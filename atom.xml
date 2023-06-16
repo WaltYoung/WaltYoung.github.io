@@ -3,11 +3,11 @@
   <title>WaltYoung</title>
   
   <subtitle>个人博客</subtitle>
-  <link href="http://example.com/atom.xml" rel="self"/>
+  <link href="https://waltyoung.github.io/atom.xml" rel="self"/>
   
-  <link href="http://example.com/"/>
+  <link href="https://waltyoung.github.io/"/>
   <updated>2023-06-14T16:55:48.726Z</updated>
-  <id>http://example.com/</id>
+  <id>https://waltyoung.github.io/</id>
   
   <author>
     <name>WaltYoung</name>
@@ -18,8 +18,8 @@
   
   <entry>
     <title>Hello World</title>
-    <link href="http://example.com/2023/06/15/hello-world/"/>
-    <id>http://example.com/2023/06/15/hello-world/</id>
+    <link href="https://waltyoung.github.io/2023/06/15/hello-world/"/>
+    <id>https://waltyoung.github.io/2023/06/15/hello-world/</id>
     <published>2023-06-14T16:55:48.726Z</published>
     <updated>2023-06-14T16:55:48.726Z</updated>
     
