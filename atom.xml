@@ -6,7 +6,7 @@
   <link href="https://waltyoung.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltyoung.github.io/"/>
-  <updated>2023-06-14T16:55:48.726Z</updated>
+  <updated>2023-06-17T09:51:55.374Z</updated>
   <id>https://waltyoung.github.io/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>基于Hexo框架搭建个人博客教程</title>
+    <link href="https://waltyoung.github.io/2023/06/17/%E5%9F%BA%E4%BA%8EHexo%E6%A1%86%E6%9E%B6%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%95%99%E7%A8%8B/"/>
+    <id>https://waltyoung.github.io/2023/06/17/%E5%9F%BA%E4%BA%8EHexo%E6%A1%86%E6%9E%B6%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%95%99%E7%A8%8B/</id>
+    <published>2023-06-17T09:16:19.000Z</published>
+    <updated>2023-06-17T09:51:55.374Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>本文前置技能：虚拟机的安装与初始化，Linux操作系统基础</strong></p><p>##第0步：系统更新</p><p>笔者使用的Linux系统是Ubuntu LTS22.0.4。所有使用Debian内核的Linux都可遵循本教程。</p><p>切换到root用户，并且注意全程使用root用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ su</span><br></pre></td></tr></table></figure><p>更新软件包列表</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ apt-get update</span><br></pre></td></tr></table></figure><p>进行一次升级</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ apt-get upgrade</span><br></pre></td></tr></table></figure><p>##第1步：安装Git<br>注意使用root用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ apt-get install git</span><br></pre></td></tr></table></figure><p>安装完成后使用如下命令检查安装是否成功</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git --version</span><br></pre></td></tr></table></figure><p>##第2步：安装Nodejs<br>注意使用root用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ apt-get install node</span><br><span class="line">$ apt-get install npm</span><br></pre></td></tr></table></figure><p>安装完成后使用如下命令检查安装是否成功</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ node -v</span><br><span class="line">$ npm -v</span><br></pre></td></tr></table></figure><p>##第3步：安装及初始化Hexo<br>注意使用root用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g hexo-cli</span><br></pre></td></tr></table></figure><p>安装完成后使用如下命令检查安装是否成功</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo -v</span><br></pre></td></tr></table></figure><p>初始化Hexo</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init</span><br></pre></td></tr></table></figure><p>启动服务</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo s</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;strong&gt;本文前置技能：虚拟机的安装与初始化，Linux操作系统基础&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;##第0步：系统更新&lt;/p&gt;
+&lt;p&gt;笔者使用的Linux系统是Ubuntu LTS22.0.4。所有使用Debian内核的Linux都可遵循本教程。&lt;/p&gt;
+&lt;p&gt;切</summary>
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>Hello World</title>
