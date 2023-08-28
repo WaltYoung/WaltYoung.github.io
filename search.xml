@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search> 
+  
+  
+    
+    <entry>
+      <title>云服务器上基于Docker搭建AWVS教程</title>
+      <link href="/2023/07/09/AWVS%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/"/>
+      <url>/2023/07/09/AWVS%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/</url>
+      
+        <content type="html"><![CDATA[<h2 id="第0步：系统更新"><a href="#第0步：系统更新" class="headerlink" title="第0步：系统更新"></a>第0步：系统更新</h2><p>笔者使用的Linux系统是Debian 11.1 64bit。</p><p>切换到root用户，并且注意全程使用root用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su</span><br></pre></td></tr></table></figure><p>更新软件包列表</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get update</span><br></pre></td></tr></table></figure><p>进行一次升级</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get upgrade</span><br></pre></td></tr></table></figure><h2 id="第1步：安装Docker"><a href="#第1步：安装Docker" class="headerlink" title="第1步：安装Docker"></a>第1步：安装Docker</h2><p>安装docker和docker-compose</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install docker docker-compose</span><br></pre></td></tr></table></figure><p>安装Docker依赖</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install docker.io</span><br></pre></td></tr></table></figure><p>安装完成后使用如下命令检查安装是否成功</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker -v</span><br></pre></td></tr></table></figure><h2 id="第2步：安装AWVS"><a href="#第2步：安装AWVS" class="headerlink" title="第2步：安装AWVS"></a>第2步：安装AWVS</h2><p>拉取Docker镜像<br><img src="https://s2.loli.net/2023/07/09/ik2gua81tYsdnez.png" alt="docker pull.png"></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull quay.io/hiepnv/acunetix</span><br></pre></td></tr></table></figure><p>创建名为acunetix_data的Docker卷<br><img src="https://s2.loli.net/2023/07/09/TObiGQlW8vo3rf4.png" alt="docker volume create acunetix_data.png"></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker volume create acunetix_data</span><br></pre></td></tr></table></figure><p>运行acunetix_web的容器<br><img src="https://s2.loli.net/2023/07/09/xAPJfi784yjDzX1.png" alt="docker run -d -p.png"></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 3443:3443 --restart=unless-stoped --name=acunetix_web quay.io/hiepnv/acunetix</span><br></pre></td></tr></table></figure><h2 id="第3步：开放端口"><a href="#第3步：开放端口" class="headerlink" title="第3步：开放端口"></a>第3步：开放端口</h2><p>云服务器防火墙开放端口，个人使用可以全部开放，如有必要则可以选择只开放3443端口<br><img src="https://s2.loli.net/2023/07/09/g3LKOcMdj9vH6Yp.png" alt="防火墙开放端口.png"></p><h2 id="第4步：测试"><a href="#第4步：测试" class="headerlink" title="第4步：测试"></a>第4步：测试</h2><p><strong>必须通过HTTPS访问3443端口</strong></p><p>默认账户：<a href="mailto:&#x61;&#100;&#x6d;&#x69;&#x6e;&#x40;&#97;&#x63;&#117;&#x2e;&#99;&#x6f;&#x6d;">&#x61;&#100;&#x6d;&#x69;&#x6e;&#x40;&#97;&#x63;&#117;&#x2e;&#99;&#x6f;&#x6d;</a></p><p>默认密码：Passw0rd!</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> AWVS </tag>
+            
+            <tag> 安装教程 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>基于Hexo框架搭建个人博客教程</title>
+      <link href="/2023/06/17/%E5%9F%BA%E4%BA%8EHexo%E6%A1%86%E6%9E%B6%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%95%99%E7%A8%8B/"/>
+      <url>/2023/06/17/%E5%9F%BA%E4%BA%8EHexo%E6%A1%86%E6%9E%B6%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%95%99%E7%A8%8B/</url>
+      
+        <content type="html"><![CDATA[<p><strong>本文前置技能：虚拟机的安装与初始化，Linux操作系统基础</strong></p><h2 id="第0步：系统更新"><a href="#第0步：系统更新" class="headerlink" title="第0步：系统更新"></a>第0步：系统更新</h2><p>笔者使用的Linux系统是Ubuntu LTS22.0.4。所有使用Debian内核的Linux都可遵循本教程。</p><p>切换到root用户，并且注意全程使用root用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su</span><br></pre></td></tr></table></figure><p>更新软件包列表</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get update</span><br></pre></td></tr></table></figure><p>进行一次升级</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get upgrade</span><br></pre></td></tr></table></figure><h2 id="第1步：安装Git"><a href="#第1步：安装Git" class="headerlink" title="第1步：安装Git"></a>第1步：安装Git</h2><p>注意使用root用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install git</span><br></pre></td></tr></table></figure><p>安装完成后使用如下命令检查安装是否成功</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git --version</span><br></pre></td></tr></table></figure><h2 id="第2步：安装Nodejs"><a href="#第2步：安装Nodejs" class="headerlink" title="第2步：安装Nodejs"></a>第2步：安装Nodejs</h2><p>注意使用root用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt-get install node</span><br><span class="line">apt-get install npm</span><br></pre></td></tr></table></figure><p>安装完成后使用如下命令检查安装是否成功</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure><h2 id="第3步：安装及初始化Hexo"><a href="#第3步：安装及初始化Hexo" class="headerlink" title="第3步：安装及初始化Hexo"></a>第3步：安装及初始化Hexo</h2><p>注意使用root用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br></pre></td></tr></table></figure><p>安装完成后使用如下命令检查安装是否成功</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo -v</span><br></pre></td></tr></table></figure><p>初始化Hexo</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure><p>启动服务</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure><p>在终端中右键打开链接<a href="http://localhost:4000/">http://localhost:4000/</a>打开Hexo生成的默认网页<br><img src="https://s2.loli.net/2023/06/17/TWuc5B1r8a2SjVL.png" alt="localhost:4000"></p><p>未完待续…</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 安装教程 </tag>
+            
+            <tag> Hexo </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Hello World</title>
+      <link href="/2023/06/15/hello-world/"/>
+      <url>/2023/06/15/hello-world/</url>
+      
+        <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+  
+  
+</search>
