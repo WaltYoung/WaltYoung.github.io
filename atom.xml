@@ -6,7 +6,7 @@
   <link href="https://waltyoung.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltyoung.github.io/"/>
-  <updated>2023-08-28T04:36:06.543Z</updated>
+  <updated>2023-08-29T01:22:04.658Z</updated>
   <id>https://waltyoung.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>不同操作系统对待换行符的不同态度</title>
+    <link href="https://waltyoung.github.io/2023/08/29/%E4%B8%8D%E5%90%8C%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AF%B9%E5%BE%85%E6%8D%A2%E8%A1%8C%E7%AC%A6%E7%9A%84%E4%B8%8D%E5%90%8C%E6%80%81%E5%BA%A6/"/>
+    <id>https://waltyoung.github.io/2023/08/29/%E4%B8%8D%E5%90%8C%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AF%B9%E5%BE%85%E6%8D%A2%E8%A1%8C%E7%AC%A6%E7%9A%84%E4%B8%8D%E5%90%8C%E6%80%81%E5%BA%A6/</id>
+    <published>2023-08-29T01:18:17.000Z</published>
+    <updated>2023-08-29T01:22:04.658Z</updated>
+    
+    <content type="html"><![CDATA[<p>不同操作系统对待换行符的主要区别在于使用的字符不同。</p><p>在Windows操作系统中，换行符由两个字符组成：回车符（CR）和换行符（LF），表示为”\r\n”。</p><p>在Unix&#x2F;Linux操作系统中，换行符只有一个字符：换行符（LF），表示为”\n”。</p><p>在Macintosh操作系统中，换行符只有一个字符：回车符（CR），表示为”\r”。</p><p>这些差异可能会导致在不同操作系统之间传输文本文件时出现格式问题。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;不同操作系统对待换行符的主要区别在于使用的字符不同。&lt;/p&gt;
+&lt;p&gt;在Windows操作系统中，换行符由两个字符组成：回车符（CR）和换行符（LF），表示为”&#92;r&#92;n”。&lt;/p&gt;
+&lt;p&gt;在Unix&amp;#x2F;Linux操作系统中，换行符只有一个字符：换行符（LF），表示为”</summary>
+      
+    
+    
+    
+    
+    <category term="操作系统" scheme="https://waltyoung.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
+    
+    <category term="每天一个小知识点" scheme="https://waltyoung.github.io/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E4%B8%AA%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/"/>
+    
+  </entry>
   
   <entry>
     <title>DoS压力测试工具——Slowhttptest</title>
