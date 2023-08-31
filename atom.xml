@@ -6,7 +6,7 @@
   <link href="https://waltyoung.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltyoung.github.io/"/>
-  <updated>2023-08-31T05:09:15.919Z</updated>
+  <updated>2023-08-31T17:01:01.416Z</updated>
   <id>https://waltyoung.github.io/</id>
   
   <author>
@@ -17,11 +17,36 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>成为未来的管理者之前的笔记</title>
+    <link href="https://waltyoung.github.io/2023/09/01/%E6%88%90%E4%B8%BA%E6%9C%AA%E6%9D%A5%E7%9A%84%E7%AE%A1%E7%90%86%E8%80%85%E4%B9%8B%E5%89%8D%E7%9A%84%E7%AC%94%E8%AE%B0/"/>
+    <id>https://waltyoung.github.io/2023/09/01/%E6%88%90%E4%B8%BA%E6%9C%AA%E6%9D%A5%E7%9A%84%E7%AE%A1%E7%90%86%E8%80%85%E4%B9%8B%E5%89%8D%E7%9A%84%E7%AC%94%E8%AE%B0/</id>
+    <published>2023-08-31T16:58:58.000Z</published>
+    <updated>2023-08-31T17:01:01.416Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="成为未来的管理者之前的笔记"><a href="#成为未来的管理者之前的笔记" class="headerlink" title="成为未来的管理者之前的笔记"></a>成为未来的管理者之前的笔记</h1><ul><li><p>不辞退不够强的人，是对其他正在付出的人的不尊重</p></li><li><p>盲目换人从来不解决本质问题</p></li><li><p><strong>有效量化</strong>，降低信息差，是企业运作的核心</p><blockquote><ol><li>搭建适合自己的信息系统<em>（工具：飞书、共享文档）</em></li><li>会议优化（具体执行方法：在开会之前采用协作文档，共同记录信息；会议开始后，所有人静默10min阅读文档，有疑点的地方直接批注，在线交流；之后的会议只讨论批注的问题。目的：压缩会议时长，避免侃大山，减小部门间的信息差）</li></ol></blockquote></li><li><p>人性是经不起挑战的，商业，是切蛋糕的艺术，即<strong>利益分配要合理</strong></p></li><li><p>OKR体系：全称是 Objectives &amp; Key Results，即目标与关键成果。</p><blockquote><ol><li>O是努力的方向和目标，概念意义上的，代表你到底要去哪里</li><li>KR是理想结果，必须可量化，具体到面向个人，代表具体怎么去</li></ol><p>参考链接：<a href="https://zhuanlan.zhihu.com/p/265830351" title="一分钟让你明白OKR考核">https://zhuanlan.zhihu.com/p/265830351</a></p></blockquote></li><li><p>内容创作者不要把自己当回事<em>（对于内容创作者需要知道的行业规则之一：和代理有效沟通“返点”问题）</em></p></li><li><p>一个优秀的视频应当具备的要素：HKRR（H：Happiness，K：Knowledge，R：Resonance，R：Rhythm）</p></li><li><p>电影行业的技巧————<strong>时钟理论</strong>：将视频的时长作为圆的周长，标出0点、3点、6点、9点的内容，如果这四个点没有爆点，那么必须修改，尽可能让刺激点充满整个时钟。目的：<strong>可视化视频节奏</strong></p></li><li><p>不融资的话，团队人数上限不应超过20人</p></li></ul><p><strong>不要留恋成功的一刻，不要躺在功劳簿上享福</strong></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;成为未来的管理者之前的笔记&quot;&gt;&lt;a href=&quot;#成为未来的管理者之前的笔记&quot; class=&quot;headerlink&quot; title=&quot;成为未来的管理者之前的笔记&quot;&gt;&lt;/a&gt;成为未来的管理者之前的笔记&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;不辞退不够强的人，是对其他正在付出</summary>
+      
+    
+    
+    
+    
+    <category term="成长" scheme="https://waltyoung.github.io/tags/%E6%88%90%E9%95%BF/"/>
+    
+    <category term="管理" scheme="https://waltyoung.github.io/tags/%E7%AE%A1%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
     <title>网络安全成长路径</title>
     <link href="https://waltyoung.github.io/2023/08/31/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%88%90%E9%95%BF%E8%B7%AF%E5%BE%84/"/>
     <id>https://waltyoung.github.io/2023/08/31/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%88%90%E9%95%BF%E8%B7%AF%E5%BE%84/</id>
     <published>2023-08-31T05:08:06.000Z</published>
-    <updated>2023-08-31T05:09:15.919Z</updated>
+    <updated>2023-08-31T17:00:35.140Z</updated>
     
     <content type="html"><![CDATA[<h1 id="网络安全成长路径"><a href="#网络安全成长路径" class="headerlink" title="网络安全成长路径"></a>网络安全成长路径</h1><ol><li>学习“小迪安全-渗透测试”的课程</li><li>考证：软考（中级信息安全工程师）、CISP（CISP-PTE、CISP-PTS）、OSCP</li><li>获取CNVD证书</li><li>SRC平台挖漏洞</li><li>写一个GitHub项目</li><li>搭建一个blog站，记录学习过程与经历，如记一次XXX或记一次XXX到XXX</li><li>参加CTF比赛</li></ol><p>参考链接：<a href="https://blog.csdn.net/m0_67286096/article/details/124020811" title="网络安全攻防五件套，OCSP、CISP-PTE、CISP-PTS、CISP-IRE、CISP-IRS">https://blog.csdn.net/m0_67286096&#x2F;article&#x2F;details&#x2F;124020811</a></p>]]></content>
     
@@ -37,6 +62,8 @@
     
     
     <category term="成长" scheme="https://waltyoung.github.io/tags/%E6%88%90%E9%95%BF/"/>
+    
+    <category term="网络安全" scheme="https://waltyoung.github.io/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/"/>
     
   </entry>
   
