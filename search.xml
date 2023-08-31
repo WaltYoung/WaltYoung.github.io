@@ -4,11 +4,30 @@
   
     
     <entry>
+      <title>网络安全成长路径</title>
+      <link href="/2023/08/31/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%88%90%E9%95%BF%E8%B7%AF%E5%BE%84/"/>
+      <url>/2023/08/31/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%88%90%E9%95%BF%E8%B7%AF%E5%BE%84/</url>
+      
+        <content type="html"><![CDATA[<h1 id="网络安全成长路径"><a href="#网络安全成长路径" class="headerlink" title="网络安全成长路径"></a>网络安全成长路径</h1><ol><li>学习“小迪安全-渗透测试”的课程</li><li>考证：软考（中级信息安全工程师）、CISP（CISP-PTE、CISP-PTS）、OSCP</li><li>获取CNVD证书</li><li>SRC平台挖漏洞</li><li>写一个GitHub项目</li><li>搭建一个blog站，记录学习过程与经历，如记一次XXX或记一次XXX到XXX</li><li>参加CTF比赛</li></ol><p>参考链接：<a href="https://blog.csdn.net/m0_67286096/article/details/124020811" title="网络安全攻防五件套，OCSP、CISP-PTE、CISP-PTS、CISP-IRE、CISP-IRS">https://blog.csdn.net/m0_67286096&#x2F;article&#x2F;details&#x2F;124020811</a></p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 成长 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>CMD的常见符号及其作用</title>
       <link href="/2023/08/30/CMD%E7%9A%84%E5%B8%B8%E8%A7%81%E7%AC%A6%E5%8F%B7%E5%8F%8A%E5%85%B6%E4%BD%9C%E7%94%A8/"/>
       <url>/2023/08/30/CMD%E7%9A%84%E5%B8%B8%E8%A7%81%E7%AC%A6%E5%8F%B7%E5%8F%8A%E5%85%B6%E4%BD%9C%E7%94%A8/</url>
       
-        <content type="html"><![CDATA[<p>Q：<code>tasklist | findstr &quot;cmd&quot;</code>此命令中的“|”是什么作用？</p><p>A：在CMD中，**”|”（管道符号）的作用是将前一个命令的输出作为后一个命令的输入**。在给出的命令中，”tasklist”命令用于列出当前正在运行的进程列表，而”findstr”命令用于在输出结果中查找包含指定字符串（在此例中是”cmd”）的行。所以整个命令的作用是列出当前正在运行的进程列表，并在结果中筛选出包含”cmd”字符串的行。</p><h2 id="CMD的常见符号及其作用-："><a href="#CMD的常见符号及其作用-：" class="headerlink" title="CMD的常见符号及其作用 ##："></a>CMD的常见符号及其作用 ##：</h2><ol><li><strong>“&gt;”：重定向符号。用于将命令的输出重定向到文件</strong>。例如，”dir &gt; output.txt”将”dir”命令的输出保存到名为”output.txt”的文件中。</li><li><strong>“&gt;&gt;”：追加重定向符号。与”&gt;”类似，但是会将命令的输出追加到文件的末尾，而不是覆盖文件内容</strong>。</li><li><strong>“&lt;”：输入重定向符号。用于将文件中的内容作为命令的输入</strong>。例如，”sort &lt; input.txt”将”input.txt”文件中的内容作为”sort”命令的输入进行排序。</li><li><strong>“&amp;”：命令分隔符。用于在一行中运行多个命令</strong>。例如，”command1 &amp; command2”将依次执行”command1”和”command2”。</li><li><strong>“&amp;&amp;”：条件命令分隔符。只有前一个命令成功执行后，才会执行后续的命令</strong>。例如，”command1 &amp;&amp; command2”只有在”command1”成功执行后，才会执行”command2”。</li><li><strong>“||”：条件命令分隔符。只有前一个命令执行失败后，才会执行后续的命令</strong>。例如，”command1 || command2”只有在”command1”执行失败后，才会执行”command2”。</li></ol><p>这些符号可以帮助您在CMD下更有效地执行命令和操作。请注意，有些符号在不同的操作系统或命令行环境中可能会有不同的行为。</p>]]></content>
+        <content type="html"><![CDATA[<p>Q：<code>tasklist | findstr &quot;cmd&quot;</code>此命令中的“|”是什么作用？</p><p>A：在CMD中，”|”（管道符号）的作用是<strong>将前一个命令的输出作为后一个命令的输入</strong>。在给出的命令中，”tasklist”命令用于列出当前正在运行的进程列表，而”findstr”命令用于在输出结果中查找包含指定字符串（在此例中是”cmd”）的行。所以整个命令的作用是列出当前正在运行的进程列表，并在结果中筛选出包含”cmd”字符串的行。</p><h2 id="CMD的常见符号及其作用-："><a href="#CMD的常见符号及其作用-：" class="headerlink" title="CMD的常见符号及其作用 ："></a>CMD的常见符号及其作用 ：</h2><ol><li><strong>“&gt;”：重定向符号。用于将命令的输出重定向到文件</strong>。例如，”dir &gt; output.txt”将”dir”命令的输出保存到名为”output.txt”的文件中。</li><li><strong>“&gt;&gt;”：追加重定向符号。与”&gt;”类似，但是会将命令的输出追加到文件的末尾，而不是覆盖文件内容</strong>。</li><li><strong>“&lt;”：输入重定向符号。用于将文件中的内容作为命令的输入</strong>。例如，”sort &lt; input.txt”将”input.txt”文件中的内容作为”sort”命令的输入进行排序。</li><li><strong>“&amp;”：命令分隔符。用于在一行中运行多个命令</strong>。例如，”command1 &amp; command2”将依次执行”command1”和”command2”。</li><li><strong>“&amp;&amp;”：条件命令分隔符。只有前一个命令成功执行后，才会执行后续的命令</strong>。例如，”command1 &amp;&amp; command2”只有在”command1”成功执行后，才会执行”command2”。</li><li><strong>“||”：条件命令分隔符。只有前一个命令执行失败后，才会执行后续的命令</strong>。例如，”command1 || command2”只有在”command1”执行失败后，才会执行”command2”。</li></ol><p>这些符号可以帮助您在CMD下更有效地执行命令和操作。请注意，有些符号在不同的操作系统或命令行环境中可能会有不同的行为。</p>]]></content>
       
       
       
