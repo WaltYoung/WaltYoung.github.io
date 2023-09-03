@@ -4,6 +4,27 @@
   
     
     <entry>
+      <title>UEFI和BIOS的区别</title>
+      <link href="/2023/09/03/UEFI%E5%92%8CBIOS%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
+      <url>/2023/09/03/UEFI%E5%92%8CBIOS%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+      
+        <content type="html"><![CDATA[<h1 id="UEFI和BIOS的区别"><a href="#UEFI和BIOS的区别" class="headerlink" title="UEFI和BIOS的区别"></a>UEFI和BIOS的区别</h1><p>UEFI（统一的可扩展固件接口）和BIOS（基本输入&#x2F;输出系统）都是计算机的固件接口，用于启动和管理计算机的硬件和软件。</p><p>BIOS是一种旧的固件接口，它是在计算机启动时首先加载的。它负责初始化和检测计算机的硬件设备，例如处理器、内存、硬盘等，并将控制权交给操作系统。BIOS还包含一个小型的操作系统，称为CMOS（可编程只读存储器），用于存储计算机的基本设置，例如日期、时间、启动顺序等。</p><blockquote><p>UEFI是一种更新的固件接口，它取代了传统的BIOS。UEFI提供了更先进的功能和更好的兼容性。与BIOS相比，UEFI具有以下优势：</p><ol><li>容量更大：UEFI支持更大的固件容量，可以容纳更多的功能和驱动程序。</li><li>启动速度更快：UEFI的启动速度比BIOS更快，因为它在启动时不需要进行硬件初始化和自检。</li><li>更好的兼容性：UEFI可以更好地与现代操作系统和硬件设备兼容，支持更多的文件系统和硬件接口。</li><li>图形界面：UEFI提供了一个图形界面，使用户可以更直观地设置计算机的启动选项和其他设置。</li></ol></blockquote><p>总的来说，UEFI是一种更先进、更灵活和更可扩展的固件接口，它取代了传统的BIOS，并提供了更好的启动速度和兼容性。</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 操作系统 </tag>
+            
+            <tag> 每天一个小知识点 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>HW避雷</title>
       <link href="/2023/09/02/HW%E9%81%BF%E9%9B%B7/"/>
       <url>/2023/09/02/HW%E9%81%BF%E9%9B%B7/</url>
