@@ -4,6 +4,27 @@
   
     
     <entry>
+      <title>WHERE子句可后接的关键字</title>
+      <link href="/2023/09/06/WHERE%E5%AD%90%E5%8F%A5%E5%8F%AF%E5%90%8E%E6%8E%A5%E7%9A%84%E5%85%B3%E9%94%AE%E5%AD%97/"/>
+      <url>/2023/09/06/WHERE%E5%AD%90%E5%8F%A5%E5%8F%AF%E5%90%8E%E6%8E%A5%E7%9A%84%E5%85%B3%E9%94%AE%E5%AD%97/</url>
+      
+        <content type="html"><![CDATA[<p><strong>WHERE子句可以后接以下关键字</strong>：</p><ol><li>AND：用于连接多个条件，要求同时满足所有条件。</li><li>OR：用于连接多个条件，只要满足其中一个条件即可。</li><li>NOT：用于否定一个条件。</li><li>IN：用于指定一个范围，判断某个值是否在这个范围内。</li><li>BETWEEN：用于指定一个范围，判断某个值是否在这个范围内。</li><li>LIKE：用于模糊匹配，判断某个值是否符合指定的模式。</li><li>IS NULL：用于判断某个值是否为空。</li><li>EXISTS：用于判断子查询是否返回结果。</li><li>ANY&#x2F;SOME：用于判断某个值是否与子查询中的任意一个值相等。</li><li>ALL：用于判断某个值是否与子查询中的所有值都相等。</li></ol>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 每天一个小知识点 </tag>
+            
+            <tag> SQL </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>LEFT JOIN与JOIN的区别</title>
       <link href="/2023/09/05/LEFT-JOIN%E4%B8%8EJOIN%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
       <url>/2023/09/05/LEFT-JOIN%E4%B8%8EJOIN%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
