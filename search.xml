@@ -4,6 +4,27 @@
   
     
     <entry>
+      <title>LEFT JOIN与JOIN的区别</title>
+      <link href="/2023/09/05/LEFT-JOIN%E4%B8%8EJOIN%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
+      <url>/2023/09/05/LEFT-JOIN%E4%B8%8EJOIN%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+      
+        <content type="html"><![CDATA[<h1 id="LEFT-JOIN与JOIN的区别"><a href="#LEFT-JOIN与JOIN的区别" class="headerlink" title="LEFT JOIN与JOIN的区别"></a>LEFT JOIN与JOIN的区别</h1><p>在SQL中，JOIN是连接两个或多个表的操作，而LEFT JOIN是其中一种JOIN的类型。</p><p>JOIN操作会返回两个表中匹配的行，如果两个表中没有匹配的行，则不会返回任何结果。而LEFT JOIN操作会返回左表中的所有行，即使在右表中没有匹配的行，左表中的行也会被返回，右表中没有匹配的列则会用NULL填充。</p><p>举个例子，假设有两个表A和B，A表中有3行数据，B表中有2行数据，其中一行数据的ID与A表中的一行数据的ID相同，另一行数据的ID与A表中的任何一行数据的ID都不相同。使用JOIN操作，只会返回一行数据，即A表中ID与B表中ID相同的那行数据。而使用LEFT JOIN操作，则会返回A表中的所有3行数据，其中一行数据与B表中的那行数据匹配，另外两行数据的B表中的列则会用NULL填充。</p><p>因此，LEFT JOIN操作可以保证左表中的所有数据都会被返回，即使在右表中没有匹配的数据。</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 每天一个小知识点 </tag>
+            
+            <tag> SQL </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>PKCS5padding和PKCS7padding的区别</title>
       <link href="/2023/09/04/PKCS5padding%E5%92%8CPKCS7padding%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
       <url>/2023/09/04/PKCS5padding%E5%92%8CPKCS7padding%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
@@ -15,6 +36,8 @@
         <tags>
             
             <tag> 每天一个小知识点 </tag>
+            
+            <tag> 密码学 </tag>
             
         </tags>
       

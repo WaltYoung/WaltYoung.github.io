@@ -6,7 +6,7 @@
   <link href="https://waltyoung.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltyoung.github.io/"/>
-  <updated>2023-09-04T07:44:19.556Z</updated>
+  <updated>2023-09-05T07:06:21.778Z</updated>
   <id>https://waltyoung.github.io/</id>
   
   <author>
@@ -17,11 +17,35 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>LEFT JOIN与JOIN的区别</title>
+    <link href="https://waltyoung.github.io/2023/09/05/LEFT-JOIN%E4%B8%8EJOIN%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
+    <id>https://waltyoung.github.io/2023/09/05/LEFT-JOIN%E4%B8%8EJOIN%E7%9A%84%E5%8C%BA%E5%88%AB/</id>
+    <published>2023-09-05T07:04:10.000Z</published>
+    <updated>2023-09-05T07:06:21.778Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="LEFT-JOIN与JOIN的区别"><a href="#LEFT-JOIN与JOIN的区别" class="headerlink" title="LEFT JOIN与JOIN的区别"></a>LEFT JOIN与JOIN的区别</h1><p>在SQL中，JOIN是连接两个或多个表的操作，而LEFT JOIN是其中一种JOIN的类型。</p><p>JOIN操作会返回两个表中匹配的行，如果两个表中没有匹配的行，则不会返回任何结果。而LEFT JOIN操作会返回左表中的所有行，即使在右表中没有匹配的行，左表中的行也会被返回，右表中没有匹配的列则会用NULL填充。</p><p>举个例子，假设有两个表A和B，A表中有3行数据，B表中有2行数据，其中一行数据的ID与A表中的一行数据的ID相同，另一行数据的ID与A表中的任何一行数据的ID都不相同。使用JOIN操作，只会返回一行数据，即A表中ID与B表中ID相同的那行数据。而使用LEFT JOIN操作，则会返回A表中的所有3行数据，其中一行数据与B表中的那行数据匹配，另外两行数据的B表中的列则会用NULL填充。</p><p>因此，LEFT JOIN操作可以保证左表中的所有数据都会被返回，即使在右表中没有匹配的数据。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;LEFT-JOIN与JOIN的区别&quot;&gt;&lt;a href=&quot;#LEFT-JOIN与JOIN的区别&quot; class=&quot;headerlink&quot; title=&quot;LEFT JOIN与JOIN的区别&quot;&gt;&lt;/a&gt;LEFT JOIN与JOIN的区别&lt;/h1&gt;&lt;p&gt;在SQL中，JOIN</summary>
+      
+    
+    
+    
+    
+    <category term="每天一个小知识点" scheme="https://waltyoung.github.io/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E4%B8%AA%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/"/>
+    
+    <category term="SQL" scheme="https://waltyoung.github.io/tags/SQL/"/>
+    
+  </entry>
+  
+  <entry>
     <title>PKCS5padding和PKCS7padding的区别</title>
     <link href="https://waltyoung.github.io/2023/09/04/PKCS5padding%E5%92%8CPKCS7padding%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
     <id>https://waltyoung.github.io/2023/09/04/PKCS5padding%E5%92%8CPKCS7padding%E7%9A%84%E5%8C%BA%E5%88%AB/</id>
     <published>2023-09-04T07:38:32.000Z</published>
-    <updated>2023-09-04T07:44:19.556Z</updated>
+    <updated>2023-09-05T07:05:30.624Z</updated>
     
     <content type="html"><![CDATA[<h1 id="PKCS5padding和PKCS7padding的区别"><a href="#PKCS5padding和PKCS7padding的区别" class="headerlink" title="PKCS5padding和PKCS7padding的区别"></a>PKCS5padding和PKCS7padding的区别</h1><p>PKCS5padding和PKCS7padding（PKCS7padding是PKCS#7填充的简称，PKCS#7是密码学标准PKCS（Public Key Cryptography Standards）中定义的填充方案，用于在加密算法中对数据进行填充。）是两种常见的填充方案，用于在加密前将数据块的大小调整为加密算法所要求的固定大小。它们在填充字节的值和填充方式上有一些区别。</p><p><strong>PKCS5padding</strong>：</p><ul><li>填充字节的值等于需要填充的字节数。</li><li>如果需要填充的字节数为n，则填充n个字节，每个字节的值为n。</li><li>例如，如果需要填充2个字节，那么填充的字节为0x02 0x02。</li></ul><p><strong>PKCS7padding</strong>：</p><ul><li>填充字节的值等于需要填充的字节数。</li><li>如果需要填充的字节数为n，则填充n个字节，每个字节的值为n。</li><li>与PKCS5padding的区别在于，PKCS7padding可以用于任意块大小的加密算法，而不仅限于PKCS5padding的8字节块大小。</li><li>例如，如果需要填充2个字节，那么填充的字节为0x02 0x02。</li></ul><p>总结：PKCS5padding和PKCS7padding在填充字节的值和填充方式上略有不同，但<strong>在实际应用中，它们通常可以互相替换使用</strong>。</p>]]></content>
     
@@ -35,6 +59,8 @@
     
     
     <category term="每天一个小知识点" scheme="https://waltyoung.github.io/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E4%B8%AA%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/"/>
+    
+    <category term="密码学" scheme="https://waltyoung.github.io/tags/%E5%AF%86%E7%A0%81%E5%AD%A6/"/>
     
   </entry>
   
