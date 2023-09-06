@@ -4,6 +4,27 @@
   
     
     <entry>
+      <title>WHERE、CHECK、HAVING的区别</title>
+      <link href="/2023/09/07/WHERE%E3%80%81CHECK%E3%80%81HAVING%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
+      <url>/2023/09/07/WHERE%E3%80%81CHECK%E3%80%81HAVING%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+      
+        <content type="html"><![CDATA[<h1 id="WHERE、CHECK、HAVING的区别"><a href="#WHERE、CHECK、HAVING的区别" class="headerlink" title="WHERE、CHECK、HAVING的区别"></a>WHERE、CHECK、HAVING的区别</h1><p>在T-SQL语言中，WHERE、CHECK、HAVING都是用于筛选数据的关键字，但它们的使用场景和作用略有不同。</p><ol><li>WHERE：WHERE用于在SELECT、UPDATE、DELETE等语句中筛选数据，它是一个过滤器，可以根据指定的条件从表中选择符合条件的记录。WHERE子句可以包含多个条件，多个条件之间可以使用AND或OR进行连接。<strong>WHERE子句不能使用聚合函数</strong>。**常见的聚合函数如下：count()、sum()、avg()、min()、max()**。</li><li>CHECK：CHECK用于在创建表时定义列的约束条件，它可以限制列中的数据必须满足指定的条件。例如，可以使用CHECK约束限制某个列的取值范围、数据类型、长度等。CHECK约束可以在创建表时定义，也可以在ALTER TABLE语句中添加。</li><li>HAVING：HAVING用于在GROUP BY子句中筛选数据，它是一个过滤器，可以根据指定的条件从分组后的结果集中选择符合条件的记录。HAVING子句可以包含多个条件，多个条件之间可以使用AND或OR进行连接。</li></ol><p>总的来说，WHERE用于在SELECT、UPDATE、DELETE等语句中筛选数据，CHECK用于在创建表时定义列的约束条件；HAVING用于在GROUP BY子句中筛选数据，HAVING必须写在GROUP BY之后，例<code>GROUP BY kind HAVING num &gt; 3</code>。</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 每天一个小知识点 </tag>
+            
+            <tag> SQL </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>WHERE子句可后接的关键字</title>
       <link href="/2023/09/06/WHERE%E5%AD%90%E5%8F%A5%E5%8F%AF%E5%90%8E%E6%8E%A5%E7%9A%84%E5%85%B3%E9%94%AE%E5%AD%97/"/>
       <url>/2023/09/06/WHERE%E5%AD%90%E5%8F%A5%E5%8F%AF%E5%90%8E%E6%8E%A5%E7%9A%84%E5%85%B3%E9%94%AE%E5%AD%97/</url>
