@@ -4,6 +4,27 @@
   
     
     <entry>
+      <title>记一次开发过程中根据抓包和Request-Id（日志）排错</title>
+      <link href="/2023/09/12/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%A0%B9%E6%8D%AE%E6%8A%93%E5%8C%85%E5%92%8CRequest-Id%EF%BC%88%E6%97%A5%E5%BF%97%EF%BC%89%E6%8E%92%E9%94%99/"/>
+      <url>/2023/09/12/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%A0%B9%E6%8D%AE%E6%8A%93%E5%8C%85%E5%92%8CRequest-Id%EF%BC%88%E6%97%A5%E5%BF%97%EF%BC%89%E6%8E%92%E9%94%99/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="记一次开发过程中根据抓包和Request-Id（日志）排错"><a href="#记一次开发过程中根据抓包和Request-Id（日志）排错" class="headerlink" title="记一次开发过程中根据抓包和Request-Id（日志）排错"></a>记一次开发过程中根据抓包和Request-Id（日志）排错</h1><p>笔者正在为<a href="https://waltyoung.github.io/movies/">https://waltyoung.github.io/movies/</a>嵌入视频播放器，而后发现他人视频的URL有效，可以正常播放视频，但自己视频的URL无法正常播放视频，就此展开排错。</p><p>首先，笔者花费数个小时排除代码问题</p><p>其次，笔者又花费许久排除URL的问题（即腾讯云上存储的文件访问权限的问题）</p><p>再次，笔者又排除了网络环境问题（笔者确实发现网络环境不健康，但不是主要问题）</p><p>最后，笔者才考虑到抓包重新定位问题（笔者太笨了QAQ）</p><p>笔者的音乐和视频都存储在腾讯云上，但是笔者的音乐播放器正常工作，视频播放器未正常工作，所以对于二者分别抓包再做比较</p><p>笔者分析了抓包结果，发现以下两点：</p><ol><li>返回码不同</li><li>腾讯云的自定义头的字段存在较大区别</li></ol><p>针对第一点（返回码不同），视频播放器的返回码是206，笔者搜索、学习了返回码206代表的含义。HTTP <code>206 Partial Content</code>成功状态响应代码指示请求已成功并且主体包含所请求的数据区间，该数据区间是在请求的 Range 字段指定的。<strong>可以简单地理解为返回码206是请求视频等大资源时的特定的返回码</strong>，因为用户不可能等待视频的完整传输完成，事实情况也是视频边下边播</p><p>针对第二点（腾讯云的自定义头的字段存在较大区别），二者的<code>X-Cos-Request-Id</code>值不同，并且未正常工作的视频播放器多一个<code>X-Cos-Trace-Id</code>字段</p><p><img src="https://s2.loli.net/2023/09/12/BMFcPgZ84LQVvm9.png" alt="X-Cos-Trace-Id.png"></p><p>腾讯云上对于<code>X-Cos-Request-Id</code>和<code>X-Cos-Trace-Id</code>的解释如下</p><p><img src="https://s2.loli.net/2023/09/12/uLjkTCMd5Yb73Z4.png" alt="X-Cos-Request-Id和X-Cos-Trace-Id的解释.png"></p><p>根据解释，笔者想到腾讯云的日志也可以帮助分析问题（笔者没有找到腾讯云对象存储服务的日志，但是找到了自助诊断工具）</p><p><img src="https://s2.loli.net/2023/09/12/lNuHmS31z2pfB5U.png" alt="自助诊断工具.png"></p><p>如图所示，找到跨域访问设置，解决问题</p><p><img src="https://s2.loli.net/2023/09/12/ZFHJwI3SNkdlKX5.png" alt="跨域访问设置.png"></p><blockquote><p><strong>总结</strong>：</p><p>从想到抓包至问题解决，只用了不到一个小时，远低于排除代码、文件权限问题的耗时，所以选择合适合理的方法定位、分析问题非常重要。当然，无关问题的排除也很重要</p></blockquote>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 成长 </tag>
+            
+            <tag> 记一次XXX </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>WHERE、CHECK、HAVING的区别</title>
       <link href="/2023/09/07/WHERE%E3%80%81CHECK%E3%80%81HAVING%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
       <url>/2023/09/07/WHERE%E3%80%81CHECK%E3%80%81HAVING%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
