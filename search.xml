@@ -4,11 +4,38 @@
   
     
     <entry>
-      <title>记一次CTF杂项解题（一）</title>
-      <link href="/2023/09/13/%E8%AE%B0%E4%B8%80%E6%AC%A1CTF%E6%9D%82%E9%A1%B9%E8%A7%A3%E9%A2%98%EF%BC%88%E4%B8%80%EF%BC%89/"/>
-      <url>/2023/09/13/%E8%AE%B0%E4%B8%80%E6%AC%A1CTF%E6%9D%82%E9%A1%B9%E8%A7%A3%E9%A2%98%EF%BC%88%E4%B8%80%EF%BC%89/</url>
+      <title>NTFS交换数据流隐藏文件</title>
+      <link href="/2023/09/14/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E9%9A%90%E8%97%8F%E6%96%87%E4%BB%B6/"/>
+      <url>/2023/09/14/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E9%9A%90%E8%97%8F%E6%96%87%E4%BB%B6/</url>
       
-        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="记一次CTF杂项解题（一）"><a href="#记一次CTF杂项解题（一）" class="headerlink" title="记一次CTF杂项解题（一）"></a>记一次CTF杂项解题（一）</h1><p>笔者在做CTF题时，发现了未曾见过的一句话木马<code>┼攠數畣整爠煥敵瑳∨≡┩愾</code>，就此展开探索</p><p>由网络可知<strong>这是ANSI 转 Unicode编码的 access 木马</strong></p><p>ANSI是一种字符代码，对于不同语言来说，ANSI对应的编码是不同的</p><ul><li>在中文系统中，使用ANSI保存，编码集是 GBK（MS936）</li><li>在日文系统中，使用ANSI保存，编码集是 Shift_JIS（MS932）</li></ul><p>在CMD中可以使用<code>chcp</code>命令查看Windows当前的页面编码集，编码集根据时区选择。页面编码936在Win95及之前表示GB2312，在Win95之后表示GBK，需要注明的是GBK 包括了 GB2312 的所有内容，同时又增加了近20000个新的汉字（包括繁体字）和符号。参考链接：<a href="https://blog.csdn.net/sxzlc/article/details/106203495" title="文件编码 ANSI、GBK、GB2312、MS936、MS932、SJIS、Windows-31 、EUC-JP 、EBCDIC 等等之间的区别与联系">https://blog.csdn.net/sxzlc/article/details/106203495</a>这里提供查询页面编码的网址<a href="https://blog.csdn.net/sxzlc/article/details/106270405" title="windows中，页面编码集一览 （chcp code）">https://blog.csdn.net/sxzlc/article/details/106270405</a></p><blockquote><p>UTF-16是一种编码方式，用于将Unicode字符转换为二进制数据。在UTF-16中，每个字符通常占用2个字节。</p><p>由于计算机存储数据的方式有两种：Big Endian（大端存储，高位低地址、低位高地址）和<strong>Little Endian（小端存储，低位低地址、高位高地址）</strong>，因此在使用UTF-16编码时，需要通过在文件开头添加一个特殊字符来指示文件是使用Big Endian还是Little Endian的方式存储数据。这个特殊字符就是BOM（Byte Order Mark），它是一个Unicode字符，其编码为U+FEFF。</p><p><strong>在 Windows 平台下，默认的Unicode编码为UTF-16 Little Endian</strong>，所以在UTF-16编码的文件开头会添加一个BOM字符（U+FEFF），以表示文件是以Little Endian方式存储数据。这个BOM字符在文件中的作用是告诉解码器如何正确地解析文件中的字符数据。</p></blockquote><p>通过将木马复制粘贴到记事本，另存为5种不同编码方式的文件(ANSI、UTF-8、带有BOM的UTF-8、UTF-16 Big Endian、UTF-16 Little Endian)，再使用十六进制查看</p><p><img src="https://s2.loli.net/2023/09/13/b4VIw8pOzBrnJWg.png" alt="UTF-16 Little Endian编码.png"></p><p>由图可见，在UTF-16 Little Endian编码下可见正常的文字——<code>&lt;% execute request(&quot;a&quot;)%&gt;</code></p><p>此处收集常见的一句话木马：</p><ol><li><a href="https://blog.csdn.net/forest_fire/article/details/50944437" title="收集一些常见的webshell后门的特征码">https://blog.csdn.net/forest_fire&#x2F;article&#x2F;details&#x2F;50944437</a></li><li><a href="https://www.cnblogs.com/goodgad/p/13463866.html" title="常见的一句话木马">https://www.cnblogs.com/goodgad/p/13463866.html</a></li></ol>]]></content>
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="NTFS交换数据流隐藏文件"><a href="#NTFS交换数据流隐藏文件" class="headerlink" title="NTFS交换数据流隐藏文件"></a>NTFS交换数据流隐藏文件</h1><blockquote><p>NTFS交换数据流（Alternate Data Streams，简称ADS）是NTFS磁盘格式的一个特性，在NTFS文件系统下，每个文件都可以存在多个数据流，就是说除了主文件流之外还可以有许多非主文件流寄宿在主文件流中，而我们无法看到非主文件的数据流。它使用资源派生来维持与文件相关的信息。<strong>类似 Linux 的 swap 文件</strong>。</p></blockquote><p>将 123 写入到 NTFS_demo.txt:1.txt 文件中</p><p>‘’’ bash<br>echo 123 &gt; NTFS_demo.txt:1.txt<br>‘’’</p><p>此时在文件中可见产生了一个 NTFS_demo.txt 文件，打开 NTFS_demo.txt 文件，可见是空白的</p><p><img src="https://s2.loli.net/2023/09/14/rqV57Fh1QXbJiUc.png" alt="demo.txt.png"></p><p>使用 notepad 命令打开 NTFS_demo.txt:1.txt 文件</p><p>‘’’ bash<br>notepad NTFS_demo.txt:1.txt<br>‘’’</p><p>notepad 命令将唤起记事本，可见输入内容“123”</p><p><img src="https://s2.loli.net/2023/09/14/1s9DCnw4vtNpr6U.png" alt="1.txt.png"></p><p>参考链接：<a href="https://www.qingsword.com/qing/812.html" title="利用NTFS交换数据流隐藏文件">https://www.qingsword.com/qing/812.html</a></p><p>如何如何检测和清除NTFS-ADS隐藏的文件：</p><ol><li>对于压缩包类文件，可以使用压缩软件打开，在压缩软件中查看所需内容；也可以在Linux中直接解压该文件</li><li>合理利用工具，NTFS交换数据流检测工具的下载地址：<a href="https://waltyoung-music-1317864421.cos.ap-shanghai.myqcloud.com/tools/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E6%A3%80%E6%B5%8B%E5%B7%A5%E5%85%B7.rar">https://waltyoung-music-1317864421.cos.ap-shanghai.myqcloud.com/tools/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E6%A3%80%E6%B5%8B%E5%B7%A5%E5%85%B7.rar</a></li></ol><hr><p>需要注意的是，type命令执行 NTFS_demo.txt 文件和 NTFS_demo.txt:1.txt 文件的结果是不同的</p><p><code>type NTFS_demo.txt</code>命令执行结果为空（因为NTFS_demo.txt文件中没有内容）</p><p><code>type NTFS_demo.txt:1.txt</code>命令执行结果如下所示</p><p><img src="https://s2.loli.net/2023/09/14/A9CjBwLT7Okgq6H.png" alt="type命令执行不同文件.png"></p><p>echo 命令和 type 命令存在显著差异</p><p>echo 命令是将字符写入到文件中</p><p>‘’’ bash<br>echo 456 &gt;&gt; NTFS_demo.txt:1.txt<br>‘’’</p><p>type 命令是将已存在的文件用交换数据流的方式寄生到另外一个文件或文件夹上，</p><p>‘’’ bash<br>type 456.txt &gt;&gt; NTFS_demo.txt:1.txt<br>‘’’</p><p>注：“&gt;&gt;”是追加重定向符号，与”&gt;”类似，但是会将命令的输出追加到文件的末尾，而不是覆盖文件内容。</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 操作系统 </tag>
+            
+            <tag> CTF </tag>
+            
+            <tag> Misc </tag>
+            
+            <tag> 隐写 </tag>
+            
+            <tag> 取证 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>记一次一句话木马的探索</title>
+      <link href="/2023/09/13/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E7%9A%84%E6%8E%A2%E7%B4%A2/"/>
+      <url>/2023/09/13/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E7%9A%84%E6%8E%A2%E7%B4%A2/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="记一次一句话木马的探索"><a href="#记一次一句话木马的探索" class="headerlink" title="记一次一句话木马的探索"></a>记一次一句话木马的探索</h1><p>笔者在做CTF题时，发现了未曾见过的一句话木马<code>┼攠數畣整爠煥敵瑳∨≡┩愾</code>，就此展开探索</p><p>由网络可知<strong>这是ANSI 转 Unicode编码的 access 木马</strong></p><p>ANSI是一种字符代码，对于不同语言来说，ANSI对应的编码是不同的</p><ul><li>在中文系统中，使用ANSI保存，编码集是 GBK（MS936）</li><li>在日文系统中，使用ANSI保存，编码集是 Shift_JIS（MS932）</li></ul><p>在CMD中可以使用<code>chcp</code>命令查看Windows当前的页面编码集，编码集根据时区选择。页面编码936在Win95及之前表示GB2312，在Win95之后表示GBK，需要注明的是GBK 包括了 GB2312 的所有内容，同时又增加了近20000个新的汉字（包括繁体字）和符号。参考链接：<a href="https://blog.csdn.net/sxzlc/article/details/106203495" title="文件编码 ANSI、GBK、GB2312、MS936、MS932、SJIS、Windows-31 、EUC-JP 、EBCDIC 等等之间的区别与联系">https://blog.csdn.net/sxzlc/article/details/106203495</a>这里提供查询页面编码的网址<a href="https://blog.csdn.net/sxzlc/article/details/106270405" title="windows中，页面编码集一览 （chcp code）">https://blog.csdn.net/sxzlc/article/details/106270405</a></p><blockquote><p>UTF-16是一种编码方式，用于将Unicode字符转换为二进制数据。在UTF-16中，每个字符通常占用2个字节。</p><p>由于计算机存储数据的方式有两种：Big Endian（大端存储，高位低地址、低位高地址）和<strong>Little Endian（小端存储，低位低地址、高位高地址）</strong>，因此在使用UTF-16编码时，需要通过在文件开头添加一个特殊字符来指示文件是使用Big Endian还是Little Endian的方式存储数据。这个特殊字符就是BOM（Byte Order Mark），它是一个Unicode字符，其编码为U+FEFF。</p><p><strong>在 Windows 平台下，默认的Unicode编码为UTF-16 Little Endian</strong>，所以在UTF-16编码的文件开头会添加一个BOM字符（U+FEFF），以表示文件是以Little Endian方式存储数据。这个BOM字符在文件中的作用是告诉解码器如何正确地解析文件中的字符数据。</p></blockquote><p>通过将木马复制粘贴到记事本，另存为5种不同编码方式的文件(ANSI、UTF-8、带有BOM的UTF-8、UTF-16 Big Endian、UTF-16 Little Endian)，再使用十六进制查看</p><p><img src="https://s2.loli.net/2023/09/13/b4VIw8pOzBrnJWg.png" alt="UTF-16 Little Endian编码.png"></p><p>由图可见，在UTF-16 Little Endian编码下可见正常的文字——<code>&lt;% execute request(&quot;a&quot;)%&gt;</code></p><p>此处收集常见的一句话木马：</p><ol><li><a href="https://blog.csdn.net/forest_fire/article/details/50944437" title="收集一些常见的webshell后门的特征码">https://blog.csdn.net/forest_fire&#x2F;article&#x2F;details&#x2F;50944437</a></li><li><a href="https://www.cnblogs.com/goodgad/p/13463866.html" title="常见的一句话木马">https://www.cnblogs.com/goodgad/p/13463866.html</a></li></ol>]]></content>
       
       
       
