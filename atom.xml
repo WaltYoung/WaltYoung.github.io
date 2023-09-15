@@ -6,7 +6,7 @@
   <link href="https://waltyoung.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltyoung.github.io/"/>
-  <updated>2023-09-14T03:58:08.117Z</updated>
+  <updated>2023-09-15T04:17:03.892Z</updated>
   <id>https://waltyoung.github.io/</id>
   
   <author>
@@ -17,11 +17,35 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>CTF-Misc-zip伪加密</title>
+    <link href="https://waltyoung.github.io/2023/09/15/CTF-Misc-zip%E4%BC%AA%E5%8A%A0%E5%AF%86/"/>
+    <id>https://waltyoung.github.io/2023/09/15/CTF-Misc-zip%E4%BC%AA%E5%8A%A0%E5%AF%86/</id>
+    <published>2023-09-15T04:15:30.000Z</published>
+    <updated>2023-09-15T04:17:03.892Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="CTF-Misc-zip伪加密"><a href="#CTF-Misc-zip伪加密" class="headerlink" title="CTF-Misc-zip伪加密"></a>CTF-Misc-zip伪加密</h1><p>原题链接：<a href="https://buuoj.cn/challenges#zip%E4%BC%AA%E5%8A%A0%E5%AF%86">https://buuoj.cn/challenges#zip%E4%BC%AA%E5%8A%A0%E5%AF%86</a></p><p>一个 ZIP 文件由三个部分组成：</p><p>压缩源文件数据区+压缩源文件目录区+压缩源文件目录结束标志</p><p><strong>zip伪加密是在文件头的加密标志位做修改，进而再打开文件时识被别为加密压缩包</strong>。</p><p><strong>压缩源文件数据区</strong>：</p><ul><li><strong>50 4B 03 04</strong>：这是头文件标记（0x04034b50）</li><li>14 00：解压文件所需 pkware 版本</li><li><strong>09 00</strong>：全局方式位标记（有无加密）</li><li>08 00：压缩方式</li><li>50 A3：最后修改文件时间</li><li>A5 4A：最后修改文件日期</li><li>21 38 76 64：CRC-32校验（1480B516）</li><li>19 00 00 00：压缩后尺寸（25）</li><li>17 00 00 00：未压缩尺寸（23）</li><li>08 00：文件名长度</li><li>00 00：扩展记录长度</li></ul><p><strong>压缩源文件目录区</strong>:</p><ul><li>50 4B 01 02：目录中文件文件头标记(0x02014b50)</li><li>1F 00：压缩使用的 pkware 版本</li><li>14 00：解压文件所需 pkware 版本</li><li>09 00：全局方式位标记（有无加密，这个更改这里进行伪加密，改为09 00打开就会提示有密码了）</li><li>08 00：压缩方式</li><li>50 A3：最后修改文件时间</li><li>A5 4A：最后修改文件日期</li><li>21 38 76 65：CRC-32校验（1480B516）</li><li>19 00 00 00：压缩后尺寸（25）</li><li>17 00 00 00：未压缩尺寸（23）</li><li>08 00：文件名长度</li><li>24 00：扩展字段长度</li><li>00 00：文件注释长度</li><li>00 00：磁盘开始号</li><li>00 00：内部文件属性</li><li>20 00 00 00：外部文件属性</li><li>00 00 00 00：局部头部偏移量</li></ul><p><strong>压缩源文件目录结束标志</strong>:</p><ul><li>50 4B 05 06：目录结束标记</li><li>00 00：当前磁盘编号</li><li>00 00：目录区开始磁盘编号</li><li>01 00：本磁盘上纪录总数</li><li>01 00：目录区中纪录总数</li><li>5A 00 00 00：目录区尺寸大小</li><li>3F 00 00 00：目录区对第一张磁盘的偏移量</li><li>00 00 00：ZIP 文件注释长度</li></ul><p><strong>无加密</strong><br>压缩源文件数据区的全局加密应当为<code>00 00</code><br>且压缩源文件目录区的全局方式位标记应当为<code>00 00</code></p><p><strong>假加密</strong><br>压缩源文件数据区的全局加密应当为<code>00 00</code><br>且压缩源文件目录区的全局方式位标记应当为<code>09 00</code></p><p><strong>真加密</strong><br>压缩源文件数据区的全局加密应当为<code>09 00</code><br>且压缩源文件目录区的全局方式位标记应当为<code>09 00</code></p><p>这是题目的原文件的十六进制</p><p><img src="https://s2.loli.net/2023/09/14/4dOImnfhrQi3cvo.jpg" alt="伪加密_1.jpg"></p><p>对照上文，将<code>09 00</code><em>全部</em>修改为<code>00 00</code>，再次解压可得flag</p><p>参考链接：<a href="https://blog.csdn.net/qq_32350719/article/details/102661596" title="CTF-伪加密">https://blog.csdn.net/qq_32350719&#x2F;article&#x2F;details&#x2F;102661596</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
+      
+    
+    
+    
+    
+    <category term="CTF" scheme="https://waltyoung.github.io/tags/CTF/"/>
+    
+    <category term="Misc" scheme="https://waltyoung.github.io/tags/Misc/"/>
+    
+  </entry>
+  
+  <entry>
     <title>NTFS交换数据流隐藏文件</title>
     <link href="https://waltyoung.github.io/2023/09/14/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E9%9A%90%E8%97%8F%E6%96%87%E4%BB%B6/"/>
     <id>https://waltyoung.github.io/2023/09/14/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E9%9A%90%E8%97%8F%E6%96%87%E4%BB%B6/</id>
     <published>2023-09-14T03:47:47.000Z</published>
-    <updated>2023-09-14T03:58:08.117Z</updated>
+    <updated>2023-09-15T04:12:59.214Z</updated>
     
     <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="NTFS交换数据流隐藏文件"><a href="#NTFS交换数据流隐藏文件" class="headerlink" title="NTFS交换数据流隐藏文件"></a>NTFS交换数据流隐藏文件</h1><blockquote><p>NTFS交换数据流（Alternate Data Streams，简称ADS）是NTFS磁盘格式的一个特性，在NTFS文件系统下，每个文件都可以存在多个数据流，就是说除了主文件流之外还可以有许多非主文件流寄宿在主文件流中，而我们无法看到非主文件的数据流。它使用资源派生来维持与文件相关的信息。<strong>类似 Linux 的 swap 文件</strong>。</p></blockquote><p>将 123 写入到 NTFS_demo.txt:1.txt 文件中</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 123 &gt; NTFS_demo.txt:1.txt</span><br></pre></td></tr></table></figure><p>此时在文件中可见产生了一个 NTFS_demo.txt 文件，打开 NTFS_demo.txt 文件，可见是空白的</p><p><img src="https://s2.loli.net/2023/09/14/rqV57Fh1QXbJiUc.png" alt="demo.txt.png"></p><p>使用 notepad 命令打开 NTFS_demo.txt:1.txt 文件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">notepad NTFS_demo.txt:1.txt</span><br></pre></td></tr></table></figure><p>notepad 命令将唤起记事本，可见输入内容“123”</p><p><img src="https://s2.loli.net/2023/09/14/1s9DCnw4vtNpr6U.png" alt="1.txt.png"></p><p>参考链接：<a href="https://www.qingsword.com/qing/812.html" title="利用NTFS交换数据流隐藏文件">https://www.qingsword.com/qing/812.html</a></p><p>如何如何检测和清除NTFS-ADS隐藏的文件：</p><ol><li>对于压缩包类文件，可以使用压缩软件打开，在压缩软件中查看所需内容；也可以在Linux中直接解压该文件</li><li>合理利用工具，NTFS交换数据流检测工具的下载地址：<a href="https://waltyoung-music-1317864421.cos.ap-shanghai.myqcloud.com/tools/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E6%A3%80%E6%B5%8B%E5%B7%A5%E5%85%B7.rar">https://waltyoung-music-1317864421.cos.ap-shanghai.myqcloud.com/tools/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E6%A3%80%E6%B5%8B%E5%B7%A5%E5%85%B7.rar</a></li></ol><hr><p>需要注意的是，type命令执行 NTFS_demo.txt 文件和 NTFS_demo.txt:1.txt 文件的结果是不同的</p><p><code>type NTFS_demo.txt</code>命令执行结果为空（因为NTFS_demo.txt文件中没有内容）</p><p><code>type NTFS_demo.txt:1.txt</code>命令执行结果如下所示</p><p><img src="https://s2.loli.net/2023/09/14/A9CjBwLT7Okgq6H.png" alt="type命令执行不同文件.png"></p><p>echo 命令和 type 命令存在显著差异</p><p>echo 命令是将字符写入到文件中</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 456 &gt;&gt; NTFS_demo.txt:1.txt</span><br></pre></td></tr></table></figure><p>type 命令是将已存在的文件用交换数据流的方式寄生到另外一个文件或文件夹上，</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">type</span> 456.txt &gt;&gt; NTFS_demo.txt:1.txt</span><br></pre></td></tr></table></figure><p>注：“&gt;&gt;”是追加重定向符号，与”&gt;”类似，但是会将命令的输出追加到文件的末尾，而不是覆盖文件内容。</p>]]></content>
     
@@ -34,15 +58,15 @@
     
     
     
-    <category term="操作系统" scheme="https://waltyoung.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
-    
     <category term="CTF" scheme="https://waltyoung.github.io/tags/CTF/"/>
     
     <category term="Misc" scheme="https://waltyoung.github.io/tags/Misc/"/>
     
     <category term="隐写" scheme="https://waltyoung.github.io/tags/%E9%9A%90%E5%86%99/"/>
     
-    <category term="取证" scheme="https://waltyoung.github.io/tags/%E5%8F%96%E8%AF%81/"/>
+    <category term="OS" scheme="https://waltyoung.github.io/tags/OS/"/>
+    
+    <category term="Forensics" scheme="https://waltyoung.github.io/tags/Forensics/"/>
     
   </entry>
   
@@ -171,7 +195,7 @@
     <link href="https://waltyoung.github.io/2023/09/04/PKCS5padding%E5%92%8CPKCS7padding%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
     <id>https://waltyoung.github.io/2023/09/04/PKCS5padding%E5%92%8CPKCS7padding%E7%9A%84%E5%8C%BA%E5%88%AB/</id>
     <published>2023-09-04T07:38:32.000Z</published>
-    <updated>2023-09-05T07:05:30.624Z</updated>
+    <updated>2023-09-15T04:14:52.242Z</updated>
     
     <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="PKCS5padding和PKCS7padding的区别"><a href="#PKCS5padding和PKCS7padding的区别" class="headerlink" title="PKCS5padding和PKCS7padding的区别"></a>PKCS5padding和PKCS7padding的区别</h1><p>PKCS5padding和PKCS7padding（PKCS7padding是PKCS#7填充的简称，PKCS#7是密码学标准PKCS（Public Key Cryptography Standards）中定义的填充方案，用于在加密算法中对数据进行填充。）是两种常见的填充方案，用于在加密前将数据块的大小调整为加密算法所要求的固定大小。它们在填充字节的值和填充方式上有一些区别。</p><p><strong>PKCS5padding</strong>：</p><ul><li>填充字节的值等于需要填充的字节数。</li><li>如果需要填充的字节数为n，则填充n个字节，每个字节的值为n。</li><li>例如，如果需要填充2个字节，那么填充的字节为0x02 0x02。</li></ul><p><strong>PKCS7padding</strong>：</p><ul><li>填充字节的值等于需要填充的字节数。</li><li>如果需要填充的字节数为n，则填充n个字节，每个字节的值为n。</li><li>与PKCS5padding的区别在于，PKCS7padding可以用于任意块大小的加密算法，而不仅限于PKCS5padding的8字节块大小。</li><li>例如，如果需要填充2个字节，那么填充的字节为0x02 0x02。</li></ul><p>总结：PKCS5padding和PKCS7padding在填充字节的值和填充方式上略有不同，但<strong>在实际应用中，它们通常可以互相替换使用</strong>。</p>]]></content>
     
@@ -186,7 +210,7 @@
     
     <category term="每天一个小知识点" scheme="https://waltyoung.github.io/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E4%B8%AA%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/"/>
     
-    <category term="密码学" scheme="https://waltyoung.github.io/tags/%E5%AF%86%E7%A0%81%E5%AD%A6/"/>
+    <category term="Crypto" scheme="https://waltyoung.github.io/tags/Crypto/"/>
     
   </entry>
   
@@ -195,7 +219,7 @@
     <link href="https://waltyoung.github.io/2023/09/03/UEFI%E5%92%8CBIOS%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
     <id>https://waltyoung.github.io/2023/09/03/UEFI%E5%92%8CBIOS%E7%9A%84%E5%8C%BA%E5%88%AB/</id>
     <published>2023-09-03T05:30:15.000Z</published>
-    <updated>2023-09-03T05:33:16.230Z</updated>
+    <updated>2023-09-15T04:13:19.386Z</updated>
     
     <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="UEFI和BIOS的区别"><a href="#UEFI和BIOS的区别" class="headerlink" title="UEFI和BIOS的区别"></a>UEFI和BIOS的区别</h1><p>UEFI（统一的可扩展固件接口）和BIOS（基本输入&#x2F;输出系统）都是计算机的固件接口，用于启动和管理计算机的硬件和软件。</p><p>BIOS是一种旧的固件接口，它是在计算机启动时首先加载的。它负责初始化和检测计算机的硬件设备，例如处理器、内存、硬盘等，并将控制权交给操作系统。BIOS还包含一个小型的操作系统，称为CMOS（可编程只读存储器），用于存储计算机的基本设置，例如日期、时间、启动顺序等。</p><blockquote><p>UEFI是一种更新的固件接口，它取代了传统的BIOS。UEFI提供了更先进的功能和更好的兼容性。与BIOS相比，UEFI具有以下优势：</p><ol><li>容量更大：UEFI支持更大的固件容量，可以容纳更多的功能和驱动程序。</li><li>启动速度更快：UEFI的启动速度比BIOS更快，因为它在启动时不需要进行硬件初始化和自检。</li><li>更好的兼容性：UEFI可以更好地与现代操作系统和硬件设备兼容，支持更多的文件系统和硬件接口。</li><li>图形界面：UEFI提供了一个图形界面，使用户可以更直观地设置计算机的启动选项和其他设置。</li></ol></blockquote><p>总的来说，UEFI是一种更先进、更灵活和更可扩展的固件接口，它取代了传统的BIOS，并提供了更好的启动速度和兼容性。</p>]]></content>
     
@@ -210,7 +234,7 @@
     
     <category term="每天一个小知识点" scheme="https://waltyoung.github.io/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E4%B8%AA%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/"/>
     
-    <category term="操作系统" scheme="https://waltyoung.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
+    <category term="OS" scheme="https://waltyoung.github.io/tags/OS/"/>
     
   </entry>
   
@@ -291,7 +315,7 @@
     <link href="https://waltyoung.github.io/2023/08/30/CMD%E7%9A%84%E5%B8%B8%E8%A7%81%E7%AC%A6%E5%8F%B7%E5%8F%8A%E5%85%B6%E4%BD%9C%E7%94%A8/"/>
     <id>https://waltyoung.github.io/2023/08/30/CMD%E7%9A%84%E5%B8%B8%E8%A7%81%E7%AC%A6%E5%8F%B7%E5%8F%8A%E5%85%B6%E4%BD%9C%E7%94%A8/</id>
     <published>2023-08-30T01:58:41.000Z</published>
-    <updated>2023-08-31T05:17:21.471Z</updated>
+    <updated>2023-09-15T04:12:09.540Z</updated>
     
     <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><p>Q：<code>tasklist | findstr &quot;cmd&quot;</code>此命令中的“|”是什么作用？</p><p>A：在CMD中，”|”（管道符号）的作用是<strong>将前一个命令的输出作为后一个命令的输入</strong>。在给出的命令中，”tasklist”命令用于列出当前正在运行的进程列表，而”findstr”命令用于在输出结果中查找包含指定字符串（在此例中是”cmd”）的行。所以整个命令的作用是列出当前正在运行的进程列表，并在结果中筛选出包含”cmd”字符串的行。</p><h2 id="CMD的常见符号及其作用-："><a href="#CMD的常见符号及其作用-：" class="headerlink" title="CMD的常见符号及其作用 ："></a>CMD的常见符号及其作用 ：</h2><ol><li><strong>“&gt;”：重定向符号。用于将命令的输出重定向到文件</strong>。例如，”dir &gt; output.txt”将”dir”命令的输出保存到名为”output.txt”的文件中。</li><li><strong>“&gt;&gt;”：追加重定向符号。与”&gt;”类似，但是会将命令的输出追加到文件的末尾，而不是覆盖文件内容</strong>。</li><li><strong>“&lt;”：输入重定向符号。用于将文件中的内容作为命令的输入</strong>。例如，”sort &lt; input.txt”将”input.txt”文件中的内容作为”sort”命令的输入进行排序。</li><li><strong>“&amp;”：命令分隔符。用于在一行中运行多个命令</strong>。例如，”command1 &amp; command2”将依次执行”command1”和”command2”。</li><li><strong>“&amp;&amp;”：条件命令分隔符。只有前一个命令成功执行后，才会执行后续的命令</strong>。例如，”command1 &amp;&amp; command2”只有在”command1”成功执行后，才会执行”command2”。</li><li><strong>“||”：条件命令分隔符。只有前一个命令执行失败后，才会执行后续的命令</strong>。例如，”command1 || command2”只有在”command1”执行失败后，才会执行”command2”。</li></ol><p>这些符号可以帮助您在CMD下更有效地执行命令和操作。请注意，有些符号在不同的操作系统或命令行环境中可能会有不同的行为。</p>]]></content>
     
@@ -306,7 +330,7 @@
     
     <category term="每天一个小知识点" scheme="https://waltyoung.github.io/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E4%B8%AA%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/"/>
     
-    <category term="操作系统" scheme="https://waltyoung.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
+    <category term="OS" scheme="https://waltyoung.github.io/tags/OS/"/>
     
   </entry>
   
@@ -315,7 +339,7 @@
     <link href="https://waltyoung.github.io/2023/08/29/%E4%B8%8D%E5%90%8C%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AF%B9%E5%BE%85%E6%8D%A2%E8%A1%8C%E7%AC%A6%E7%9A%84%E4%B8%8D%E5%90%8C%E6%80%81%E5%BA%A6/"/>
     <id>https://waltyoung.github.io/2023/08/29/%E4%B8%8D%E5%90%8C%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AF%B9%E5%BE%85%E6%8D%A2%E8%A1%8C%E7%AC%A6%E7%9A%84%E4%B8%8D%E5%90%8C%E6%80%81%E5%BA%A6/</id>
     <published>2023-08-29T01:18:17.000Z</published>
-    <updated>2023-08-29T01:22:04.658Z</updated>
+    <updated>2023-09-15T04:11:54.216Z</updated>
     
     <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><p>不同操作系统对待换行符的主要区别在于使用的字符不同。</p><p>在Windows操作系统中，换行符由两个字符组成：回车符（CR）和换行符（LF），表示为”\r\n”。</p><p>在Unix&#x2F;Linux操作系统中，换行符只有一个字符：换行符（LF），表示为”\n”。</p><p>在Macintosh操作系统中，换行符只有一个字符：回车符（CR），表示为”\r”。</p><p>这些差异可能会导致在不同操作系统之间传输文本文件时出现格式问题。</p>]]></content>
     
@@ -330,7 +354,7 @@
     
     <category term="每天一个小知识点" scheme="https://waltyoung.github.io/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E4%B8%AA%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/"/>
     
-    <category term="操作系统" scheme="https://waltyoung.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
+    <category term="OS" scheme="https://waltyoung.github.io/tags/OS/"/>
     
   </entry>
   
