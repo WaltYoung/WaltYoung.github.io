@@ -6,7 +6,7 @@
   <link href="https://waltyoung.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltyoung.github.io/"/>
-  <updated>2023-09-15T04:17:03.892Z</updated>
+  <updated>2023-09-15T16:33:46.217Z</updated>
   <id>https://waltyoung.github.io/</id>
   
   <author>
@@ -17,13 +17,39 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>CTF-Misc-另外一个世界</title>
+    <link href="https://waltyoung.github.io/2023/09/16/CTF-Misc-%E5%8F%A6%E5%A4%96%E4%B8%80%E4%B8%AA%E4%B8%96%E7%95%8C/"/>
+    <id>https://waltyoung.github.io/2023/09/16/CTF-Misc-%E5%8F%A6%E5%A4%96%E4%B8%80%E4%B8%AA%E4%B8%96%E7%95%8C/</id>
+    <published>2023-09-15T16:32:22.000Z</published>
+    <updated>2023-09-15T16:33:46.217Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="CTF-Misc-另外一个世界"><a href="#CTF-Misc-另外一个世界" class="headerlink" title="CTF-Misc-另外一个世界"></a>CTF-Misc-另外一个世界</h1><p>原题链接：<a href="https://buuoj.cn/challenges#%E5%8F%A6%E5%A4%96%E4%B8%80%E4%B8%AA%E4%B8%96%E7%95%8C" title="另外一个世界">https://buuoj.cn/challenges#%E5%8F%A6%E5%A4%96%E4%B8%80%E4%B8%AA%E4%B8%96%E7%95%8C</a></p><p>笔者在做该题时，首先尝试了 Stegsolve，没有获得有效信息，然后打开了十六进制编辑器，在文件末尾发现了一段可疑的二进制序列。（需要注意的是查看文件的十六进制时，不仅需要关注到文件的头尾，而且在没有思路的时候需要关注到文件的中间部分，可能遗漏信息）</p><p><img src="https://s2.loli.net/2023/09/15/6FMyEBNQfTOglax.png" alt="另外一个世界_1.png"></p><p>笔者没有思路，选择了看 wp (writeup)<em>(笔者太笨了QAQ)</em></p><p>二进制序列以8位为一组，转换为十进制，再对照 ASCII 码表得出字符，最后以flag格式提交</p><p><img src="https://s2.loli.net/2023/09/15/9uqXYGHoKfIBaL2.png" alt="另外一个世界_2.png"></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
+      
+    
+    
+    
+    
+    <category term="CTF" scheme="https://waltyoung.github.io/tags/CTF/"/>
+    
+    <category term="Misc" scheme="https://waltyoung.github.io/tags/Misc/"/>
+    
+    <category term="隐写" scheme="https://waltyoung.github.io/tags/%E9%9A%90%E5%86%99/"/>
+    
+  </entry>
+  
+  <entry>
     <title>CTF-Misc-zip伪加密</title>
     <link href="https://waltyoung.github.io/2023/09/15/CTF-Misc-zip%E4%BC%AA%E5%8A%A0%E5%AF%86/"/>
     <id>https://waltyoung.github.io/2023/09/15/CTF-Misc-zip%E4%BC%AA%E5%8A%A0%E5%AF%86/</id>
     <published>2023-09-15T04:15:30.000Z</published>
-    <updated>2023-09-15T04:17:03.892Z</updated>
+    <updated>2023-09-15T16:30:31.058Z</updated>
     
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="CTF-Misc-zip伪加密"><a href="#CTF-Misc-zip伪加密" class="headerlink" title="CTF-Misc-zip伪加密"></a>CTF-Misc-zip伪加密</h1><p>原题链接：<a href="https://buuoj.cn/challenges#zip%E4%BC%AA%E5%8A%A0%E5%AF%86">https://buuoj.cn/challenges#zip%E4%BC%AA%E5%8A%A0%E5%AF%86</a></p><p>一个 ZIP 文件由三个部分组成：</p><p>压缩源文件数据区+压缩源文件目录区+压缩源文件目录结束标志</p><p><strong>zip伪加密是在文件头的加密标志位做修改，进而再打开文件时识被别为加密压缩包</strong>。</p><p><strong>压缩源文件数据区</strong>：</p><ul><li><strong>50 4B 03 04</strong>：这是头文件标记（0x04034b50）</li><li>14 00：解压文件所需 pkware 版本</li><li><strong>09 00</strong>：全局方式位标记（有无加密）</li><li>08 00：压缩方式</li><li>50 A3：最后修改文件时间</li><li>A5 4A：最后修改文件日期</li><li>21 38 76 64：CRC-32校验（1480B516）</li><li>19 00 00 00：压缩后尺寸（25）</li><li>17 00 00 00：未压缩尺寸（23）</li><li>08 00：文件名长度</li><li>00 00：扩展记录长度</li></ul><p><strong>压缩源文件目录区</strong>:</p><ul><li>50 4B 01 02：目录中文件文件头标记(0x02014b50)</li><li>1F 00：压缩使用的 pkware 版本</li><li>14 00：解压文件所需 pkware 版本</li><li>09 00：全局方式位标记（有无加密，这个更改这里进行伪加密，改为09 00打开就会提示有密码了）</li><li>08 00：压缩方式</li><li>50 A3：最后修改文件时间</li><li>A5 4A：最后修改文件日期</li><li>21 38 76 65：CRC-32校验（1480B516）</li><li>19 00 00 00：压缩后尺寸（25）</li><li>17 00 00 00：未压缩尺寸（23）</li><li>08 00：文件名长度</li><li>24 00：扩展字段长度</li><li>00 00：文件注释长度</li><li>00 00：磁盘开始号</li><li>00 00：内部文件属性</li><li>20 00 00 00：外部文件属性</li><li>00 00 00 00：局部头部偏移量</li></ul><p><strong>压缩源文件目录结束标志</strong>:</p><ul><li>50 4B 05 06：目录结束标记</li><li>00 00：当前磁盘编号</li><li>00 00：目录区开始磁盘编号</li><li>01 00：本磁盘上纪录总数</li><li>01 00：目录区中纪录总数</li><li>5A 00 00 00：目录区尺寸大小</li><li>3F 00 00 00：目录区对第一张磁盘的偏移量</li><li>00 00 00：ZIP 文件注释长度</li></ul><p><strong>无加密</strong><br>压缩源文件数据区的全局加密应当为<code>00 00</code><br>且压缩源文件目录区的全局方式位标记应当为<code>00 00</code></p><p><strong>假加密</strong><br>压缩源文件数据区的全局加密应当为<code>00 00</code><br>且压缩源文件目录区的全局方式位标记应当为<code>09 00</code></p><p><strong>真加密</strong><br>压缩源文件数据区的全局加密应当为<code>09 00</code><br>且压缩源文件目录区的全局方式位标记应当为<code>09 00</code></p><p>这是题目的原文件的十六进制</p><p><img src="https://s2.loli.net/2023/09/14/4dOImnfhrQi3cvo.jpg" alt="伪加密_1.jpg"></p><p>对照上文，将<code>09 00</code><em>全部</em>修改为<code>00 00</code>，再次解压可得flag</p><p>参考链接：<a href="https://blog.csdn.net/qq_32350719/article/details/102661596" title="CTF-伪加密">https://blog.csdn.net/qq_32350719&#x2F;article&#x2F;details&#x2F;102661596</a></p>]]></content>
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="CTF-Misc-zip伪加密"><a href="#CTF-Misc-zip伪加密" class="headerlink" title="CTF-Misc-zip伪加密"></a>CTF-Misc-zip伪加密</h1><p>原题链接：<a href="https://buuoj.cn/challenges#zip%E4%BC%AA%E5%8A%A0%E5%AF%86">https://buuoj.cn/challenges#zip%E4%BC%AA%E5%8A%A0%E5%AF%86</a></p><p>一个 ZIP 文件由三个部分组成：</p><p>压缩源文件数据区+压缩源文件目录区+压缩源文件目录结束标志</p><p><strong>zip伪加密是在文件头的加密标志位做修改，进而再打开文件时识被别为加密压缩包</strong>。</p><p><strong>压缩源文件数据区</strong>：</p><ul><li><strong>50 4B 03 04</strong>：这是头文件标记（0x04034b50），十六进制表示为<strong>PK</strong></li><li>14 00：解压文件所需 pkware 版本</li><li><strong>09 00</strong>：全局方式位标记（有无加密）</li><li>08 00：压缩方式</li><li>50 A3：最后修改文件时间</li><li>A5 4A：最后修改文件日期</li><li>21 38 76 64：CRC-32校验（1480B516）</li><li>19 00 00 00：压缩后尺寸（25）</li><li>17 00 00 00：未压缩尺寸（23）</li><li>08 00：文件名长度</li><li>00 00：扩展记录长度</li></ul><p><strong>压缩源文件目录区</strong>:</p><ul><li>50 4B 01 02：目录中文件文件头标记(0x02014b50)</li><li>1F 00：压缩使用的 pkware 版本</li><li>14 00：解压文件所需 pkware 版本</li><li>09 00：全局方式位标记（有无加密，这个更改这里进行伪加密，改为09 00打开就会提示有密码了）</li><li>08 00：压缩方式</li><li>50 A3：最后修改文件时间</li><li>A5 4A：最后修改文件日期</li><li>21 38 76 65：CRC-32校验（1480B516）</li><li>19 00 00 00：压缩后尺寸（25）</li><li>17 00 00 00：未压缩尺寸（23）</li><li>08 00：文件名长度</li><li>24 00：扩展字段长度</li><li>00 00：文件注释长度</li><li>00 00：磁盘开始号</li><li>00 00：内部文件属性</li><li>20 00 00 00：外部文件属性</li><li>00 00 00 00：局部头部偏移量</li></ul><p><strong>压缩源文件目录结束标志</strong>:</p><ul><li>50 4B 05 06：目录结束标记</li><li>00 00：当前磁盘编号</li><li>00 00：目录区开始磁盘编号</li><li>01 00：本磁盘上纪录总数</li><li>01 00：目录区中纪录总数</li><li>5A 00 00 00：目录区尺寸大小</li><li>3F 00 00 00：目录区对第一张磁盘的偏移量</li><li>00 00 00：ZIP 文件注释长度</li></ul><p><strong>无加密</strong><br>压缩源文件数据区的全局加密应当为<code>00 00</code><br>且压缩源文件目录区的全局方式位标记应当为<code>00 00</code></p><p><strong>假加密</strong><br>压缩源文件数据区的全局加密应当为<code>00 00</code><br>且压缩源文件目录区的全局方式位标记应当为<code>09 00</code></p><p><strong>真加密</strong><br>压缩源文件数据区的全局加密应当为<code>09 00</code><br>且压缩源文件目录区的全局方式位标记应当为<code>09 00</code></p><p>这是题目的原文件的十六进制</p><p><img src="https://s2.loli.net/2023/09/14/4dOImnfhrQi3cvo.jpg" alt="伪加密_1.jpg"></p><p>对照上文，将<code>09 00</code><em>全部</em>修改为<code>00 00</code>，再次解压可得flag</p><p>参考链接：<a href="https://blog.csdn.net/qq_32350719/article/details/102661596" title="CTF-伪加密">https://blog.csdn.net/qq_32350719&#x2F;article&#x2F;details&#x2F;102661596</a></p>]]></content>
     
     
       
