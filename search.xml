@@ -4,6 +4,29 @@
   
     
     <entry>
+      <title>CTF-Misc-N种方法解决</title>
+      <link href="/2023/09/17/CTF-Misc-N%E7%A7%8D%E6%96%B9%E6%B3%95%E8%A7%A3%E5%86%B3/"/>
+      <url>/2023/09/17/CTF-Misc-N%E7%A7%8D%E6%96%B9%E6%B3%95%E8%A7%A3%E5%86%B3/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="CTF-Misc-N种方法解决"><a href="#CTF-Misc-N种方法解决" class="headerlink" title="CTF-Misc-N种方法解决"></a>CTF-Misc-N种方法解决</h1><p>原题链接：<a href="https://buuoj.cn/challenges#N%E7%A7%8D%E6%96%B9%E6%B3%95%E8%A7%A3%E5%86%B3" title="N种方法解决">https://buuoj.cn/challenges#N%E7%A7%8D%E6%96%B9%E6%B3%95%E8%A7%A3%E5%86%B3</a></p><p>本题如题名有N种方法解决</p><h2 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h2><p>使用十六进制编辑器打开文件，可见 base64 编码的字符</p><p><img src="https://s2.loli.net/2023/09/16/9BgidRnlHkDTJ4C.png" alt="N种方法解决_1.1.png"></p><p>文件尾也符合 base64 编码的特征，故将其间一整段字符使用 base64 解码。</p><p><img src="https://s2.loli.net/2023/09/16/6XtxJCQELD2fngq.png" alt="N种方法解决_1.2.png"></p><p><strong>需要注意的是 base64 解码的结果必须直接以十六进制展示，不能将 base64 解码得到的乱码复制到十六进制编辑器再计算其十六进制（后者的操作将导致数据不完整）</strong></p><p>下图是正确解码的结果</p><p><img src="https://s2.loli.net/2023/09/16/7nK514ty3eaOHoA.png" alt="N种方法解决_1.3.png"></p><p>复制结果，保存为 png 图片（<code>89 50 4E 47</code>是 PNG 的文件头）</p><p>得到一张二维码，置于草料二维码解码器<a href="https://cli.im/deqr/other" title="草料二维码解码器">https://cli.im/deqr/other</a>解码</p><hr><h2 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h2><p>PHP 内置很多 URL 风格的封装协议，可用于类似 fopen()、 copy()、 file_exists() 和 filesize() 的文件系统函数。</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">file:<span class="comment">// — 访问本地文件系统</span></span><br><span class="line">http:<span class="comment">// — 访问 HTTP(s) 网址</span></span><br><span class="line">ftp:<span class="comment">// — 访问 FTP(s) URLs</span></span><br><span class="line">php:<span class="comment">// — 访问各个输入/输出流（I/O streams）</span></span><br><span class="line">zlib:<span class="comment">// — 压缩流</span></span><br><span class="line">data:<span class="comment">// — 数据（RFC 2397）</span></span><br><span class="line">glob:<span class="comment">// — 查找匹配的文件路径模式</span></span><br><span class="line">phar:<span class="comment">// — PHP 归档</span></span><br><span class="line">ssh2:<span class="comment">// — Secure Shell 2</span></span><br><span class="line">rar:<span class="comment">// — RAR</span></span><br><span class="line">ogg:<span class="comment">// — 音频流</span></span><br><span class="line">expect:<span class="comment">// — 处理交互式的流</span></span><br></pre></td></tr></table></figure><p>如下图所示，这是 PHP 伪协议的例子</p><p><img src="https://s2.loli.net/2023/09/16/NltSmE5exIipaOn.png" alt="N种方法解决_2.0.png"></p><p>本题中存在类似的 PHP 伪协议</p><p><img src="https://s2.loli.net/2023/09/16/4a2Qw3xUTNrCJz7.png" alt="N种方法解决_2.1.png"></p><p>直接将十六进制的字符复制到浏览器</p><p><img src="https://s2.loli.net/2023/09/16/tvlUh5TbQ93RP4j.png" alt="N种方法解决_2.2.png"></p><p>得到一张二维码，置于草料二维码解码器<a href="https://cli.im/deqr/other" title="草料二维码解码器">https://cli.im/deqr/other</a>解码</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> CTF </tag>
+            
+            <tag> Misc </tag>
+            
+            <tag> 隐写 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>CTF-Misc-另外一个世界</title>
       <link href="/2023/09/16/CTF-Misc-%E5%8F%A6%E5%A4%96%E4%B8%80%E4%B8%AA%E4%B8%96%E7%95%8C/"/>
       <url>/2023/09/16/CTF-Misc-%E5%8F%A6%E5%A4%96%E4%B8%80%E4%B8%AA%E4%B8%96%E7%95%8C/</url>
