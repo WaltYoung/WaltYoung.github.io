@@ -6,7 +6,7 @@
   <link href="https://waltyoung.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltyoung.github.io/"/>
-  <updated>2023-09-16T16:16:56.962Z</updated>
+  <updated>2023-09-18T03:47:56.622Z</updated>
   <id>https://waltyoung.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>CTF-Misc-LSB隐写</title>
+    <link href="https://waltyoung.github.io/2023/09/18/CTF-Misc-LSB%E9%9A%90%E5%86%99/"/>
+    <id>https://waltyoung.github.io/2023/09/18/CTF-Misc-LSB%E9%9A%90%E5%86%99/</id>
+    <published>2023-09-18T03:46:20.000Z</published>
+    <updated>2023-09-18T03:47:56.622Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="CTF-Misc-LSB隐写"><a href="#CTF-Misc-LSB隐写" class="headerlink" title="CTF-Misc-LSB隐写"></a>CTF-Misc-LSB隐写</h1><h2 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h2><p>MSB（Most Significant Bit）：最高有效位，二进制中代表最高值的比特位，这一位对数值的影响最大</p><p>LSB（Least Significant Bit）：最低有效位，二进制中代表最低值的比特位</p><p>例如，在二进制的1001（十进制的9）中，最左边的“1”即是MSB，最右边的“1”是LSB</p><p>常见CPU采用小端模式（Little-Endian）网络字节顺序采用大端模式（big endian）排序方式，TCP&#x2F;IP协议规定:接收到的第一个字节视作高位字节，这就要求发送端发送的第一个字节是高位字节。<strong>intel x86的CPU使用的是LE（Windows中称为“主机字节序”）,而SocksAddr中使用的则是BE（就是“网络字节序”），所以在使用网络编程时需要使用htns,htnl,nths,nthl来倒字节序</strong></p><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>图片中的图像像素一般是由RGB三原色（红绿蓝）组成，每一种颜色占用8位，即有256种颜色。LSB隐写就是修改RGB颜色分量的最低二进制位也就是最低有效位（LSB），而人类的眼睛不会注意到这前后的变化</p><h2 id="原题"><a href="#原题" class="headerlink" title="原题"></a>原题</h2><p>隐写的内容不同，主要分为2种：字符和文件</p><p>原题链接：<a href="https://buuoj.cn/challenges#%E9%95%9C%E5%AD%90%E9%87%8C%E9%9D%A2%E7%9A%84%E4%B8%96%E7%95%8C" title="镜子里面的世界">https://buuoj.cn/challenges#%E9%95%9C%E5%AD%90%E9%87%8C%E9%9D%A2%E7%9A%84%E4%B8%96%E7%95%8C</a></p><p>工具： <strong>Stegsolve</strong> </p><p>如下图所示，可见隐写的内容是字符，即flag</p><p><img src="https://s2.loli.net/2023/09/15/LjCUHefJPuD6AgX.png" alt="镜子里面的世界_1.png"></p><hr><p>原题链接：<a href="https://buuoj.cn/challenges#LSB" title="LSB">https://buuoj.cn/challenges#LSB</a></p><p>如下图所示，可见隐写的内容是 png 图片</p><p><img src="https://s2.loli.net/2023/09/15/Ah1C8QGxUsXadqH.png" alt="LSB_1.png"></p><p>将得到的 png 图片（即二维码）解码，解码平台————草料二维码解码器：<a href="https://cli.im/deqr/other" title="草料二维码解码器">https://cli.im/deqr/other</a></p><hr><p>原题链接：<a href="https://buuoj.cn/challenges#FLAG" title="FLAG">https://buuoj.cn/challenges#FLAG</a></p><p>如下图所示，可见隐写的内容是 zip 压缩包（<code>50 4b 03 04</code>和<code>PK</code>的文件头，应及时反应是 zip 压缩包）</p><p><img src="https://s2.loli.net/2023/09/15/z1BGXYsxC2T6r5e.png" alt="FLAG_1.png"></p><p><strong>需要注意的是 0平面 可能隐写内容，1平面 也可能隐写内容</strong></p><p>参考链接：<a href="https://zhuanlan.zhihu.com/p/461716971" title="浅谈LSB隐写解题与出题">https://zhuanlan.zhihu.com/p/461716971</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
+      
+    
+    
+    
+    
+    <category term="CTF" scheme="https://waltyoung.github.io/tags/CTF/"/>
+    
+    <category term="Misc" scheme="https://waltyoung.github.io/tags/Misc/"/>
+    
+    <category term="隐写" scheme="https://waltyoung.github.io/tags/%E9%9A%90%E5%86%99/"/>
+    
+  </entry>
   
   <entry>
     <title>CTF-Misc-N种方法解决</title>
@@ -97,9 +123,9 @@
     <link href="https://waltyoung.github.io/2023/09/14/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E9%9A%90%E8%97%8F%E6%96%87%E4%BB%B6/"/>
     <id>https://waltyoung.github.io/2023/09/14/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E9%9A%90%E8%97%8F%E6%96%87%E4%BB%B6/</id>
     <published>2023-09-14T03:47:47.000Z</published>
-    <updated>2023-09-15T04:26:03.068Z</updated>
+    <updated>2023-09-18T03:54:57.223Z</updated>
     
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="NTFS交换数据流隐藏文件"><a href="#NTFS交换数据流隐藏文件" class="headerlink" title="NTFS交换数据流隐藏文件"></a>NTFS交换数据流隐藏文件</h1><blockquote><p>NTFS交换数据流（Alternate Data Streams，简称ADS）是NTFS磁盘格式的一个特性，在NTFS文件系统下，每个文件都可以存在多个数据流，就是说除了主文件流之外还可以有许多非主文件流寄宿在主文件流中，而我们无法看到非主文件的数据流。它使用资源派生来维持与文件相关的信息。<strong>类似 Linux 的 swap 文件</strong>。</p></blockquote><p>将 123 写入到 NTFS_demo.txt:1.txt 文件中</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 123 &gt; NTFS_demo.txt:1.txt</span><br></pre></td></tr></table></figure><p>此时在文件中可见产生了一个 NTFS_demo.txt 文件，打开 NTFS_demo.txt 文件，可见是空白的</p><p><img src="https://s2.loli.net/2023/09/14/rqV57Fh1QXbJiUc.png" alt="demo.txt.png"></p><p>使用 notepad 命令打开 NTFS_demo.txt:1.txt 文件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">notepad NTFS_demo.txt:1.txt</span><br></pre></td></tr></table></figure><p>notepad 命令将唤起记事本，可见输入内容“123”</p><p><img src="https://s2.loli.net/2023/09/14/1s9DCnw4vtNpr6U.png" alt="1.txt.png"></p><p>参考链接：<a href="https://www.qingsword.com/qing/812.html" title="利用NTFS交换数据流隐藏文件">https://www.qingsword.com/qing/812.html</a></p><p>如何检测和清除NTFS-ADS隐藏的文件：</p><ol><li>对于压缩包类文件，可以使用压缩软件打开，在压缩软件中查看所需内容；也可以在Linux中直接解压该文件</li><li>合理利用工具，NTFS交换数据流检测工具的下载地址：<a href="https://waltyoung-music-1317864421.cos.ap-shanghai.myqcloud.com/tools/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E6%A3%80%E6%B5%8B%E5%B7%A5%E5%85%B7.rar">https://waltyoung-music-1317864421.cos.ap-shanghai.myqcloud.com/tools/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E6%A3%80%E6%B5%8B%E5%B7%A5%E5%85%B7.rar</a></li></ol><hr><p>需要注意的是，type命令执行 NTFS_demo.txt 文件和 NTFS_demo.txt:1.txt 文件的结果是不同的</p><p><code>type NTFS_demo.txt</code>命令执行结果为空（因为NTFS_demo.txt文件中没有内容）</p><p><code>type NTFS_demo.txt:1.txt</code>命令执行结果如下所示</p><p><img src="https://s2.loli.net/2023/09/14/A9CjBwLT7Okgq6H.png" alt="type命令执行不同文件.png"></p><p>echo 命令和 type 命令存在显著差异</p><p>echo 命令是将字符写入到文件中</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 456 &gt;&gt; NTFS_demo.txt:1.txt</span><br></pre></td></tr></table></figure><p>type 命令是将已存在的文件用交换数据流的方式写到另外一个文件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">type</span> 456.txt &gt;&gt; NTFS_demo.txt:1.txt</span><br></pre></td></tr></table></figure><p>注：“&gt;&gt;”是追加重定向符号，与”&gt;”类似，但是会将命令的输出追加到文件的末尾，而不是覆盖文件内容。</p>]]></content>
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="NTFS交换数据流隐藏文件"><a href="#NTFS交换数据流隐藏文件" class="headerlink" title="NTFS交换数据流隐藏文件"></a>NTFS交换数据流隐藏文件</h1><blockquote><p>NTFS交换数据流（Alternate Data Streams，简称ADS）是NTFS磁盘格式的一个特性，在NTFS文件系统下，每个文件都可以存在多个数据流，就是说除了主文件流之外还可以有许多非主文件流寄宿在主文件流中，而我们无法看到非主文件的数据流。它使用资源派生来维持与文件相关的信息。<strong>在Windows下，文件名带有<code>:</code>的文件被视为NTFS流的非主文流，类似 Linux 的 swap 文件</strong>。</p></blockquote><p>将 123 写入到 NTFS_demo.txt:1.txt 文件中</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 123 &gt; NTFS_demo.txt:1.txt</span><br></pre></td></tr></table></figure><p>此时在文件中可见产生了一个 NTFS_demo.txt 文件，打开 NTFS_demo.txt 文件，可见是空白的</p><p><img src="https://s2.loli.net/2023/09/14/rqV57Fh1QXbJiUc.png" alt="demo.txt.png"></p><p>使用 notepad 命令打开 NTFS_demo.txt:1.txt 文件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">notepad NTFS_demo.txt:1.txt</span><br></pre></td></tr></table></figure><p>notepad 命令将唤起记事本，可见输入内容“123”</p><p><img src="https://s2.loli.net/2023/09/14/1s9DCnw4vtNpr6U.png" alt="1.txt.png"></p><p>参考链接：<a href="https://www.qingsword.com/qing/812.html" title="利用NTFS交换数据流隐藏文件">https://www.qingsword.com/qing/812.html</a></p><p>如何检测和清除NTFS-ADS隐藏的文件：</p><ol><li>对于压缩包类文件，可以使用压缩软件打开，在压缩软件中查看所需内容；也可以在Linux中直接解压该文件</li><li>合理利用工具，NTFS交换数据流检测工具的下载地址：<a href="https://waltyoung-music-1317864421.cos.ap-shanghai.myqcloud.com/tools/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E6%A3%80%E6%B5%8B%E5%B7%A5%E5%85%B7.rar">https://waltyoung-music-1317864421.cos.ap-shanghai.myqcloud.com/tools/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E6%A3%80%E6%B5%8B%E5%B7%A5%E5%85%B7.rar</a></li></ol><hr><p>需要注意的是，type命令执行 NTFS_demo.txt 文件和 NTFS_demo.txt:1.txt 文件的结果是不同的</p><p><code>type NTFS_demo.txt</code>命令执行结果为空（因为NTFS_demo.txt文件中没有内容）</p><p><code>type NTFS_demo.txt:1.txt</code>命令执行结果如下所示</p><p><img src="https://s2.loli.net/2023/09/14/A9CjBwLT7Okgq6H.png" alt="type命令执行不同文件.png"></p><p>echo 命令和 type 命令存在显著差异</p><p>echo 命令是将字符写入到文件中</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 456 &gt;&gt; NTFS_demo.txt:1.txt</span><br></pre></td></tr></table></figure><p>type 命令是将已存在的文件用交换数据流的方式写到另外一个文件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">type</span> 456.txt &gt;&gt; NTFS_demo.txt:1.txt</span><br></pre></td></tr></table></figure><p>注：“&gt;&gt;”是追加重定向符号，与”&gt;”类似，但是会将命令的输出追加到文件的末尾，而不是覆盖文件内容。</p>]]></content>
     
     
       
@@ -477,26 +503,6 @@
     <category term="安装教程" scheme="https://waltyoung.github.io/tags/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/"/>
     
     <category term="Hexo" scheme="https://waltyoung.github.io/tags/Hexo/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Hello World</title>
-    <link href="https://waltyoung.github.io/2023/06/15/hello-world/"/>
-    <id>https://waltyoung.github.io/2023/06/15/hello-world/</id>
-    <published>2023-06-14T16:55:48.726Z</published>
-    <updated>2023-06-14T16:55:48.726Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
-      
-    
-    
-    
     
   </entry>
   
