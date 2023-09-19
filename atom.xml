@@ -6,7 +6,7 @@
   <link href="https://waltyoung.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltyoung.github.io/"/>
-  <updated>2023-09-18T03:47:56.622Z</updated>
+  <updated>2023-09-19T05:15:00.099Z</updated>
   <id>https://waltyoung.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>CTF-Misc-来首歌吧</title>
+    <link href="https://waltyoung.github.io/2023/09/19/CTF-Misc-%E6%9D%A5%E9%A6%96%E6%AD%8C%E5%90%A7/"/>
+    <id>https://waltyoung.github.io/2023/09/19/CTF-Misc-%E6%9D%A5%E9%A6%96%E6%AD%8C%E5%90%A7/</id>
+    <published>2023-09-19T05:09:00.000Z</published>
+    <updated>2023-09-19T05:15:00.099Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="CTF-Misc-来首歌吧"><a href="#CTF-Misc-来首歌吧" class="headerlink" title="CTF-Misc-来首歌吧"></a>CTF-Misc-来首歌吧</h1><p>将 wav 文件置入 <strong>Audicity</strong> ，可观察到左声道特殊</p><p><img src="https://s2.loli.net/2023/09/16/StmTIuXNWnqY1Kb.png" alt="来首歌吧_1.png"></p><p>放大后可见摩斯电码</p><p><img src="https://s2.loli.net/2023/09/16/Lw9KqIu1EvOY26g.png" alt="来首歌吧_2.png"></p><p>逐个对照下表的摩斯电码，可以得到flag</p><p><img src="https://s2.loli.net/2023/09/16/h9J58BbN6DPxMIk.jpg" alt="摩斯电码.jpg"></p><hr><p>本文重点在于介绍另一款音频隐写与提取工具————<strong>MP3Stego</strong></p><p>MP3Stego下载地址：<a href="https://www.petitcolas.net/fabien/software/" title="MP3Stego">https://www.petitcolas.net/fabien/software/</a></p><p>MP3Stego 提供图形化用户界面（即GUI）但为方便日后学习，笔者仍介绍在命令行下的使用方法</p><p>加密命令如下</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Encode -E data.txt -P pass sound.wav sound.mp3</span><br></pre></td></tr></table></figure><p>参数解释</p><ul><li>data.txt:需要加密的txt文件</li><li>pass:密码</li><li>sound.wav:需要将密码放入的wav文件)</li><li>sound.mp3:需要解密的文件</li></ul><p>解密命令如下</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Decode -X -P pass sound.mp3</span><br></pre></td></tr></table></figure><p>参数解释</p><ul><li>pass:密码</li><li>sound.mp3:需要解密的文件</li></ul><p><strong>需要注意的是 MP3Stego 只能分析、处理 MP3 文件</strong>（这也是本题使用不到 MP3Stego 的原因，即使本题的 wav 文件的文件名在诱导我们）</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
+      
+    
+    
+    
+    
+    <category term="CTF" scheme="https://waltyoung.github.io/tags/CTF/"/>
+    
+    <category term="Misc" scheme="https://waltyoung.github.io/tags/Misc/"/>
+    
+    <category term="隐写" scheme="https://waltyoung.github.io/tags/%E9%9A%90%E5%86%99/"/>
+    
+  </entry>
   
   <entry>
     <title>CTF-Misc-LSB隐写</title>
@@ -99,9 +125,9 @@
     <link href="https://waltyoung.github.io/2023/09/15/CTF-Misc-zip%E4%BC%AA%E5%8A%A0%E5%AF%86/"/>
     <id>https://waltyoung.github.io/2023/09/15/CTF-Misc-zip%E4%BC%AA%E5%8A%A0%E5%AF%86/</id>
     <published>2023-09-15T04:15:30.000Z</published>
-    <updated>2023-09-15T16:30:31.058Z</updated>
+    <updated>2023-09-19T07:16:21.216Z</updated>
     
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="CTF-Misc-zip伪加密"><a href="#CTF-Misc-zip伪加密" class="headerlink" title="CTF-Misc-zip伪加密"></a>CTF-Misc-zip伪加密</h1><p>原题链接：<a href="https://buuoj.cn/challenges#zip%E4%BC%AA%E5%8A%A0%E5%AF%86">https://buuoj.cn/challenges#zip%E4%BC%AA%E5%8A%A0%E5%AF%86</a></p><p>一个 ZIP 文件由三个部分组成：</p><p>压缩源文件数据区+压缩源文件目录区+压缩源文件目录结束标志</p><p><strong>zip伪加密是在文件头的加密标志位做修改，进而再打开文件时识被别为加密压缩包</strong>。</p><p><strong>压缩源文件数据区</strong>：</p><ul><li><strong>50 4B 03 04</strong>：这是头文件标记（0x04034b50），十六进制表示为<strong>PK</strong></li><li>14 00：解压文件所需 pkware 版本</li><li><strong>09 00</strong>：全局方式位标记（有无加密）</li><li>08 00：压缩方式</li><li>50 A3：最后修改文件时间</li><li>A5 4A：最后修改文件日期</li><li>21 38 76 64：CRC-32校验（1480B516）</li><li>19 00 00 00：压缩后尺寸（25）</li><li>17 00 00 00：未压缩尺寸（23）</li><li>08 00：文件名长度</li><li>00 00：扩展记录长度</li></ul><p><strong>压缩源文件目录区</strong>:</p><ul><li>50 4B 01 02：目录中文件文件头标记(0x02014b50)</li><li>1F 00：压缩使用的 pkware 版本</li><li>14 00：解压文件所需 pkware 版本</li><li>09 00：全局方式位标记（有无加密，这个更改这里进行伪加密，改为09 00打开就会提示有密码了）</li><li>08 00：压缩方式</li><li>50 A3：最后修改文件时间</li><li>A5 4A：最后修改文件日期</li><li>21 38 76 65：CRC-32校验（1480B516）</li><li>19 00 00 00：压缩后尺寸（25）</li><li>17 00 00 00：未压缩尺寸（23）</li><li>08 00：文件名长度</li><li>24 00：扩展字段长度</li><li>00 00：文件注释长度</li><li>00 00：磁盘开始号</li><li>00 00：内部文件属性</li><li>20 00 00 00：外部文件属性</li><li>00 00 00 00：局部头部偏移量</li></ul><p><strong>压缩源文件目录结束标志</strong>:</p><ul><li>50 4B 05 06：目录结束标记</li><li>00 00：当前磁盘编号</li><li>00 00：目录区开始磁盘编号</li><li>01 00：本磁盘上纪录总数</li><li>01 00：目录区中纪录总数</li><li>5A 00 00 00：目录区尺寸大小</li><li>3F 00 00 00：目录区对第一张磁盘的偏移量</li><li>00 00 00：ZIP 文件注释长度</li></ul><p><strong>无加密</strong><br>压缩源文件数据区的全局加密应当为<code>00 00</code><br>且压缩源文件目录区的全局方式位标记应当为<code>00 00</code></p><p><strong>假加密</strong><br>压缩源文件数据区的全局加密应当为<code>00 00</code><br>且压缩源文件目录区的全局方式位标记应当为<code>09 00</code></p><p><strong>真加密</strong><br>压缩源文件数据区的全局加密应当为<code>09 00</code><br>且压缩源文件目录区的全局方式位标记应当为<code>09 00</code></p><p>这是题目的原文件的十六进制</p><p><img src="https://s2.loli.net/2023/09/14/4dOImnfhrQi3cvo.jpg" alt="伪加密_1.jpg"></p><p>对照上文，将<code>09 00</code><em>全部</em>修改为<code>00 00</code>，再次解压可得flag</p><p>参考链接：<a href="https://blog.csdn.net/qq_32350719/article/details/102661596" title="CTF-伪加密">https://blog.csdn.net/qq_32350719&#x2F;article&#x2F;details&#x2F;102661596</a></p>]]></content>
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="CTF-Misc-zip伪加密"><a href="#CTF-Misc-zip伪加密" class="headerlink" title="CTF-Misc-zip伪加密"></a>CTF-Misc-zip伪加密</h1><p>原题链接：<a href="https://buuoj.cn/challenges#zip%E4%BC%AA%E5%8A%A0%E5%AF%86">https://buuoj.cn/challenges#zip%E4%BC%AA%E5%8A%A0%E5%AF%86</a></p><p>一个 ZIP 文件由三个部分组成：</p><p>压缩源文件数据区+压缩源文件目录区+压缩源文件目录结束标志</p><p><strong>zip伪加密是在文件头的加密标志位做修改，进而再打开文件时识被别为加密压缩包</strong>。</p><p><strong>压缩源文件数据区</strong>：</p><ul><li><strong>50 4B 03 04</strong>：这是头文件标记，十六进制表示为<strong>PK</strong></li><li>14 00：解压文件所需 pkware 版本</li><li><strong>00 00</strong>：全局方式位标记（有无加密）</li><li>08 00：压缩方式</li><li>50 A3：最后修改文件时间</li><li>A5 4A：最后修改文件日期</li><li>21 38 76 64：CRC-32校验（1480B516）</li><li>19 00 00 00：压缩后尺寸（25）</li><li>17 00 00 00：未压缩尺寸（23）</li><li>08 00：文件名长度</li><li>00 00：扩展记录长度</li></ul><p><strong>压缩源文件目录区</strong>:</p><ul><li><strong>50 4B 01 02</strong>：目录中文件文件头标记</li><li>1F 00：压缩使用的 pkware 版本</li><li>14 00：解压文件所需 pkware 版本</li><li><strong>00 00</strong>：全局方式位标记（有无加密）</li><li>08 00：压缩方式</li><li>50 A3：最后修改文件时间</li><li>A5 4A：最后修改文件日期</li><li>21 38 76 65：CRC-32校验（1480B516）</li><li>19 00 00 00：压缩后尺寸（25）</li><li>17 00 00 00：未压缩尺寸（23）</li><li>08 00：文件名长度</li><li>24 00：扩展字段长度</li><li>00 00：文件注释长度</li><li>00 00：磁盘开始号</li><li>00 00：内部文件属性</li><li>20 00 00 00：外部文件属性</li><li>00 00 00 00：局部头部偏移量</li></ul><p><strong>压缩源文件目录结束标志</strong>:</p><ul><li>50 4B 05 06：目录结束标记</li><li>00 00：当前磁盘编号</li><li>00 00：目录区开始磁盘编号</li><li>01 00：本磁盘上纪录总数</li><li>01 00：目录区中纪录总数</li><li>5A 00 00 00：目录区尺寸大小</li><li>3F 00 00 00：目录区对第一张磁盘的偏移量</li><li>00 00 00：ZIP 文件注释长度</li></ul><p>文件数据区的全局方式位标记是文件头之后的第三个字节</p><p>文件目录区的全局方式位标记是文件头之后的第五个字节</p><p><strong>无加密</strong><br>压缩源文件数据区的全局方式位标记应当为<code>00 00</code><br>且压缩源文件目录区的全局方式位标记应当为<code>00 00</code></p><p><strong>假加密</strong><br>压缩源文件数据区的全局方式位标记应当为<code>00 00</code><br>且压缩源文件目录区的全局方式位标记应当为<code>01 00</code></p><p><strong>真加密</strong><br>压缩源文件数据区的全局方式位标记应当为<code>01 00</code><br>且压缩源文件目录区的全局方式位标记应当为<code>01 00</code></p><p><strong>全局方式位标记的四个数字中只有第二个数字对其有影响</strong></p><ul><li>第二个数字为奇数时，加密 </li><li>第二个数字为偶数时，未加密</li></ul><p>这是题目的原文件的十六进制</p><p><img src="https://s2.loli.net/2023/09/14/4dOImnfhrQi3cvo.jpg" alt="伪加密_1.jpg"></p><p>对照上文，将<code>09 00</code><em>全部</em>修改为<code>00 00</code>，再次解压可得flag。<em>（此处一定不是真加密，出题人将源文件数据区和目录区的全局方式位标记都修改了）</em></p><p>参考链接：</p><ol><li><a href="https://blog.csdn.net/qq_32350719/article/details/102661596" title="CTF-伪加密">https://blog.csdn.net/qq_32350719&#x2F;article&#x2F;details&#x2F;102661596</a></li><li><a href="https://blog.csdn.net/qq_26187985/article/details/83654197" title="zip伪加密原理及操作">https://blog.csdn.net/qq_26187985&#x2F;article&#x2F;details&#x2F;83654197</a></li></ol><hr><p>笔者最初的笔记参考了伪教程，虽然当时的题目解决了，但是其他题目遇到问题了。鉴于网络的伪教程过多，说法不一致，所以笔者决定自己动手实验一遍</p><p>这是无加密的 zip 文件</p><p><img src="https://s2.loli.net/2023/09/19/GASzYLgfxU4BkJq.png" alt="zip无加密.png"></p><p>这是真加密的 zip 文件</p><p><img src="https://s2.loli.net/2023/09/19/JmacPgFVw4vhE1i.png" alt="zip真加密.png"></p><p>这是修改文件目录区的伪加密的 zip 文件</p><p><img src="https://s2.loli.net/2023/09/19/SVJO83k6BUGbdWT.png" alt="zip伪加密_修改文件目录区.png"></p><p>这是修改文件数据区的伪加密的 zip 文件</p><p><img src="https://s2.loli.net/2023/09/19/18LBjfhv543VkK2.png" alt="zip伪加密_修改文件数据区.png"></p><p>最终结果如下</p><p><img src="https://s2.loli.net/2023/09/19/cwg7yKb6svTDlWS.png" alt="结果.png"></p><p>与网络上的结论不同，只有修改文件数据区的全局方式位标记，才被提示加密了（可能与笔者使用的解压缩软件和 pkware 版本相关）</p><p>但在做题过程中确实遇到的是修改文件目录区，所以需要做更多的题目来验证</p><blockquote><p>目前文件数据区和目录区的全局方式位标记都需要留意</p><p>文件数据区的全局方式位标记是文件头之后的第三个字节</p><p>文件目录区的全局方式位标记是文件头之后的第五个字节</p></blockquote>]]></content>
     
     
       
@@ -479,30 +505,6 @@
     <category term="AWVS" scheme="https://waltyoung.github.io/tags/AWVS/"/>
     
     <category term="安装教程" scheme="https://waltyoung.github.io/tags/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>基于Hexo框架搭建个人博客教程</title>
-    <link href="https://waltyoung.github.io/2023/06/17/%E5%9F%BA%E4%BA%8EHexo%E6%A1%86%E6%9E%B6%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%95%99%E7%A8%8B/"/>
-    <id>https://waltyoung.github.io/2023/06/17/%E5%9F%BA%E4%BA%8EHexo%E6%A1%86%E6%9E%B6%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%95%99%E7%A8%8B/</id>
-    <published>2023-06-17T09:16:19.000Z</published>
-    <updated>2023-08-28T01:37:27.486Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><p><strong>本文前置技能：虚拟机的安装与初始化，Linux操作系统基础</strong></p><h2 id="第0步：系统更新"><a href="#第0步：系统更新" class="headerlink" title="第0步：系统更新"></a>第0步：系统更新</h2><p>笔者使用的Linux系统是Ubuntu LTS22.0.4。所有使用Debian内核的Linux都可遵循本教程。</p><p>切换到root用户，并且注意全程使用root用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su</span><br></pre></td></tr></table></figure><p>更新软件包列表</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get update</span><br></pre></td></tr></table></figure><p>进行一次升级</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get upgrade</span><br></pre></td></tr></table></figure><h2 id="第1步：安装Git"><a href="#第1步：安装Git" class="headerlink" title="第1步：安装Git"></a>第1步：安装Git</h2><p>注意使用root用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install git</span><br></pre></td></tr></table></figure><p>安装完成后使用如下命令检查安装是否成功</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git --version</span><br></pre></td></tr></table></figure><h2 id="第2步：安装Nodejs"><a href="#第2步：安装Nodejs" class="headerlink" title="第2步：安装Nodejs"></a>第2步：安装Nodejs</h2><p>注意使用root用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt-get install node</span><br><span class="line">apt-get install npm</span><br></pre></td></tr></table></figure><p>安装完成后使用如下命令检查安装是否成功</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure><h2 id="第3步：安装及初始化Hexo"><a href="#第3步：安装及初始化Hexo" class="headerlink" title="第3步：安装及初始化Hexo"></a>第3步：安装及初始化Hexo</h2><p>注意使用root用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br></pre></td></tr></table></figure><p>安装完成后使用如下命令检查安装是否成功</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo -v</span><br></pre></td></tr></table></figure><p>初始化Hexo</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure><p>启动服务</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure><p>在终端中右键打开链接<a href="http://localhost:4000/">http://localhost:4000/</a>打开Hexo生成的默认网页<br><img src="https://s2.loli.net/2023/06/17/TWuc5B1r8a2SjVL.png" alt="localhost:4000"></p><p>未完待续…</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
-      
-    
-    
-    
-    
-    <category term="安装教程" scheme="https://waltyoung.github.io/tags/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/"/>
-    
-    <category term="Hexo" scheme="https://waltyoung.github.io/tags/Hexo/"/>
     
   </entry>
   
