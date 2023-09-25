@@ -1,0 +1,227 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>CTF-Reverse-Java_Tools | WaltYoung</title><meta name="author" content="WaltYoung"><meta name="copyright" content="WaltYoung"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="CTF-Reverse-Java_Tools原题链接：https:&#x2F;&#x2F;www.polarctf.com&#x2F;#&#x2F;page&#x2F;challenges的Java_Tools 笔者拿到该题，发现是 jar 文件，优先置于 jd-gui.exe 反编译。可见如下两个文件  Test.java 文件的内容： 12345678910111213141516package main.java;import java.u">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CTF-Reverse-Java_Tools">
+<meta property="og:url" content="https://waltyoung.github.io/2023/09/25/CTF-Reverse-Java-Tools/index.html">
+<meta property="og:site_name" content="WaltYoung">
+<meta property="og:description" content="CTF-Reverse-Java_Tools原题链接：https:&#x2F;&#x2F;www.polarctf.com&#x2F;#&#x2F;page&#x2F;challenges的Java_Tools 笔者拿到该题，发现是 jar 文件，优先置于 jd-gui.exe 反编译。可见如下两个文件  Test.java 文件的内容： 12345678910111213141516package main.java;import java.u">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp">
+<meta property="article:published_time" content="2023-09-25T02:04:48.000Z">
+<meta property="article:modified_time" content="2023-09-25T02:07:44.492Z">
+<meta property="article:author" content="WaltYoung">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Reverse">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp"><link rel="shortcut icon" href="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp"><link rel="canonical" href="https://waltyoung.github.io/2023/09/25/CTF-Reverse-Java-Tools/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CTF-Reverse-Java_Tools',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-09-25 10:07:44'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="WaltYoung" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">28</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">23</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s2.loli.net/2023/07/25/5fu7CQnLBJ6ENIT.png')"><nav id="nav"><span id="blog-info"><a href="/" title="WaltYoung"><span class="site-name">WaltYoung</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CTF-Reverse-Java_Tools</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-09-25T02:04:48.000Z" title="发表于 2023-09-25 10:04:48">2023-09-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-09-25T02:07:44.492Z" title="更新于 2023-09-25 10:07:44">2023-09-25</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="CTF-Reverse-Java_Tools"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="CTF-Reverse-Java-Tools"><a href="#CTF-Reverse-Java-Tools" class="headerlink" title="CTF-Reverse-Java_Tools"></a>CTF-Reverse-Java_Tools</h1><p>原题链接：<a target="_blank" rel="noopener" href="https://www.polarctf.com/#/page/challenges">https://www.polarctf.com/#/page/challenges</a>的Java_Tools</p>
+<p>笔者拿到该题，发现是 jar 文件，优先置于 jd-gui.exe 反编译。可见如下两个文件</p>
+<p><img src="https://s2.loli.net/2023/09/23/RGZgQeM9WzIl5VC.png" alt="jar 文件内容.png"></p>
+<p>Test.java 文件的内容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main.java;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Scanner;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="type">Scanner</span> <span class="variable">in</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(System.in);</span><br><span class="line">    System.out.println(<span class="string">&quot;Welcome to Polar_Ctf!,come to play!&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;Please Input : &quot;</span>);</span><br><span class="line">    <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> in.next();</span><br><span class="line">    <span class="type">char</span>[] Strings = name.toCharArray();</span><br><span class="line">    Tools.Add_1(Strings, <span class="number">3</span>);</span><br><span class="line">    Tools.Re(Strings);</span><br><span class="line">    Tools.Judge(Strings);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Tools.java 文件的内容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main.java;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Tools</span> &#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">6</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">Re</span><span class="params">(<span class="type">char</span>[] str)</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; str.length / <span class="number">2</span> - <span class="number">1</span>; i++) &#123;</span><br><span class="line">      <span class="type">char</span> <span class="variable">temp</span> <span class="operator">=</span> str[i];</span><br><span class="line">      str[i] = str[str.length - i - <span class="number">1</span>];</span><br><span class="line">      str[str.length - i - <span class="number">1</span>] = temp;</span><br><span class="line">    &#125; </span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">Xor</span><span class="params">(<span class="type">char</span>[] str)</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; str.length; i++)</span><br><span class="line">      str[i] = (<span class="type">char</span>)(str[i] ^ j); </span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">Add_1</span><span class="params">(<span class="type">char</span>[] str, <span class="type">int</span> x)</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; str.length; i++)</span><br><span class="line">      str[i] = (<span class="type">char</span>)(str[i] + x); </span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">Judge</span><span class="params">(<span class="type">char</span>[] str)</span> &#123;</span><br><span class="line">    ArrayList&lt;Character&gt; Result = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    ArrayList&lt;Character&gt; Flag = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    <span class="type">char</span>[] arrayOfChar1;</span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line">    <span class="type">byte</span> b;</span><br><span class="line">    <span class="keyword">for</span> (arrayOfChar1 = str, i = arrayOfChar1.length, b = <span class="number">0</span>; b &lt; i; ) &#123;</span><br><span class="line">      <span class="type">Character</span> <span class="variable">character</span> <span class="operator">=</span> Character.valueOf(arrayOfChar1[b]);</span><br><span class="line">      Result.add(Character.valueOf(character.charValue()));</span><br><span class="line">      b++;</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;$gourZroohK&quot;</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">sttr</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(str);</span><br><span class="line">    <span class="keyword">if</span> (name.contains(sttr)) &#123;</span><br><span class="line">      System.out.println(<span class="string">&quot;You Are Right!MD5!&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      System.out.println(<span class="string">&quot;You Are Wrong! please try it again!&quot;</span>);</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="type">char</span>[] Strings = name.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">char</span> c : Strings)</span><br><span class="line">      Flag.add(Character.valueOf(c)); </span><br><span class="line">    <span class="keyword">if</span> (Result.equals(Flag)) &#123;</span><br><span class="line">      System.out.println(<span class="string">&quot;You Are Right!MD5!&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      System.out.println(<span class="string">&quot;You Are Wrong! please try it again!&quot;</span>);</span><br><span class="line">    &#125; </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>显然可见 Test.java 调用 Tools.java 的方法，直接阅读代码可知 Add_1 方法是默认情况的凯撒加密， Re 方法是互换位置， Judge 方法是判断输入是否正确， Xor 方法没有使用</p>
+<p>实战或比赛中，可以对代码稍加分析后立即调试，在调试中观察代码的执行情况</p>
+<p>为了便于调试，我们可以将源文件置于 IDEA 项目的 <code>src</code> 目录下，并且重命名 Test.java 为 Main.java，删除每个java文件的第一行<code>package main.java</code></p>
+<p>如图所示java文件位置</p>
+<p><img src="https://s2.loli.net/2023/09/24/MrQCA1YFlP2S9yD.png" alt="java文件位置.png"></p>
+<p>以<code>12345678</code>为输入，作示例</p>
+<p>下图是步入 Add_1 函数前，Strings数组的内容就是笔者的输入</p>
+<p><img src="https://s2.loli.net/2023/09/23/PvJ4c2dorhiAlDy.png" alt="示例：步入Add_1函数前.png"></p>
+<p>下图是步出 Add_1 函数后即步入 Re 函数前，Strings数组的内容是笔者的输入经过偏移值为3的凯撒加密后的结果</p>
+<p><img src="https://s2.loli.net/2023/09/23/u3ZNAxdDvzypolS.png" alt="示例：步出Add_1函数后即步入Re函数前.png"></p>
+<p>下图是步出 Re 函数后即步入 Judge 函数前，Strings数组的内容是步入Re函数前的数组 头尾互换。（<em>具体细节情读者自行查看，笔者表述能力不太好QAQ）</em></p>
+<p><img src="https://s2.loli.net/2023/09/23/qrZugJd7pUDnT3A.png" alt="示例：步出Re函数后.png"></p>
+<p>笔者接下来将图文结合逐行解释代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;Character&gt; Result = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">ArrayList&lt;Character&gt; Flag = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br></pre></td></tr></table></figure>
+
+<p>如上代码的作用是新建 Result 、 Flag 数组</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (arrayOfChar1 = str, i = arrayOfChar1.length, b = <span class="number">0</span>; b &lt; i; ) &#123;</span><br><span class="line">  <span class="type">Character</span> <span class="variable">character</span> <span class="operator">=</span> Character.valueOf(arrayOfChar1[b]);</span><br><span class="line">  Result.add(Character.valueOf(character.charValue()));</span><br><span class="line">  b++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如上代码的作用是复制步入 Judge 函数前 Strings数组的内容到 Result 数组</p>
+<p>调试时也可验证如上代码的作用，下图是Result数组的内容， Result 数组的内容和 str 数组、步入 Judge 函数前 Strings数组的内容完全相同</p>
+<p><img src="https://s2.loli.net/2023/09/24/fMwt91QJR4PShHI.png" alt="Result数组的内容.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;$gourZroohK&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">sttr</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(str); </span><br></pre></td></tr></table></figure>
+
+<p>如上代码的作用是第一行，创建一个 String 类型的变量 name，并赋值<code>$gourZroohK</code>；第二行，将传入的数组 str 转化为 String 类型的字符串，并保存到 String 类型的变量sttr 中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (name.contains(sttr)) &#123;</span><br><span class="line">  System.out.println(<span class="string">&quot;You Are Right!MD5!&quot;</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  System.out.println(<span class="string">&quot;You Are Wrong! please try it again!&quot;</span>);</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>如上代码的作用是判断 sttr 是否包含在 name 中。关键方法是contains()。*(与下一段代码相比，不是很重要)*</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span>[] Strings = name.toCharArray();</span><br><span class="line"><span class="keyword">for</span> (<span class="type">char</span> c : Strings)</span><br><span class="line">  Flag.add(Character.valueOf(c)); </span><br></pre></td></tr></table></figure>
+
+<p>如上代码的作用是第一行，将 name 字符串转化为 char 类型的数组，并保存到 char 类型的 Strings 数组中；第二行，for 语句的作用的本质是复制第一行的 Strings数组的内容到 Flag 数组中</p>
+<p>调试时也可验证如上代码的作用，下图是 Flag 数组的内容， Flag 数组的内容和 Strings数组的内容完全相同</p>
+<p><img src="https://s2.loli.net/2023/09/24/XDiIQKB4bFhwyEJ.png" alt="flag数组的内容.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (Result.equals(Flag)) &#123;</span><br><span class="line">  System.out.println(<span class="string">&quot;You Are Right!MD5!&quot;</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  System.out.println(<span class="string">&quot;You Are Wrong! please try it again!&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如上代码的作用是判断 Result 数组是否与 Flag 数组相同。关键方法是equals()。*(与上一段 if 语句相比，这句更重要。因为上一段 if 语句要求 包含flag，这一段 if 语句要求 等于flag)*</p>
+<blockquote>
+<p><strong>总结</strong></p>
+<p>此段代码的正向操作是先偏移值为3的凯撒加密，再进行移位</p>
+<p>故反向操作应该是先进行移位，再偏移值为3的凯撒加密</p>
+<p>具体步骤如下：</p>
+<ol>
+<li>将<code>String name = &quot;$gourZroohK&quot;;</code>的<code>name</code>变量的值，即<code>$gourZroohK</code>，进行移位，可得<code>KhourZroog$</code></li>
+<li>对<code>KhourZroog$</code>进行偏移值为3的凯撒解密，可得<code>HelloWorld!</code></li>
+<li>将<code>HelloWorld!</code>进行 MD5 计算后可得flag</li>
+</ol>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://waltyoung.github.io">WaltYoung</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://waltyoung.github.io/2023/09/25/CTF-Reverse-Java-Tools/">https://waltyoung.github.io/2023/09/25/CTF-Reverse-Java-Tools/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://WaltYoung.github.io" target="_blank">WaltYoung</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CTF/">CTF</a><a class="post-meta__tags" href="/tags/Reverse/">Reverse</a><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" data-sites="wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/09/24/CTF-Misc-%E5%A4%A7%E7%99%BD/" title="CTF-Misc-大白"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CTF-Misc-大白</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/09/14/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E9%9A%90%E8%97%8F%E6%96%87%E4%BB%B6/" title="NTFS交换数据流隐藏文件"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-14</div><div class="title">NTFS交换数据流隐藏文件</div></div></a></div><div><a href="/2023/09/13/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E7%9A%84%E6%8E%A2%E7%B4%A2/" title="记一次一句话木马的探索"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-13</div><div class="title">记一次一句话木马的探索</div></div></a></div><div><a href="/2023/09/15/CTF-Misc-zip%E4%BC%AA%E5%8A%A0%E5%AF%86/" title="CTF-Misc-zip伪加密"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-15</div><div class="title">CTF-Misc-zip伪加密</div></div></a></div><div><a href="/2023/09/16/CTF-Misc-%E5%8F%A6%E5%A4%96%E4%B8%80%E4%B8%AA%E4%B8%96%E7%95%8C/" title="CTF-Misc-另外一个世界"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-16</div><div class="title">CTF-Misc-另外一个世界</div></div></a></div><div><a href="/2023/09/17/CTF-Misc-N%E7%A7%8D%E6%96%B9%E6%B3%95%E8%A7%A3%E5%86%B3/" title="CTF-Misc-N种方法解决"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-17</div><div class="title">CTF-Misc-N种方法解决</div></div></a></div><div><a href="/2023/09/18/CTF-Misc-LSB%E9%9A%90%E5%86%99/" title="CTF-Misc-LSB隐写"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-18</div><div class="title">CTF-Misc-LSB隐写</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">WaltYoung</div><div class="author-info__description">为世界上所有美好而战</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">28</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">23</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/WaltYoung"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/WaltYoung" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">我的小窝</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CTF-Reverse-Java-Tools"><span class="toc-number">1.</span> <span class="toc-text">CTF-Reverse-Java_Tools</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/09/25/CTF-Reverse-Java-Tools/" title="CTF-Reverse-Java_Tools">CTF-Reverse-Java_Tools</a><time datetime="2023-09-25T02:04:48.000Z" title="发表于 2023-09-25 10:04:48">2023-09-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/09/24/CTF-Misc-%E5%A4%A7%E7%99%BD/" title="CTF-Misc-大白">CTF-Misc-大白</a><time datetime="2023-09-23T16:38:14.000Z" title="发表于 2023-09-24 00:38:14">2023-09-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/09/23/CTF-Misc-%E4%B9%9D%E8%BF%9E%E7%8E%AF/" title="CTF-Misc-九连环">CTF-Misc-九连环</a><time datetime="2023-09-22T23:02:44.000Z" title="发表于 2023-09-23 07:02:44">2023-09-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/09/22/Vim%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/" title="Vim优化指南">Vim优化指南</a><time datetime="2023-09-21T16:29:18.000Z" title="发表于 2023-09-22 00:29:18">2023-09-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/09/21/Base64%E9%9A%90%E5%86%99/" title="Base64隐写">Base64隐写</a><time datetime="2023-09-21T14:36:31.000Z" title="发表于 2023-09-21 22:36:31">2023-09-21</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent"><div id="footer-wrap"><div class="copyright">&copy;2023 By WaltYoung</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
