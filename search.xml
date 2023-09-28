@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>CTF-Reverse-Sign Up</title>
+      <link href="/2023/09/28/CTF-Reverse-Sign-Up/"/>
+      <url>/2023/09/28/CTF-Reverse-Sign-Up/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="CTF-Reverse-Sign-Up"><a href="#CTF-Reverse-Sign-Up" class="headerlink" title="CTF-Reverse-Sign Up"></a>CTF-Reverse-Sign Up</h1><p>原题链接：<a href="https://www.polarctf.com/#/page/challenges">https://www.polarctf.com/#/page/challenges</a>的Sign Up</p><p>笔者拿到该题，优先置于 exeinfope 中侦壳</p><p><img src="https://s2.loli.net/2023/09/27/inON4WL5KA2hGRe.png" alt="侦壳signup.png"></p><p>如上图所示，64位，无壳</p><p>置于 IDA 中反编译</p><p><img src="https://s2.loli.net/2023/09/27/oBU9ASOtmQKlY5k.png" alt="IDA置于IDA中反编译.png"></p><p>如上图所示，这是 main 函数的汇编代码</p><p>按下<code>F5</code>（笔记本为Fn + F5）展示C语言的代码，如下图所示</p><p><img src="https://s2.loli.net/2023/09/27/bn6uxq4MwEH3c1Z.png" alt="sign up的main函数.png"></p><ul><li><code>_main();</code>无实义</li><li><code>Input_Data();</code>从命名上看用于输入</li><li><code>Check_Data();</code>从命名上看用于检查输入，判断 flag 是否正确</li></ul><p><code>Input_Data()</code>函数如下</p><p><img src="https://s2.loli.net/2023/09/27/aI8sQYWgmeRVEud.png" alt="原Input_Data__.png"></p><p>从 main 函数、Input_Data 函数可以发现<code>Buffer</code>、<code>num</code>、<code>password</code>是全局变量<em>（因为在 main 函数、Input_Data 函数都没有定义任何变量）</em></p><p>双击<code>Buffer</code>跳转到全局变量<code>Buffer</code>定义的十六进制处，如下图所示</p><p><img src="https://s2.loli.net/2023/09/27/1uTopneb3hC7MPk.png" alt="Buffer定义的十六进制处.png"></p><p>按下<code>A</code>（大小写无关）将十六进制解码成字符，如下图所示</p><p><img src="https://s2.loli.net/2023/09/27/NG9AFIYnKd54Lvz.png" alt="将十六进制解码成字符.png"></p><p>如果没有成功，且报错，请参考这篇文章：<a href="https://blog.csdn.net/qq_36535153/article/details/111252053" title="IDA7.0 显示中文的快捷操作">https://blog.csdn.net/qq_36535153&#x2F;article&#x2F;details&#x2F;111252053</a></p><p>按下<code>Esc</code>返回<code>Input_Data()</code>函数，如下图所示</p><p><img src="https://s2.loli.net/2023/09/27/LZzeBX8WMbAoxti.png" alt="解码后的Input_Data__.png"></p><p>可见<code>&amp;Buffer</code>替换为中文字符，共需要2个输入<code>num</code>、<code>password</code></p><p><code>Check_Data()</code>函数如下</p><p><img src="https://s2.loli.net/2023/09/28/elfg7CNBRhGXLEo.png" alt="原Check_Data__.png"></p><p>解码后的<code>Check_Data()</code>函数如下</p><p><img src="https://s2.loli.net/2023/09/28/E5tT9VdGpXQcf4v.png" alt="解码后的Check_Data__.png"></p><p>如上图所示，在2个for循环中分别使用到了<code>key_num</code>、<code>key_password</code>数组</p><p>双击<code>key_num</code>跳转到全局变量<code>key_num</code>定义的十六进制处，如下图所示</p><p><img src="https://s2.loli.net/2023/09/28/oZelBW8bOJzMNLc.png" alt="key_num、key_password数组.png"></p><p><code>key_num</code>数组的值是<code>192168109</code></p><p><code>key_password</code>数组的值是<code>root</code></p><p>通过后3个 if 语句可以得知只有在标志位<code>v3</code>为1时表示”密码正确!”，<code>v4</code>为1时表示”账号正确”</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if ( !v4 &amp;&amp; !v3 )</span><br><span class="line">    return puts(&quot;账号密码错误:&quot;);</span><br><span class="line">if ( !v4 )</span><br><span class="line">    return puts(&quot;账号错误:&quot;);</span><br><span class="line">if ( v3 )</span><br><span class="line">    return printf(&quot;密码正确!&quot;);</span><br><span class="line">return puts(&quot;密码错误:&quot;);</span><br></pre></td></tr></table></figure><p>第一个 for 语句表明<code>num</code>数组的值的AscII值是<code>key_num</code>数组的值的AscII值减一。<strong>需要注意的是循环只能执行7次，但<code>key_num</code>数组长度为9</strong>（笔者第一次尝试解题时就被）</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">for ( i = 0; i &lt;= 6; ++i )</span><br><span class="line">&#123;</span><br><span class="line">    if ( num[i] + 1 != key_num[i] )</span><br><span class="line">    v4 = 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>第二个 for 语句表明<code>password</code>数组的值的AscII值是<code>key_password</code>数组的值的AscII值减二。循环可以执行4次，与<code>key_password</code>数组的长度一致</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">for ( j = 0; j &lt;= 3; ++j )</span><br><span class="line">&#123;</span><br><span class="line">if ( password[j] + 2 != key_password[j] )</span><br><span class="line">    v3 = 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>根据以上分析，我们需要将<code>192168109</code>的前7位减一，<code>root</code>的4位向前推2位</p><p>得到<code>081057008</code>和<code>pmmr</code></p><p>验证Sign Up.exe的答案</p><p><img src="https://s2.loli.net/2023/09/28/NBp5RVCqWfK4wY2.png" alt="signup答案.png"></p><p><strong>后记</strong></p><p>在做逆向题时，遇到的<code>0i64</code>，<code>1i64</code>，<code>1000i64</code>相当于将0，1，1000转换为64位格式进行处理，i64跟u、f等类似，如1.0f，2000.0f。</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> CTF </tag>
+            
+            <tag> Windows </tag>
+            
+            <tag> Reverse </tag>
+            
+            <tag> PE </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>CTF-Reverse-AndroidXor</title>
       <link href="/2023/09/26/CTF-Reverse-AndroidXor/"/>
       <url>/2023/09/26/CTF-Reverse-AndroidXor/</url>
