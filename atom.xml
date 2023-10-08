@@ -6,7 +6,7 @@
   <link href="https://waltyoung.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltyoung.github.io/"/>
-  <updated>2023-09-28T09:57:25.316Z</updated>
+  <updated>2023-10-08T11:01:39.518Z</updated>
   <id>https://waltyoung.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>CTF-Crypto-Caesar</title>
+    <link href="https://waltyoung.github.io/2023/10/08/CTF-Crypto-Caesar/"/>
+    <id>https://waltyoung.github.io/2023/10/08/CTF-Crypto-Caesar/</id>
+    <published>2023-10-08T10:59:56.000Z</published>
+    <updated>2023-10-08T11:01:39.518Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="CTF-Crypto-Caesar"><a href="#CTF-Crypto-Caesar" class="headerlink" title="CTF-Crypto-Caesar"></a>CTF-Crypto-Caesar</h1><p>笔者遇到凯撒加密的某一环节，因凯撒加密的方式较为简单，决定手写解密代码，在此存储、记录</p><p>近期在学习计算机网络编程（socket 编程），对C语言更加熟练一些，遂用C语言写了解密代码</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line">using namespace <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="type">char</span> caesar[<span class="number">110</span>];</span><br><span class="line"><span class="built_in">scanf</span>(<span class="string">&quot;%s&quot;</span>,caesar);</span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">26</span>;i++)</span><br><span class="line">&#123;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%d &quot;</span>,<span class="number">26</span>-i);</span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> j=<span class="number">0</span>;caesar[j]!=<span class="string">&#x27;\0&#x27;</span>;j++)<span class="comment">//(char)将ASCII码转化为字符</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">if</span>(caesar[j] &gt;= <span class="string">&#x27;A&#x27;</span> &amp;&amp; caesar[j] &lt;= <span class="string">&#x27;Z&#x27;</span>) </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>,(<span class="type">char</span>)( (caesar[j]-<span class="string">&#x27;A&#x27;</span>)+i )%<span class="number">26</span> + <span class="string">&#x27;A&#x27;</span> );</span><br><span class="line"><span class="keyword">if</span>(caesar[j] &gt;= <span class="string">&#x27;a&#x27;</span> &amp;&amp; caesar[j] &lt;= <span class="string">&#x27;z&#x27;</span>)</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>,(<span class="type">char</span>)( (caesar[j]-<span class="string">&#x27;a&#x27;</span>)+i )%<span class="number">26</span> + <span class="string">&#x27;a&#x27;</span> );</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>此C语言代码较为简单，不逐行解释</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
+      
+    
+    
+    
+    
+    <category term="CTF" scheme="https://waltyoung.github.io/tags/CTF/"/>
+    
+    <category term="Misc" scheme="https://waltyoung.github.io/tags/Misc/"/>
+    
+    <category term="Crypto" scheme="https://waltyoung.github.io/tags/Crypto/"/>
+    
+    <category term="C/C++" scheme="https://waltyoung.github.io/tags/C-C/"/>
+    
+  </entry>
   
   <entry>
     <title>CTF-Reverse-Sign Up</title>
@@ -505,30 +533,6 @@
     <category term="每天一个小知识点" scheme="https://waltyoung.github.io/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E4%B8%AA%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/"/>
     
     <category term="SQL" scheme="https://waltyoung.github.io/tags/SQL/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>PKCS5padding和PKCS7padding的区别</title>
-    <link href="https://waltyoung.github.io/2023/09/04/PKCS5padding%E5%92%8CPKCS7padding%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
-    <id>https://waltyoung.github.io/2023/09/04/PKCS5padding%E5%92%8CPKCS7padding%E7%9A%84%E5%8C%BA%E5%88%AB/</id>
-    <published>2023-09-04T07:38:32.000Z</published>
-    <updated>2023-09-15T04:14:52.242Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="PKCS5padding和PKCS7padding的区别"><a href="#PKCS5padding和PKCS7padding的区别" class="headerlink" title="PKCS5padding和PKCS7padding的区别"></a>PKCS5padding和PKCS7padding的区别</h1><p>PKCS5padding和PKCS7padding（PKCS7padding是PKCS#7填充的简称，PKCS#7是密码学标准PKCS（Public Key Cryptography Standards）中定义的填充方案，用于在加密算法中对数据进行填充。）是两种常见的填充方案，用于在加密前将数据块的大小调整为加密算法所要求的固定大小。它们在填充字节的值和填充方式上有一些区别。</p><p><strong>PKCS5padding</strong>：</p><ul><li>填充字节的值等于需要填充的字节数。</li><li>如果需要填充的字节数为n，则填充n个字节，每个字节的值为n。</li><li>例如，如果需要填充2个字节，那么填充的字节为0x02 0x02。</li></ul><p><strong>PKCS7padding</strong>：</p><ul><li>填充字节的值等于需要填充的字节数。</li><li>如果需要填充的字节数为n，则填充n个字节，每个字节的值为n。</li><li>与PKCS5padding的区别在于，PKCS7padding可以用于任意块大小的加密算法，而不仅限于PKCS5padding的8字节块大小。</li><li>例如，如果需要填充2个字节，那么填充的字节为0x02 0x02。</li></ul><p>总结：PKCS5padding和PKCS7padding在填充字节的值和填充方式上略有不同，但<strong>在实际应用中，它们通常可以互相替换使用</strong>。</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
-      
-    
-    
-    
-    
-    <category term="每天一个小知识点" scheme="https://waltyoung.github.io/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E4%B8%AA%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/"/>
-    
-    <category term="Crypto" scheme="https://waltyoung.github.io/tags/Crypto/"/>
     
   </entry>
   

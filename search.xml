@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>CTF-Crypto-Caesar</title>
+      <link href="/2023/10/08/CTF-Crypto-Caesar/"/>
+      <url>/2023/10/08/CTF-Crypto-Caesar/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="CTF-Crypto-Caesar"><a href="#CTF-Crypto-Caesar" class="headerlink" title="CTF-Crypto-Caesar"></a>CTF-Crypto-Caesar</h1><p>笔者遇到凯撒加密的某一环节，因凯撒加密的方式较为简单，决定手写解密代码，在此存储、记录</p><p>近期在学习计算机网络编程（socket 编程），对C语言更加熟练一些，遂用C语言写了解密代码</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line">using namespace <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="type">char</span> caesar[<span class="number">110</span>];</span><br><span class="line"><span class="built_in">scanf</span>(<span class="string">&quot;%s&quot;</span>,caesar);</span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">26</span>;i++)</span><br><span class="line">&#123;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%d &quot;</span>,<span class="number">26</span>-i);</span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> j=<span class="number">0</span>;caesar[j]!=<span class="string">&#x27;\0&#x27;</span>;j++)<span class="comment">//(char)将ASCII码转化为字符</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">if</span>(caesar[j] &gt;= <span class="string">&#x27;A&#x27;</span> &amp;&amp; caesar[j] &lt;= <span class="string">&#x27;Z&#x27;</span>) </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>,(<span class="type">char</span>)( (caesar[j]-<span class="string">&#x27;A&#x27;</span>)+i )%<span class="number">26</span> + <span class="string">&#x27;A&#x27;</span> );</span><br><span class="line"><span class="keyword">if</span>(caesar[j] &gt;= <span class="string">&#x27;a&#x27;</span> &amp;&amp; caesar[j] &lt;= <span class="string">&#x27;z&#x27;</span>)</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>,(<span class="type">char</span>)( (caesar[j]-<span class="string">&#x27;a&#x27;</span>)+i )%<span class="number">26</span> + <span class="string">&#x27;a&#x27;</span> );</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>此C语言代码较为简单，不逐行解释</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> CTF </tag>
+            
+            <tag> Misc </tag>
+            
+            <tag> Crypto </tag>
+            
+            <tag> C/C++ </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>CTF-Reverse-Sign Up</title>
       <link href="/2023/09/28/CTF-Reverse-Sign-Up/"/>
       <url>/2023/09/28/CTF-Reverse-Sign-Up/</url>
