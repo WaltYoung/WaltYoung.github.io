@@ -6,7 +6,7 @@
   <link href="https://waltyoung.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltyoung.github.io/"/>
-  <updated>2023-10-08T11:01:39.518Z</updated>
+  <updated>2023-10-14T08:20:43.473Z</updated>
   <id>https://waltyoung.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>VS Code SSH连接远程服务器</title>
+    <link href="https://waltyoung.github.io/2023/10/14/VS-Code-SSH%E8%BF%9E%E6%8E%A5%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
+    <id>https://waltyoung.github.io/2023/10/14/VS-Code-SSH%E8%BF%9E%E6%8E%A5%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/</id>
+    <published>2023-10-14T07:39:22.000Z</published>
+    <updated>2023-10-14T08:20:43.473Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="VS-Code-SSH连接远程服务器"><a href="#VS-Code-SSH连接远程服务器" class="headerlink" title="VS Code SSH连接远程服务器"></a>VS Code SSH连接远程服务器</h1><p>因为 Vim 不支持代码补全，所以搭建一套 VS Code 的远端开发环境。笔者结合网络上的文章实操，遂有了此篇文章</p><p>环境：客户端：win10 服务器：Ubuntu</p><h2 id="第0步：系统更新"><a href="#第0步：系统更新" class="headerlink" title="第0步：系统更新"></a>第0步：系统更新</h2><p>切换到root用户，并且注意全程使用root用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su</span><br></pre></td></tr></table></figure><p>更新软件包列表</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get update</span><br></pre></td></tr></table></figure><p>进行一次升级</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get upgrade</span><br></pre></td></tr></table></figure><h2 id="第1步：服务器安装SSH"><a href="#第1步：服务器安装SSH" class="headerlink" title="第1步：服务器安装SSH"></a>第1步：服务器安装SSH</h2><p>注意使用root用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt-get install net-tools</span><br><span class="line">apt-get install openssh-server</span><br></pre></td></tr></table></figure><h2 id="第2步：服务器配置SSH"><a href="#第2步：服务器配置SSH" class="headerlink" title="第2步：服务器配置SSH"></a>第2步：服务器配置SSH</h2><p>打开 SSH 配置文件</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure><p>修改SSH配置项：</p><ul><li>取消<code>PermitRootLogin</code>的注释</li><li>取消<code>PubkeyAuthentication</code>的注释</li><li>添加<code>RSAAuthentication yes</code>内容</li></ul><p>如下图所示</p><p><img src="https://s2.loli.net/2023/10/14/tPZ9M7DCmFzjLQR.png" alt="SSH配置项.png"></p><h2 id="第3步：客户端安装SSH"><a href="#第3步：客户端安装SSH" class="headerlink" title="第3步：客户端安装SSH"></a>第3步：客户端安装SSH</h2><p>通过安装 Git 来获取 SSH 功能。因为我的客户端是Win10，没有默认搭载 Git。如果读者是相同的环境，可以查看<a href="https://blog.csdn.net/mukes/article/details/115693833" title="Git 详细安装教程（详解 Git 安装过程的每一个步骤）">https://blog.csdn.net/mukes/article/details/115693833</a>。该文章详细介绍了 Git 的安装教程</p><p>安装完成后使用<code>ssh</code>检查安装是否成功</p><p><img src="https://s2.loli.net/2023/10/14/A4PKR6eVrazbiOM.png" alt="SSH.png"></p><p>若如上图所示，则代表 SSH 已经安装成功</p><h2 id="第4步：客户端生成密钥对"><a href="#第4步：客户端生成密钥对" class="headerlink" title="第4步：客户端生成密钥对"></a>第4步：客户端生成密钥对</h2><p>使用如下命令，生成 SSH 密钥对</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure><h2 id="第5步：服务器保存客户端的-SSH-公钥"><a href="#第5步：服务器保存客户端的-SSH-公钥" class="headerlink" title="第5步：服务器保存客户端的 SSH 公钥"></a>第5步：服务器保存客户端的 SSH 公钥</h2><p>在上一步中生成的密钥对，默认保存路径为：<code>C:\Users\user\.ssh</code>（路径中的<code>user</code>需要读者自行替换为实际的用户名）</p><p>将<code>.ssh</code>文件夹下的<code>id_rsa.pub</code>，复制到远程服务器的<code>.ssh</code>文件夹中。（<code>id_rsa.pub</code>是公钥，从其后缀名<code>.pub</code>也可见。<em>pub是 public 的前3个字母</em>）</p><p><code>.ssh</code>文件夹可以是根目录下的<code>.ssh</code>文件夹，也可以是用户目录下的<code>.ssh</code>文件夹。<strong>如果没有<code>.ssh</code>文件夹，则新建一个文件夹，命名为<code>.ssh</code>即可。</strong></p><p>在<code>.ssh</code>目录下，使用如下命令，生成<code>authorized_keys</code>文件，可以在连接到此服务器时不输入密码</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> id_rsa.pub &gt;&gt; authorized_keys</span><br></pre></td></tr></table></figure><h2 id="第6步：客户端VS-Code添加插件并配置"><a href="#第6步：客户端VS-Code添加插件并配置" class="headerlink" title="第6步：客户端VS Code添加插件并配置"></a>第6步：客户端VS Code添加插件并配置</h2><p>在 VS Code 中添加<code>Remote - SSH</code>插件</p><p>若添加成功，则在左侧可见 远程资源管理器。点击远程资源管理器，再点击小齿轮，如下图所示</p><p><img src="https://s2.loli.net/2023/10/14/KSW5HncqZ478JVO.png" alt="VScode的SSH.png"></p><p>选择第一项，如下图所示</p><p><img src="https://s2.loli.net/2023/10/14/X8nDHR2KpwUlMOb.png" alt="VScode配置SSH.png"></p><p>根据实际情况，修改配置项</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Host 服务器主机名</span><br><span class="line">    HostName 服务器IP地址</span><br><span class="line">    User 用户名</span><br><span class="line">    IdentityFile &quot;私钥路径&quot;</span><br></pre></td></tr></table></figure><p><strong>完成</strong></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
+      
+    
+    
+    
+    
+    <category term="安装教程" scheme="https://waltyoung.github.io/tags/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/"/>
+    
+    <category term="Linux" scheme="https://waltyoung.github.io/tags/Linux/"/>
+    
+  </entry>
   
   <entry>
     <title>CTF-Crypto-Caesar</title>
@@ -496,30 +520,6 @@
     <updated>2023-09-05T16:53:46.462Z</updated>
     
     <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><p><strong>WHERE子句可以后接以下关键字</strong>：</p><ol><li>AND：用于连接多个条件，要求同时满足所有条件。</li><li>OR：用于连接多个条件，只要满足其中一个条件即可。</li><li>NOT：用于否定一个条件。</li><li>IN：用于指定一个范围，判断某个值是否在这个范围内。</li><li>BETWEEN：用于指定一个范围，判断某个值是否在这个范围内。</li><li>LIKE：用于模糊匹配，判断某个值是否符合指定的模式。</li><li>IS NULL：用于判断某个值是否为空。</li><li>EXISTS：用于判断子查询是否返回结果。</li><li>ANY&#x2F;SOME：用于判断某个值是否与子查询中的任意一个值相等。</li><li>ALL：用于判断某个值是否与子查询中的所有值都相等。</li></ol>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
-      
-    
-    
-    
-    
-    <category term="每天一个小知识点" scheme="https://waltyoung.github.io/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E4%B8%AA%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/"/>
-    
-    <category term="SQL" scheme="https://waltyoung.github.io/tags/SQL/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>LEFT JOIN与JOIN的区别</title>
-    <link href="https://waltyoung.github.io/2023/09/05/LEFT-JOIN%E4%B8%8EJOIN%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
-    <id>https://waltyoung.github.io/2023/09/05/LEFT-JOIN%E4%B8%8EJOIN%E7%9A%84%E5%8C%BA%E5%88%AB/</id>
-    <published>2023-09-05T07:04:10.000Z</published>
-    <updated>2023-09-05T07:06:21.778Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="LEFT-JOIN与JOIN的区别"><a href="#LEFT-JOIN与JOIN的区别" class="headerlink" title="LEFT JOIN与JOIN的区别"></a>LEFT JOIN与JOIN的区别</h1><p>在SQL中，JOIN是连接两个或多个表的操作，而LEFT JOIN是其中一种JOIN的类型。</p><p>JOIN操作会返回两个表中匹配的行，如果两个表中没有匹配的行，则不会返回任何结果。而LEFT JOIN操作会返回左表中的所有行，即使在右表中没有匹配的行，左表中的行也会被返回，右表中没有匹配的列则会用NULL填充。</p><p>举个例子，假设有两个表A和B，A表中有3行数据，B表中有2行数据，其中一行数据的ID与A表中的一行数据的ID相同，另一行数据的ID与A表中的任何一行数据的ID都不相同。使用JOIN操作，只会返回一行数据，即A表中ID与B表中ID相同的那行数据。而使用LEFT JOIN操作，则会返回A表中的所有3行数据，其中一行数据与B表中的那行数据匹配，另外两行数据的B表中的列则会用NULL填充。</p><p>因此，LEFT JOIN操作可以保证左表中的所有数据都会被返回，即使在右表中没有匹配的数据。</p>]]></content>
     
     
       
