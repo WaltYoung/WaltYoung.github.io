@@ -6,7 +6,7 @@
   <link href="https://waltyoung.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltyoung.github.io/"/>
-  <updated>2023-10-14T08:20:43.473Z</updated>
+  <updated>2023-10-28T09:56:26.243Z</updated>
   <id>https://waltyoung.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>PAT-Mooncake</title>
+    <link href="https://waltyoung.github.io/2023/10/28/PAT-Mooncake/"/>
+    <id>https://waltyoung.github.io/2023/10/28/PAT-Mooncake/</id>
+    <published>2023-10-28T09:51:37.000Z</published>
+    <updated>2023-10-28T09:56:26.243Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="PAT-Mooncake"><a href="#PAT-Mooncake" class="headerlink" title="PAT-Mooncake"></a>PAT-Mooncake</h1><p>原题链接:<a href="https://www.nowcoder.com/pat/5/problem/4031" title="Mooncake">https://www.nowcoder.com/pat/5/problem/4031</a></p><h2 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h2><p>题目描述</p><blockquote><p>Mooncake is a Chinese bakery product traditionally eaten during the Mid-Autumn Festival. Many types of fillings and<br>crusts can be found in traditional mooncakes according to the region’s culture. Now given the inventory amounts and<br>the prices of all kinds of the mooncakes, together with the maximum total demand of the market, you are supposed to<br>tell the maximum profit that can be made.<br>Note: partial inventory storage can be taken. The sample shows the following situation: given three kinds of<br>mooncakes with inventory amounts being 180, 150, and 100 thousand tons, and the prices being 7.5, 7.2, and 4.5<br>billion yuans. If the market demand can be at most 200 thousand tons, the best we can do is to sell 150 thousand<br>tons of the second kind of mooncake, and 50 thousand tons of the third kind. Hence the total profit is 7.2 + 4.5&#x2F;2 &#x3D;<br>9.45 (billion yuans).</p></blockquote><p>输入描述</p><blockquote><p>Each input file contains one test case. For each case, the first line contains 2 positive integers N (&lt;&#x3D;1000), the number of different kinds<br>of mooncakes, and D (&lt;&#x3D;500 thousand tons), the maximum total demand of the market. Then the second line gives the positive inventory<br>amounts (in thousand tons), and the third line gives the positive prices (in billion yuans) of N kinds of mooncakes. All the numbers in a<br>line are separated by a space.</p></blockquote><p>输出描述</p><blockquote><p>For each test case, print the maximum profit (in billion yuans) in one line, accurate up to 2 decimal places.</p></blockquote><p>输入例子</p><blockquote><p>3 20</p><p>18 15 10</p><p>75 72 45</p></blockquote><p>输出例子</p><blockquote><p>94.50</p></blockquote><h2 id="Answer"><a href="#Answer" class="headerlink" title="Answer"></a>Answer</h2><p><strong>题目难度</strong></p><p>简单</p><p><strong>解题算法</strong></p><p>贪心</p><p><strong>我的代码</strong>（无注释版）</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">Mooncake</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">double</span> amounts;</span><br><span class="line">    <span class="type">double</span> prices;</span><br><span class="line">    <span class="type">double</span> per;</span><br><span class="line">    <span class="type">bool</span> <span class="keyword">operator</span> &lt; (<span class="type">const</span> Mooncake &amp;next)<span class="type">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> per &gt; next.per;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;Mooncake,mooncake[<span class="number">1010</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> kind,demand;</span><br><span class="line">    cin &gt;&gt; kind &gt;&gt; demand;</span><br><span class="line">    Mooncake mooncake[<span class="number">1010</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> input = <span class="number">0</span>; input &lt; kind; input++)</span><br><span class="line">        cin &gt;&gt; mooncake[input].amounts;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> input = <span class="number">0</span>; input &lt; kind; input++)</span><br><span class="line">    &#123;</span><br><span class="line">        cin &gt;&gt; mooncake[input].prices;</span><br><span class="line">        mooncake[input].per = mooncake[input].prices / mooncake[input].amounts;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">sort</span>(mooncake,mooncake+kind);</span><br><span class="line">    <span class="type">double</span> sum=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> input = <span class="number">0</span>; input &lt; kind; input++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(demand &gt; mooncake[input].amounts)</span><br><span class="line">        &#123;</span><br><span class="line">            demand -= mooncake[input].amounts;</span><br><span class="line">            sum += mooncake[input].prices;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            sum += (demand / mooncake[input].amounts * mooncake[input].prices);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%.2f\n&quot;</span>,sum);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>此题较为简单，旨在复习<strong>运算符重载</strong>与<strong>结构体数组排序</strong></p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> <span class="keyword">operator</span> &lt; (<span class="type">const</span> Mooncake &amp;next)<span class="type">const</span><span class="comment">//运算符重载</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> per &gt; next.per;<span class="comment">//自大到小降序排列</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>根据代码逻辑，如果当前对象的per值大于传入对象的per值，那么返回true，意味着当前对象应该排在传入对象之前，即按照per值从大到小排列。因此，这段代码是用于降序排列的。如果需要自小到大升序排列，则修改<code>return per &gt; next.per;</code>中的大于号<code>&gt;</code>为小于号<code>&lt;</code></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
+      
+    
+    
+    
+    
+    <category term="C/C++" scheme="https://waltyoung.github.io/tags/C-C/"/>
+    
+    <category term="PAT" scheme="https://waltyoung.github.io/tags/PAT/"/>
+    
+  </entry>
   
   <entry>
     <title>VS Code SSH连接远程服务器</title>
@@ -496,30 +520,6 @@
     <updated>2023-09-06T16:11:12.522Z</updated>
     
     <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="WHERE、CHECK、HAVING的区别"><a href="#WHERE、CHECK、HAVING的区别" class="headerlink" title="WHERE、CHECK、HAVING的区别"></a>WHERE、CHECK、HAVING的区别</h1><p>在T-SQL语言中，WHERE、CHECK、HAVING都是用于筛选数据的关键字，但它们的使用场景和作用略有不同。</p><ol><li>WHERE：WHERE用于在SELECT、UPDATE、DELETE等语句中筛选数据，它是一个过滤器，可以根据指定的条件从表中选择符合条件的记录。WHERE子句可以包含多个条件，多个条件之间可以使用AND或OR进行连接。<strong>WHERE子句不能使用聚合函数</strong>。**常见的聚合函数如下：count()、sum()、avg()、min()、max()**。</li><li>CHECK：CHECK用于在创建表时定义列的约束条件，它可以限制列中的数据必须满足指定的条件。例如，可以使用CHECK约束限制某个列的取值范围、数据类型、长度等。CHECK约束可以在创建表时定义，也可以在ALTER TABLE语句中添加。</li><li>HAVING：HAVING用于在GROUP BY子句中筛选数据，它是一个过滤器，可以根据指定的条件从分组后的结果集中选择符合条件的记录。HAVING子句可以包含多个条件，多个条件之间可以使用AND或OR进行连接。</li></ol><p>总的来说，WHERE用于在SELECT、UPDATE、DELETE等语句中筛选数据，CHECK用于在创建表时定义列的约束条件；HAVING用于在GROUP BY子句中筛选数据，HAVING必须写在GROUP BY之后，例<code>GROUP BY kind HAVING num &gt; 3</code>。</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
-      
-    
-    
-    
-    
-    <category term="每天一个小知识点" scheme="https://waltyoung.github.io/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E4%B8%AA%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/"/>
-    
-    <category term="SQL" scheme="https://waltyoung.github.io/tags/SQL/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>WHERE子句可后接的关键字</title>
-    <link href="https://waltyoung.github.io/2023/09/06/WHERE%E5%AD%90%E5%8F%A5%E5%8F%AF%E5%90%8E%E6%8E%A5%E7%9A%84%E5%85%B3%E9%94%AE%E5%AD%97/"/>
-    <id>https://waltyoung.github.io/2023/09/06/WHERE%E5%AD%90%E5%8F%A5%E5%8F%AF%E5%90%8E%E6%8E%A5%E7%9A%84%E5%85%B3%E9%94%AE%E5%AD%97/</id>
-    <published>2023-09-05T16:51:31.000Z</published>
-    <updated>2023-09-05T16:53:46.462Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><p><strong>WHERE子句可以后接以下关键字</strong>：</p><ol><li>AND：用于连接多个条件，要求同时满足所有条件。</li><li>OR：用于连接多个条件，只要满足其中一个条件即可。</li><li>NOT：用于否定一个条件。</li><li>IN：用于指定一个范围，判断某个值是否在这个范围内。</li><li>BETWEEN：用于指定一个范围，判断某个值是否在这个范围内。</li><li>LIKE：用于模糊匹配，判断某个值是否符合指定的模式。</li><li>IS NULL：用于判断某个值是否为空。</li><li>EXISTS：用于判断子查询是否返回结果。</li><li>ANY&#x2F;SOME：用于判断某个值是否与子查询中的任意一个值相等。</li><li>ALL：用于判断某个值是否与子查询中的所有值都相等。</li></ol>]]></content>
     
     
       
