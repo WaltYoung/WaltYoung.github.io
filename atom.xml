@@ -6,7 +6,7 @@
   <link href="https://waltyoung.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltyoung.github.io/"/>
-  <updated>2023-11-01T08:14:23.658Z</updated>
+  <updated>2023-11-04T04:00:57.292Z</updated>
   <id>https://waltyoung.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>CTF-Misc-swp</title>
+    <link href="https://waltyoung.github.io/2023/11/04/CTF-Misc-swp/"/>
+    <id>https://waltyoung.github.io/2023/11/04/CTF-Misc-swp/</id>
+    <published>2023-11-04T03:57:57.000Z</published>
+    <updated>2023-11-04T04:00:57.292Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="CTF-Misc-swp"><a href="#CTF-Misc-swp" class="headerlink" title="CTF-Misc-swp"></a>CTF-Misc-swp</h1><p>原题链接：<a href="https://buuoj.cn/challenges#[ACTF%E6%96%B0%E7%94%9F%E8%B5%9B2020]swp" title="[ACTF新生赛2020]swp">https://buuoj.cn/challenges#[ACTF%E6%96%B0%E7%94%9F%E8%B5%9B2020]swp</a></p><p>解压压缩包，得到<code>wget.pcapng</code></p><blockquote><p><strong>pcapng文件</strong><br>PCAPNG全名Packet CAPture Next Generation，是一种现阶段广泛使用的网络数据包保存格式，其前身为PCAP。二者都可以用<code>Wireshark</code>打开。这里不对<code>pcapng</code>和<code>pcap</code>的具体文件格式展开详细了解、介绍。之后如果需要深入，会再作补充。</p></blockquote><p>通过文件名，我们可以猜测这是关于<code>wget</code>的网络数据包文件。<code>wget</code>支持HTTP、HTTPS以及FTP协议。所以选择导出文件。具体操作如下图所示</p><p><img src="https://s2.loli.net/2023/11/04/MP7VHZnLojKwX3A.png" alt="导出HTTP数据包.png"></p><p>在弹出的页面中可以观察到可疑文件<code>secret.zip</code>，选中并点击保存</p><p><img src="https://s2.loli.net/2023/11/04/knx35vIcJUNWHBC.png" alt="保存secret.zip文件.png"></p><p>解压得到的<code>secret.zip</code>，得到<code>flag</code>文件和<code>.flag.swp</code>文件。<code>swp</code>文件是Linux的交换文件。将<code>.flag.swp</code>文件拖入十六进制查看器中可见flag</p><p><img src="https://s2.loli.net/2023/11/04/qhega2IJzKoPGxO.png" alt="swp文件内容.png"></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
+      
+    
+    
+    
+    
+    <category term="CTF" scheme="https://waltyoung.github.io/tags/CTF/"/>
+    
+    <category term="Misc" scheme="https://waltyoung.github.io/tags/Misc/"/>
+    
+    <category term="Linux" scheme="https://waltyoung.github.io/tags/Linux/"/>
+    
+    <category term="Wireshark" scheme="https://waltyoung.github.io/tags/Wireshark/"/>
+    
+  </entry>
   
   <entry>
     <title>PAT-Longest Symmetric String</title>
@@ -511,30 +539,6 @@
     <category term="Forensics" scheme="https://waltyoung.github.io/tags/Forensics/"/>
     
     <category term="Windows" scheme="https://waltyoung.github.io/tags/Windows/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>记一次一句话木马的探索</title>
-    <link href="https://waltyoung.github.io/2023/09/13/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E7%9A%84%E6%8E%A2%E7%B4%A2/"/>
-    <id>https://waltyoung.github.io/2023/09/13/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E7%9A%84%E6%8E%A2%E7%B4%A2/</id>
-    <published>2023-09-13T07:28:35.000Z</published>
-    <updated>2023-09-14T03:46:32.492Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="记一次一句话木马的探索"><a href="#记一次一句话木马的探索" class="headerlink" title="记一次一句话木马的探索"></a>记一次一句话木马的探索</h1><p>笔者在做CTF题时，发现了未曾见过的一句话木马<code>┼攠數畣整爠煥敵瑳∨≡┩愾</code>，就此展开探索</p><p>由网络可知<strong>这是ANSI 转 Unicode编码的 access 木马</strong></p><p>ANSI是一种字符代码，对于不同语言来说，ANSI对应的编码是不同的</p><ul><li>在中文系统中，使用ANSI保存，编码集是 GBK（MS936）</li><li>在日文系统中，使用ANSI保存，编码集是 Shift_JIS（MS932）</li></ul><p>在CMD中可以使用<code>chcp</code>命令查看Windows当前的页面编码集，编码集根据时区选择。页面编码936在Win95及之前表示GB2312，在Win95之后表示GBK，需要注明的是GBK 包括了 GB2312 的所有内容，同时又增加了近20000个新的汉字（包括繁体字）和符号。参考链接：<a href="https://blog.csdn.net/sxzlc/article/details/106203495" title="文件编码 ANSI、GBK、GB2312、MS936、MS932、SJIS、Windows-31 、EUC-JP 、EBCDIC 等等之间的区别与联系">https://blog.csdn.net/sxzlc/article/details/106203495</a>这里提供查询页面编码的网址<a href="https://blog.csdn.net/sxzlc/article/details/106270405" title="windows中，页面编码集一览 （chcp code）">https://blog.csdn.net/sxzlc/article/details/106270405</a></p><blockquote><p>UTF-16是一种编码方式，用于将Unicode字符转换为二进制数据。在UTF-16中，每个字符通常占用2个字节。</p><p>由于计算机存储数据的方式有两种：Big Endian（大端存储，高位低地址、低位高地址）和<strong>Little Endian（小端存储，低位低地址、高位高地址）</strong>，因此在使用UTF-16编码时，需要通过在文件开头添加一个特殊字符来指示文件是使用Big Endian还是Little Endian的方式存储数据。这个特殊字符就是BOM（Byte Order Mark），它是一个Unicode字符，其编码为U+FEFF。</p><p><strong>在 Windows 平台下，默认的Unicode编码为UTF-16 Little Endian</strong>，所以在UTF-16编码的文件开头会添加一个BOM字符（U+FEFF），以表示文件是以Little Endian方式存储数据。这个BOM字符在文件中的作用是告诉解码器如何正确地解析文件中的字符数据。</p></blockquote><p>通过将木马复制粘贴到记事本，另存为5种不同编码方式的文件(ANSI、UTF-8、带有BOM的UTF-8、UTF-16 Big Endian、UTF-16 Little Endian)，再使用十六进制查看</p><p><img src="https://s2.loli.net/2023/09/13/b4VIw8pOzBrnJWg.png" alt="UTF-16 Little Endian编码.png"></p><p>由图可见，在UTF-16 Little Endian编码下可见正常的文字——<code>&lt;% execute request(&quot;a&quot;)%&gt;</code></p><p>此处收集常见的一句话木马：</p><ol><li><a href="https://blog.csdn.net/forest_fire/article/details/50944437" title="收集一些常见的webshell后门的特征码">https://blog.csdn.net/forest_fire&#x2F;article&#x2F;details&#x2F;50944437</a></li><li><a href="https://www.cnblogs.com/goodgad/p/13463866.html" title="常见的一句话木马">https://www.cnblogs.com/goodgad/p/13463866.html</a></li></ol>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
-      
-    
-    
-    
-    
-    <category term="记一次XXX" scheme="https://waltyoung.github.io/tags/%E8%AE%B0%E4%B8%80%E6%AC%A1XXX/"/>
-    
-    <category term="CTF" scheme="https://waltyoung.github.io/tags/CTF/"/>
     
   </entry>
   

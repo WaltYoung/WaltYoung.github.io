@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>CTF-Misc-swp</title>
+      <link href="/2023/11/04/CTF-Misc-swp/"/>
+      <url>/2023/11/04/CTF-Misc-swp/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="CTF-Misc-swp"><a href="#CTF-Misc-swp" class="headerlink" title="CTF-Misc-swp"></a>CTF-Misc-swp</h1><p>原题链接：<a href="https://buuoj.cn/challenges#[ACTF%E6%96%B0%E7%94%9F%E8%B5%9B2020]swp" title="[ACTF新生赛2020]swp">https://buuoj.cn/challenges#[ACTF%E6%96%B0%E7%94%9F%E8%B5%9B2020]swp</a></p><p>解压压缩包，得到<code>wget.pcapng</code></p><blockquote><p><strong>pcapng文件</strong><br>PCAPNG全名Packet CAPture Next Generation，是一种现阶段广泛使用的网络数据包保存格式，其前身为PCAP。二者都可以用<code>Wireshark</code>打开。这里不对<code>pcapng</code>和<code>pcap</code>的具体文件格式展开详细了解、介绍。之后如果需要深入，会再作补充。</p></blockquote><p>通过文件名，我们可以猜测这是关于<code>wget</code>的网络数据包文件。<code>wget</code>支持HTTP、HTTPS以及FTP协议。所以选择导出文件。具体操作如下图所示</p><p><img src="https://s2.loli.net/2023/11/04/MP7VHZnLojKwX3A.png" alt="导出HTTP数据包.png"></p><p>在弹出的页面中可以观察到可疑文件<code>secret.zip</code>，选中并点击保存</p><p><img src="https://s2.loli.net/2023/11/04/knx35vIcJUNWHBC.png" alt="保存secret.zip文件.png"></p><p>解压得到的<code>secret.zip</code>，得到<code>flag</code>文件和<code>.flag.swp</code>文件。<code>swp</code>文件是Linux的交换文件。将<code>.flag.swp</code>文件拖入十六进制查看器中可见flag</p><p><img src="https://s2.loli.net/2023/11/04/qhega2IJzKoPGxO.png" alt="swp文件内容.png"></p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> CTF </tag>
+            
+            <tag> Misc </tag>
+            
+            <tag> Linux </tag>
+            
+            <tag> Wireshark </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>PAT-Longest Symmetric String</title>
       <link href="/2023/11/01/PAT-Longest-Symmetric-String/"/>
       <url>/2023/11/01/PAT-Longest-Symmetric-String/</url>
