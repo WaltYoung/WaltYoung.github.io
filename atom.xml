@@ -6,7 +6,7 @@
   <link href="https://waltyoung.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltyoung.github.io/"/>
-  <updated>2023-11-04T04:00:57.292Z</updated>
+  <updated>2023-11-05T13:43:40.711Z</updated>
   <id>https://waltyoung.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Python反编译之pyc文件反编译</title>
+    <link href="https://waltyoung.github.io/2023/11/05/Python%E5%8F%8D%E7%BC%96%E8%AF%91%E4%B9%8Bpyc%E6%96%87%E4%BB%B6%E5%8F%8D%E7%BC%96%E8%AF%91/"/>
+    <id>https://waltyoung.github.io/2023/11/05/Python%E5%8F%8D%E7%BC%96%E8%AF%91%E4%B9%8Bpyc%E6%96%87%E4%BB%B6%E5%8F%8D%E7%BC%96%E8%AF%91/</id>
+    <published>2023-11-05T13:42:12.000Z</published>
+    <updated>2023-11-05T13:43:40.711Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="Python反编译之pyc文件反编译"><a href="#Python反编译之pyc文件反编译" class="headerlink" title="Python反编译之pyc文件反编译"></a>Python反编译之pyc文件反编译</h1><p>笔者在做CTF逆向题时遇到了<code>pyc</code>文件，IDA无法处理，遂有了此文</p><h2 id="pyc文件简介"><a href="#pyc文件简介" class="headerlink" title="pyc文件简介"></a>pyc文件简介</h2><p>python文件在被import运行的时候会在同目录下编译一个pyc的文件（为了下次快速加载），这个文件可以和py文件一样使用，但无法阅读和修改。<strong>pyc是一种二进制文件</strong>，是由py文件经过编译后，生成的<strong>可执行的字节码文件</strong>。pyc文件是可以跨平台部署的，类似<strong>Java的<code>.class</code>文件</strong>。</p><h2 id="编译生成pyc文件"><a href="#编译生成pyc文件" class="headerlink" title="编译生成pyc文件"></a>编译生成pyc文件</h2><h3 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h3><p>编译时使用<code>-m py_compile</code>选项</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m py_compile test.py</span><br></pre></td></tr></table></figure><p>使用<code>-O</code>选项，可以将<code>.pyc</code>文件优化为<code>.pyo</code>文件<em>（体积更小）</em></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -O -m py_compile test.py</span><br></pre></td></tr></table></figure><h3 id="方法一-1"><a href="#方法一-1" class="headerlink" title="方法一"></a>方法一</h3><p>使用代码编译生成</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> py_compile</span><br><span class="line">py_compile.<span class="built_in">compile</span>(<span class="string">r&#x27;test.py&#x27;</span>) </span><br></pre></td></tr></table></figure><p>参考链接：<a href="https://blog.csdn.net/qq_33957603/article/details/126929263" title="逆向工程：Python反编译工具的一点介绍（如何还原pyc文件）">https://blog.csdn.net/qq_33957603&#x2F;article&#x2F;details&#x2F;126929263</a></p><h2 id="pyc文件结构"><a href="#pyc文件结构" class="headerlink" title="pyc文件结构"></a>pyc文件结构</h2><p>注：不同的版本的<code>Magic Number</code>都在 Python&#x2F;import.c 内定义</p><ul><li>Python3.7及以上版本中，头部包含4字节的<code>Magic Number</code>、4字节的空位、4字节的时间戳以及4字节的文件大小信息，后者对文件反编译没有影响，全部填充0即可</li><li>Python3.3 至 Python3.7版本中，头部包含4字节的<code>Magic Number</code>、4字节的时间戳以及4字节的文件大小信息</li><li>Python3.3 以下的版本中，头部包含4字节的<code>Magic Number</code>、4字节的时间戳</li></ul><p>其后是序列化的<code>PyCodeObject</code>(此结构在<code>Include/code.h</code>内定义)，序列化方法在 <code>Python/marshal.c</code>内定义</p><p>参考链接：<a href="https://kdr2.com/tech/python/pyc-format.html" title="PYC文件格式分析">https://kdr2.com/tech/python/pyc-format.html</a></p><p>以本地的Python版本为例，下图是4字节的<code>Magic Number</code>和4字节的空位</p><p><img src="https://s2.loli.net/2023/11/05/HeEofzFrwnGS1KY.png" alt="PYC文件说明_1.png"></p><p>下图是4字节的时间戳和4字节的文件大小信息</p><p><img src="https://s2.loli.net/2023/11/05/uOReJbP52n1vEdM.png" alt="PYC文件说明_2.png"></p><h2 id="逆向方法"><a href="#逆向方法" class="headerlink" title="逆向方法"></a>逆向方法</h2><h3 id="方法一-2"><a href="#方法一-2" class="headerlink" title="方法一"></a>方法一</h3><p>工具：<code>pycdc</code></p><p><strong>pycdc 用于 Python 3.9及更高版本</strong></p><p>安装方法：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install git</span><br><span class="line">sudo apt install cmake</span><br><span class="line">git clone https://github.com/zrax/pycdc.git</span><br><span class="line"></span><br><span class="line">cd pycdc</span><br><span class="line">cmake .</span><br><span class="line">make #编译pycdc工具</span><br></pre></td></tr></table></figure><p>Windows下的参考链接：<a href="https://blog.csdn.net/qq_63585949/article/details/127080253" title="Python 反编译：pycdc工具的使用">https://blog.csdn.net/qq_63585949&#x2F;article&#x2F;details&#x2F;127080253</a></p><p>命令：**(需要把<code>pycdc.exe</code>和<code>.pyc</code>文件置于同一目录)**</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./pycdc.exe 文件名.pyc &gt; 文件名.py</span><br></pre></td></tr></table></figure><h3 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h3><p>工具：<code>uncompyle6</code></p><p><strong>uncompyle6 现仅适用于 Python 2.4 到 3.8 版本</strong></p><p>安装方法：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install uncompyle6</span><br></pre></td></tr></table></figure><p>命令：<em>（选项和参数不可调换位置）</em></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uncompyle6 -o 文件名.py 文件名.pyc</span><br></pre></td></tr></table></figure><h3 id="方法三"><a href="#方法三" class="headerlink" title="方法三"></a>方法三</h3><p>pyc文件反编译网站<a href="https://tool.lu/pyc/">https://tool.lu/pyc/</a>，适合接入互联网的情况</p><h2 id="实战案例"><a href="#实战案例" class="headerlink" title="实战案例"></a>实战案例</h2><p>工具：<code>pycdc</code></p><p>以第六届浙江省大学生网络与信息安全竞赛预赛的<code>pyccc</code>题为例</p><p>命令：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./pycdc.exe baby.pyc</span><br></pre></td></tr></table></figure><p>执行结果如图所示</p><p><img src="https://s2.loli.net/2023/11/05/K5okTMDaOJFdU3Y.png" alt="pyccc.png"></p><p>此Python代码较为简单，不逐行解释，直接给出 write up</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a = [<span class="number">102</span>,<span class="number">109</span>,<span class="number">99</span>,<span class="number">100</span>,<span class="number">127</span>,<span class="number">52</span>,<span class="number">114</span>,<span class="number">88</span>,<span class="number">97</span>,<span class="number">122</span>,<span class="number">85</span>,<span class="number">125</span>,<span class="number">105</span>,<span class="number">127</span>,<span class="number">119</span>,<span class="number">80</span>,<span class="number">120</span>,<span class="number">112</span>,<span class="number">98</span>,<span class="number">39</span>,<span class="number">109</span>,<span class="number">52</span>,<span class="number">55</span>,<span class="number">106</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(a)):</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">chr</span>(a[i] ^ i),end=<span class="string">&quot;&quot;</span>)</span><br></pre></td></tr></table></figure><p>此Python的write up代码较为简单，不逐行解释。仅在此备注，便于记忆：</p><ul><li><code>chr()</code>函数是<code>character</code>的缩写</li><li><code>ord()</code>函数是<code>ordinal</code>的缩写</li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
+      
+    
+    
+    
+    
+    <category term="CTF" scheme="https://waltyoung.github.io/tags/CTF/"/>
+    
+    <category term="Reverse" scheme="https://waltyoung.github.io/tags/Reverse/"/>
+    
+    <category term="Python" scheme="https://waltyoung.github.io/tags/Python/"/>
+    
+  </entry>
   
   <entry>
     <title>CTF-Misc-swp</title>
@@ -507,38 +533,6 @@
     <category term="CTF" scheme="https://waltyoung.github.io/tags/CTF/"/>
     
     <category term="Misc" scheme="https://waltyoung.github.io/tags/Misc/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>NTFS交换数据流隐藏文件</title>
-    <link href="https://waltyoung.github.io/2023/09/14/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E9%9A%90%E8%97%8F%E6%96%87%E4%BB%B6/"/>
-    <id>https://waltyoung.github.io/2023/09/14/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E9%9A%90%E8%97%8F%E6%96%87%E4%BB%B6/</id>
-    <published>2023-09-14T03:47:47.000Z</published>
-    <updated>2023-09-22T07:54:16.404Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="NTFS交换数据流隐藏文件"><a href="#NTFS交换数据流隐藏文件" class="headerlink" title="NTFS交换数据流隐藏文件"></a>NTFS交换数据流隐藏文件</h1><blockquote><p>NTFS交换数据流（Alternate Data Streams，简称ADS）是NTFS磁盘格式的一个特性，在NTFS文件系统下，每个文件都可以存在多个数据流，就是说除了主文件流之外还可以有许多非主文件流寄宿在主文件流中，而我们无法看到非主文件的数据流。它使用资源派生来维持与文件相关的信息。<strong>在Windows下，文件名带有<code>:</code>的文件被视为NTFS流的非主文流，类似 Linux 的  swp 文件</strong>。</p></blockquote><p>将 123 写入到 NTFS_demo.txt:1.txt 文件中</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 123 &gt; NTFS_demo.txt:1.txt</span><br></pre></td></tr></table></figure><p>此时在文件中可见产生了一个 NTFS_demo.txt 文件，打开 NTFS_demo.txt 文件，可见是空白的</p><p><img src="https://s2.loli.net/2023/09/14/rqV57Fh1QXbJiUc.png" alt="demo.txt.png"></p><p>使用 notepad 命令打开 NTFS_demo.txt:1.txt 文件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">notepad NTFS_demo.txt:1.txt</span><br></pre></td></tr></table></figure><p>notepad 命令将唤起记事本，可见输入内容“123”</p><p><img src="https://s2.loli.net/2023/09/14/1s9DCnw4vtNpr6U.png" alt="1.txt.png"></p><p>参考链接：<a href="https://www.qingsword.com/qing/812.html" title="利用NTFS交换数据流隐藏文件">https://www.qingsword.com/qing/812.html</a></p><p>如何检测和清除NTFS-ADS隐藏的文件：</p><ol><li>对于压缩包类文件，可以使用压缩软件打开，在压缩软件中查看所需内容；也可以在Linux中直接解压该文件</li><li>合理利用工具，NTFS交换数据流检测工具的下载地址：<a href="https://waltyoung-music-1317864421.cos.ap-shanghai.myqcloud.com/tools/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E6%A3%80%E6%B5%8B%E5%B7%A5%E5%85%B7.rar">https://waltyoung-music-1317864421.cos.ap-shanghai.myqcloud.com/tools/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E6%A3%80%E6%B5%8B%E5%B7%A5%E5%85%B7.rar</a></li></ol><hr><p>需要注意的是，type命令执行 NTFS_demo.txt 文件和 NTFS_demo.txt:1.txt 文件的结果是不同的</p><p><code>type NTFS_demo.txt</code>命令执行结果为空（因为NTFS_demo.txt文件中没有内容）</p><p><code>type NTFS_demo.txt:1.txt</code>命令执行结果如下所示</p><p><img src="https://s2.loli.net/2023/09/14/A9CjBwLT7Okgq6H.png" alt="type命令执行不同文件.png"></p><p>echo 命令和 type 命令存在显著差异</p><p>echo 命令是将字符写入到文件中</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 456 &gt;&gt; NTFS_demo.txt:1.txt</span><br></pre></td></tr></table></figure><p>type 命令是将已存在的文件用交换数据流的方式写到另外一个文件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">type</span> 456.txt &gt;&gt; NTFS_demo.txt:1.txt</span><br></pre></td></tr></table></figure><p>注：“&gt;&gt;”是追加重定向符号，与”&gt;”类似，但是会将命令的输出追加到文件的末尾，而不是覆盖文件内容。</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
-      
-    
-    
-    
-    
-    <category term="CTF" scheme="https://waltyoung.github.io/tags/CTF/"/>
-    
-    <category term="Misc" scheme="https://waltyoung.github.io/tags/Misc/"/>
-    
-    <category term="隐写" scheme="https://waltyoung.github.io/tags/%E9%9A%90%E5%86%99/"/>
-    
-    <category term="OS" scheme="https://waltyoung.github.io/tags/OS/"/>
-    
-    <category term="Forensics" scheme="https://waltyoung.github.io/tags/Forensics/"/>
-    
-    <category term="Windows" scheme="https://waltyoung.github.io/tags/Windows/"/>
     
   </entry>
   
