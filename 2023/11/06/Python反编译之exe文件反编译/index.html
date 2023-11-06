@@ -1,0 +1,225 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Python反编译之exe文件反编译 | WaltYoung</title><meta name="author" content="WaltYoung"><meta name="copyright" content="WaltYoung"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Python反编译之exe文件反编译在学习反编译之前，先学习编译 编译pyinstaller是一个第三方库，支持 Python 2.7 和 Python 3.3+。可以在 Windows、Mac OS X和Linux上使用，但不跨平台，即编译为.exe文件，需要在 Windows系统上进行；编译为mac app，需要在Mac OS上进行。 安装方法： 1pip install pyinstalle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python反编译之exe文件反编译">
+<meta property="og:url" content="https://waltyoung.github.io/2023/11/06/Python%E5%8F%8D%E7%BC%96%E8%AF%91%E4%B9%8Bexe%E6%96%87%E4%BB%B6%E5%8F%8D%E7%BC%96%E8%AF%91/index.html">
+<meta property="og:site_name" content="WaltYoung">
+<meta property="og:description" content="Python反编译之exe文件反编译在学习反编译之前，先学习编译 编译pyinstaller是一个第三方库，支持 Python 2.7 和 Python 3.3+。可以在 Windows、Mac OS X和Linux上使用，但不跨平台，即编译为.exe文件，需要在 Windows系统上进行；编译为mac app，需要在Mac OS上进行。 安装方法： 1pip install pyinstalle">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp">
+<meta property="article:published_time" content="2023-11-06T00:27:27.000Z">
+<meta property="article:modified_time" content="2023-11-06T00:28:46.615Z">
+<meta property="article:author" content="WaltYoung">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Reverse">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp"><link rel="shortcut icon" href="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp"><link rel="canonical" href="https://waltyoung.github.io/2023/11/06/Python%E5%8F%8D%E7%BC%96%E8%AF%91%E4%B9%8Bexe%E6%96%87%E4%BB%B6%E5%8F%8D%E7%BC%96%E8%AF%91/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Python反编译之exe文件反编译',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-11-06 08:28:46'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="WaltYoung" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">38</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s2.loli.net/2023/07/25/5fu7CQnLBJ6ENIT.png')"><nav id="nav"><span id="blog-info"><a href="/" title="WaltYoung"><span class="site-name">WaltYoung</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Python反编译之exe文件反编译</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-11-06T00:27:27.000Z" title="发表于 2023-11-06 08:27:27">2023-11-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-11-06T00:28:46.615Z" title="更新于 2023-11-06 08:28:46">2023-11-06</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Python反编译之exe文件反编译"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Python反编译之exe文件反编译"><a href="#Python反编译之exe文件反编译" class="headerlink" title="Python反编译之exe文件反编译"></a>Python反编译之exe文件反编译</h1><p>在学习反编译之前，先学习编译</p>
+<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p><code>pyinstaller</code>是一个第三方库，支持 Python 2.7 和 Python 3.3+。可以在 Windows、Mac OS X和Linux上使用，但不跨平台，即编译为.exe文件，需要在 Windows系统上进行；编译为mac app，需要在Mac OS上进行。</p>
+<p>安装方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install pyinstaller</span><br></pre></td></tr></table></figure>
+
+<p>编译产生单个的可执行文件，在生成的<code>dist</code>文件夹中可以找到<code>.exe</code>文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyinstaller -F -w 文件名.py</span><br></pre></td></tr></table></figure>
+
+<p>参数解释：</p>
+<ul>
+<li>-F 产生单个的可执行文件</li>
+<li>-w 指定程序运行时不显示命令行窗口（仅对 Windows 有效)</li>
+</ul>
+<p>其他参数或选项在使用到时再作补充</p>
+<p><strong>注</strong>：（可能存在的问题）</p>
+<p>1、可执行文件过大<em>（比如输出<code>helloworld</code>的程序占用2G）</em></p>
+<p>原因：利用 PyInstaller 对指定的代码进行解释时，会保存所有的依赖项，包括 import引用的库和Python解析器。</p>
+<p>解决方法：在引用包时，尽量使用<code>from ... import ...</code>语句，而不是直接使用<code>import</code>导入整个库</p>
+<p>2、双击可执行文件一闪而过</p>
+<p>原因：程序设计者没有编写GUI</p>
+<p>解决方法：如下有3种方法</p>
+<ol>
+<li>在程序末尾使用<code>input()</code>函数捕捉输入，主动输入以结束程序</li>
+<li>在命令行下运行<code>.exe</code>文件</li>
+<li>导入<code>os</code>模块，在程序末尾添加<code>os.system(&quot;pause&quot;)</code>来防止控制台关闭</li>
+</ol>
+<h2 id="反编译"><a href="#反编译" class="headerlink" title="反编译"></a>反编译</h2><p>工具：<code>uncompyle6</code></p>
+<p>安装方法：直接下载<a target="_blank" rel="noopener" href="https://sourceforge.net/projects/pyinstallerextractor/" title="pyinstxtractor.py 工具的下载地址">https://sourceforge.net/projects/pyinstallerextractor/</a></p>
+<p>命令：**(需要把<code>pyinstxtractor.py</code>和<code>.exe</code>文件置于同一目录)**</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python pyinstxtractor.py 文件名.exe</span><br></pre></td></tr></table></figure>
+
+<p>命令执行后可以发现一个名为<code>文件名.exe_extracted</code>的文件夹，在其中可以发现与<code>.exe</code>文件同名的<code>pyc</code>文件。</p>
+<p>经过该方法生成的<code>pyc</code>文件是没有<code>Magic Number</code>的，需要根据本地的Python版本自行补全</p>
+<p>因为笔者本地的Python版本是<code>Python 3.9.13</code>，故只有<code>Python 1.5</code>至<code>Python 3.9.13</code>的<code>Magic Number</code>。在<code>C:\Users\86159\AppData\Local\Programs\Python\Python39\Lib\importlib\_bootstrap_external.py</code>该路径下可以得到本地的Python版本已有<code>Magic Number</code>。读者需要自行替换为Python解释器所在的路径。</p>
+<p><code>Magic Number</code>表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line">Known values:</span><br><span class="line"> Python 1.5:   20121</span><br><span class="line"> Python 1.5.1: 20121</span><br><span class="line">    Python 1.5.2: 20121</span><br><span class="line">    Python 1.6:   50428</span><br><span class="line">    Python 2.0:   50823</span><br><span class="line">    Python 2.0.1: 50823</span><br><span class="line">    Python 2.1:   60202</span><br><span class="line">    Python 2.1.1: 60202</span><br><span class="line">    Python 2.1.2: 60202</span><br><span class="line">    Python 2.2:   60717</span><br><span class="line">    Python 2.3a0: 62011</span><br><span class="line">    Python 2.3a0: 62021</span><br><span class="line">    Python 2.3a0: 62011 (!)</span><br><span class="line">    Python 2.4a0: 62041</span><br><span class="line">    Python 2.4a3: 62051</span><br><span class="line">    Python 2.4b1: 62061</span><br><span class="line">    Python 2.5a0: 62071</span><br><span class="line">    Python 2.5a0: 62081 (ast-branch)</span><br><span class="line">    Python 2.5a0: 62091 (with)</span><br><span class="line">    Python 2.5a0: 62092 (changed WITH_CLEANUP opcode)</span><br><span class="line">    Python 2.5b3: 62101 (fix wrong code: for x, in ...)</span><br><span class="line">    Python 2.5b3: 62111 (fix wrong code: x += yield)</span><br><span class="line">    Python 2.5c1: 62121 (fix wrong lnotab with for loops and</span><br><span class="line">                         storing constants that should have been removed)</span><br><span class="line">    Python 2.5c2: 62131 (fix wrong code: for x, in ... in listcomp/genexp)</span><br><span class="line">    Python 2.6a0: 62151 (peephole optimizations and STORE_MAP opcode)</span><br><span class="line">    Python 2.6a1: 62161 (WITH_CLEANUP optimization)</span><br><span class="line">    Python 2.7a0: 62171 (optimize list comprehensions/change LIST_APPEND)</span><br><span class="line">    Python 2.7a0: 62181 (optimize conditional branches:</span><br><span class="line">                         introduce POP_JUMP_IF_FALSE and POP_JUMP_IF_TRUE)</span><br><span class="line">    Python 2.7a0  62191 (introduce SETUP_WITH)</span><br><span class="line">    Python 2.7a0  62201 (introduce BUILD_SET)</span><br><span class="line">    Python 2.7a0  62211 (introduce MAP_ADD and SET_ADD)</span><br><span class="line">    Python 3000:   3000</span><br><span class="line">                   3010 (removed UNARY_CONVERT)</span><br><span class="line">                   3020 (added BUILD_SET)</span><br><span class="line">                   3030 (added keyword-only parameters)</span><br><span class="line">                   3040 (added signature annotations)</span><br><span class="line">                   3050 (print becomes a function)</span><br><span class="line">                   3060 (PEP 3115 metaclass syntax)</span><br><span class="line">                   3061 (string literals become unicode)</span><br><span class="line">                   3071 (PEP 3109 raise changes)</span><br><span class="line">                   3081 (PEP 3137 make __file__ and __name__ unicode)</span><br><span class="line">                   3091 (kill str8 interning)</span><br><span class="line">                   3101 (merge from 2.6a0, see 62151)</span><br><span class="line">                   3103 (__file__ points to source file)</span><br><span class="line">    Python 3.0a4: 3111 (WITH_CLEANUP optimization).</span><br><span class="line">    Python 3.0b1: 3131 (lexical exception stacking, including POP_EXCEPT</span><br><span class="line">                          3021)</span><br><span class="line">    Python 3.1a1: 3141 (optimize list, set and dict comprehensions:</span><br><span class="line">                        change LIST_APPEND and SET_ADD, add MAP_ADD #2183)</span><br><span class="line">    Python 3.1a1: 3151 (optimize conditional branches:</span><br><span class="line">                        introduce POP_JUMP_IF_FALSE and POP_JUMP_IF_TRUE</span><br><span class="line">                          4715)</span><br><span class="line">    Python 3.2a1: 3160 (add SETUP_WITH #6101)</span><br><span class="line">                  tag: cpython-32</span><br><span class="line">    Python 3.2a2: 3170 (add DUP_TOP_TWO, remove DUP_TOPX and ROT_FOUR #9225)</span><br><span class="line">                  tag: cpython-32</span><br><span class="line">    Python 3.2a3  3180 (add DELETE_DEREF #4617)</span><br><span class="line">    Python 3.3a1  3190 (__class__ super closure changed)</span><br><span class="line">    Python 3.3a1  3200 (PEP 3155 __qualname__ added #13448)</span><br><span class="line">    Python 3.3a1  3210 (added size modulo 2**32 to the pyc header #13645)</span><br><span class="line">    Python 3.3a2  3220 (changed PEP 380 implementation #14230)</span><br><span class="line">    Python 3.3a4  3230 (revert changes to implicit __class__ closure #14857)</span><br><span class="line">    Python 3.4a1  3250 (evaluate positional default arguments before</span><br><span class="line">                       keyword-only defaults #16967)</span><br><span class="line">    Python 3.4a1  3260 (add LOAD_CLASSDEREF; allow locals of class to override</span><br><span class="line">                       free vars #17853)</span><br><span class="line">    Python 3.4a1  3270 (various tweaks to the __class__ closure #12370)</span><br><span class="line">    Python 3.4a1  3280 (remove implicit class argument)</span><br><span class="line">    Python 3.4a4  3290 (changes to __qualname__ computation #19301)</span><br><span class="line">    Python 3.4a4  3300 (more changes to __qualname__ computation #19301)</span><br><span class="line">    Python 3.4rc2 3310 (alter __qualname__ computation #20625)</span><br><span class="line">    Python 3.5a1  3320 (PEP 465: Matrix multiplication operator #21176)</span><br><span class="line">    Python 3.5b1  3330 (PEP 448: Additional Unpacking Generalizations #2292)</span><br><span class="line">    Python 3.5b2  3340 (fix dictionary display evaluation order #11205)</span><br><span class="line">    Python 3.5b3  3350 (add GET_YIELD_FROM_ITER opcode #24400)</span><br><span class="line">    Python 3.5.2  3351 (fix BUILD_MAP_UNPACK_WITH_CALL opcode #27286)</span><br><span class="line">    Python 3.6a0  3360 (add FORMAT_VALUE opcode #25483)</span><br><span class="line">    Python 3.6a1  3361 (lineno delta of code.co_lnotab becomes signed #26107)</span><br><span class="line">    Python 3.6a2  3370 (16 bit wordcode #26647)</span><br><span class="line">    Python 3.6a2  3371 (add BUILD_CONST_KEY_MAP opcode #27140)</span><br><span class="line">    Python 3.6a2  3372 (MAKE_FUNCTION simplification, remove MAKE_CLOSURE</span><br><span class="line">                        #27095)</span><br><span class="line">    Python 3.6b1  3373 (add BUILD_STRING opcode #27078)</span><br><span class="line">    Python 3.6b1  3375 (add SETUP_ANNOTATIONS and STORE_ANNOTATION opcodes</span><br><span class="line">                        #27985)</span><br><span class="line">    Python 3.6b1  3376 (simplify CALL_FUNCTIONs &amp; BUILD_MAP_UNPACK_WITH_CALL</span><br><span class="line">                          27213)</span><br><span class="line">    Python 3.6b1  3377 (set __class__ cell from type.__new__ #23722)</span><br><span class="line">    Python 3.6b2  3378 (add BUILD_TUPLE_UNPACK_WITH_CALL #28257)</span><br><span class="line">    Python 3.6rc1 3379 (more thorough __class__ validation #23722)</span><br><span class="line">    Python 3.7a1  3390 (add LOAD_METHOD and CALL_METHOD opcodes #26110)</span><br><span class="line">    Python 3.7a2  3391 (update GET_AITER #31709)</span><br><span class="line">    Python 3.7a4  3392 (PEP 552: Deterministic pycs #31650)</span><br><span class="line">    Python 3.7b1  3393 (remove STORE_ANNOTATION opcode #32550)</span><br><span class="line">    Python 3.7b5  3394 (restored docstring as the first stmt in the body;</span><br><span class="line">                        this might affected the first line number #32911)</span><br><span class="line">    Python 3.8a1  3400 (move frame block handling to compiler #17611)</span><br><span class="line">    Python 3.8a1  3401 (add END_ASYNC_FOR #33041)</span><br><span class="line">    Python 3.8a1  3410 (PEP570 Python Positional-Only Parameters #36540)</span><br><span class="line">    Python 3.8b2  3411 (Reverse evaluation order of key: value in dict</span><br><span class="line">                        comprehensions #35224)</span><br><span class="line">    Python 3.8b2  3412 (Swap the position of positional args and positional</span><br><span class="line">                        only args in ast.arguments #37593)</span><br><span class="line">    Python 3.8b4  3413 (Fix &quot;break&quot; and &quot;continue&quot; in &quot;finally&quot; #37830)</span><br><span class="line">    Python 3.9a0  3420 (add LOAD_ASSERTION_ERROR #34880)</span><br><span class="line">    Python 3.9a0  3421 (simplified bytecode for with blocks #32949)</span><br><span class="line">    Python 3.9a0  3422 (remove BEGIN_FINALLY, END_FINALLY, CALL_FINALLY, POP_FINALLY bytecodes #33387)</span><br><span class="line">    Python 3.9a2  3423 (add IS_OP, CONTAINS_OP and JUMP_IF_NOT_EXC_MATCH bytecodes #39156)</span><br><span class="line">    Python 3.9a2  3424 (simplify bytecodes for *value unpacking)</span><br><span class="line">    Python 3.9a2  3425 (simplify bytecodes for **value unpacking)</span><br></pre></td></tr></table></figure>
+
+<p><strong>pyc文件结构</strong></p>
+<p>注：不同的版本的<code>Magic Number</code>都在 Python&#x2F;import.c 内定义</p>
+<ul>
+<li>Python3.7及以上版本中，头部包含4字节的<code>Magic Number</code>、4字节的空位、4字节的时间戳以及4字节的文件大小信息</li>
+<li>Python3.3 至 Python3.7版本中，头部包含4字节的<code>Magic Number</code>、4字节的时间戳以及4字节的文件大小信息</li>
+<li>Python3.3 以下的版本中，头部包含4字节的<code>Magic Number</code>、4字节的时间戳</li>
+</ul>
+<p>其后是序列化的<code>PyCodeObject</code>(此结构在<code>Include/code.h</code>内定义)，序列化方法在 <code>Python/marshal.c</code>内定义</p>
+<p>参考链接：<a target="_blank" rel="noopener" href="https://kdr2.com/tech/python/pyc-format.html" title="PYC文件格式分析">https://kdr2.com/tech/python/pyc-format.html</a></p>
+<p>以本地的Python版本为例，下图是4字节的<code>Magic Number</code>和4字节的空位</p>
+<p><img src="https://s2.loli.net/2023/11/05/HeEofzFrwnGS1KY.png" alt="PYC文件说明_1.png"></p>
+<p>下图是4字节的时间戳和4字节的文件大小信息</p>
+<p><img src="https://s2.loli.net/2023/11/05/uOReJbP52n1vEdM.png" alt="PYC文件说明_2.png"></p>
+<p><strong>在<code>Magic Number</code>、空位、时间戳以及文件大小信息中，后三者对文件反编译没有影响，全部填充0即可。</strong>而因为小端序和 Python 版本的原因，<code>Magic Number</code>时常只需要修改第一个字节即可。如某Python 3.8版本的<code>Magic Number</code>是<code>0A0D0D61</code>，笔者本地的Python 3.9版本的<code>Magic Number</code>是<code>0A0D0D55</code>。</p>
+<p>接下来就是反编译Python的字节码文件（pyc文件）</p>
+<p>关于<strong>pyc文件反编译</strong>更多的信息，请阅读笔者的另一篇笔记<a href="https://waltyoung.github.io/2023/11/05/Python%E5%8F%8D%E7%BC%96%E8%AF%91%E4%B9%8Bpyc%E6%96%87%E4%BB%B6%E5%8F%8D%E7%BC%96%E8%AF%91/" title="Python反编译之pyc文件反编译">https://waltyoung.github.io/2023/11/05/Python%E5%8F%8D%E7%BC%96%E8%AF%91%E4%B9%8Bpyc%E6%96%87%E4%BB%B6%E5%8F%8D%E7%BC%96%E8%AF%91/</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://waltyoung.github.io">WaltYoung</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://waltyoung.github.io/2023/11/06/Python%E5%8F%8D%E7%BC%96%E8%AF%91%E4%B9%8Bexe%E6%96%87%E4%BB%B6%E5%8F%8D%E7%BC%96%E8%AF%91/">https://waltyoung.github.io/2023/11/06/Python%E5%8F%8D%E7%BC%96%E8%AF%91%E4%B9%8Bexe%E6%96%87%E4%BB%B6%E5%8F%8D%E7%BC%96%E8%AF%91/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://WaltYoung.github.io" target="_blank">WaltYoung</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CTF/">CTF</a><a class="post-meta__tags" href="/tags/Reverse/">Reverse</a><a class="post-meta__tags" href="/tags/Python/">Python</a></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" data-sites="wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/11/05/Python%E5%8F%8D%E7%BC%96%E8%AF%91%E4%B9%8Bpyc%E6%96%87%E4%BB%B6%E5%8F%8D%E7%BC%96%E8%AF%91/" title="Python反编译之pyc文件反编译"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Python反编译之pyc文件反编译</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/09/26/CTF-Reverse-AndroidXor/" title="CTF-Reverse-AndroidXor"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-26</div><div class="title">CTF-Reverse-AndroidXor</div></div></a></div><div><a href="/2023/11/05/Python%E5%8F%8D%E7%BC%96%E8%AF%91%E4%B9%8Bpyc%E6%96%87%E4%BB%B6%E5%8F%8D%E7%BC%96%E8%AF%91/" title="Python反编译之pyc文件反编译"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-05</div><div class="title">Python反编译之pyc文件反编译</div></div></a></div><div><a href="/2023/09/25/CTF-Reverse-Java-Tools/" title="CTF-Reverse-Java_Tools"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-25</div><div class="title">CTF-Reverse-Java_Tools</div></div></a></div><div><a href="/2023/09/28/CTF-Reverse-Sign-Up/" title="CTF-Reverse-Sign Up"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-28</div><div class="title">CTF-Reverse-Sign Up</div></div></a></div><div><a href="/2023/09/14/NTFS%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%B5%81%E9%9A%90%E8%97%8F%E6%96%87%E4%BB%B6/" title="NTFS交换数据流隐藏文件"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-14</div><div class="title">NTFS交换数据流隐藏文件</div></div></a></div><div><a href="/2023/09/13/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E7%9A%84%E6%8E%A2%E7%B4%A2/" title="记一次一句话木马的探索"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-13</div><div class="title">记一次一句话木马的探索</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">WaltYoung</div><div class="author-info__description">为世界上所有美好而战</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">38</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/WaltYoung"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/WaltYoung" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">我的小窝</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Python%E5%8F%8D%E7%BC%96%E8%AF%91%E4%B9%8Bexe%E6%96%87%E4%BB%B6%E5%8F%8D%E7%BC%96%E8%AF%91"><span class="toc-number">1.</span> <span class="toc-text">Python反编译之exe文件反编译</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91"><span class="toc-number">1.1.</span> <span class="toc-text">编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E7%BC%96%E8%AF%91"><span class="toc-number">1.2.</span> <span class="toc-text">反编译</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/11/06/Python%E5%8F%8D%E7%BC%96%E8%AF%91%E4%B9%8Bexe%E6%96%87%E4%BB%B6%E5%8F%8D%E7%BC%96%E8%AF%91/" title="Python反编译之exe文件反编译">Python反编译之exe文件反编译</a><time datetime="2023-11-06T00:27:27.000Z" title="发表于 2023-11-06 08:27:27">2023-11-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/11/05/Python%E5%8F%8D%E7%BC%96%E8%AF%91%E4%B9%8Bpyc%E6%96%87%E4%BB%B6%E5%8F%8D%E7%BC%96%E8%AF%91/" title="Python反编译之pyc文件反编译">Python反编译之pyc文件反编译</a><time datetime="2023-11-05T13:42:12.000Z" title="发表于 2023-11-05 21:42:12">2023-11-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/11/04/CTF-Misc-swp/" title="CTF-Misc-swp">CTF-Misc-swp</a><time datetime="2023-11-04T03:57:57.000Z" title="发表于 2023-11-04 11:57:57">2023-11-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/11/01/PAT-Longest-Symmetric-String/" title="PAT-Longest Symmetric String">PAT-Longest Symmetric String</a><time datetime="2023-11-01T08:13:24.000Z" title="发表于 2023-11-01 16:13:24">2023-11-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/10/31/PAT-Dating/" title="PAT-Dating">PAT-Dating</a><time datetime="2023-10-31T12:16:01.000Z" title="发表于 2023-10-31 20:16:01">2023-10-31</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent"><div id="footer-wrap"><div class="copyright">&copy;2023 By WaltYoung</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
