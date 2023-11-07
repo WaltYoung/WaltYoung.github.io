@@ -6,7 +6,7 @@
   <link href="https://waltyoung.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltyoung.github.io/"/>
-  <updated>2023-11-06T00:28:46.615Z</updated>
+  <updated>2023-11-07T12:50:40.778Z</updated>
   <id>https://waltyoung.github.io/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>文件头文件尾总结</title>
+    <link href="https://waltyoung.github.io/2023/11/07/%E6%96%87%E4%BB%B6%E5%A4%B4%E6%96%87%E4%BB%B6%E5%B0%BE%E6%80%BB%E7%BB%93/"/>
+    <id>https://waltyoung.github.io/2023/11/07/%E6%96%87%E4%BB%B6%E5%A4%B4%E6%96%87%E4%BB%B6%E5%B0%BE%E6%80%BB%E7%BB%93/</id>
+    <published>2023-11-07T12:49:29.000Z</published>
+    <updated>2023-11-07T12:50:40.778Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="文件头文件尾总结"><a href="#文件头文件尾总结" class="headerlink" title="文件头文件尾总结"></a>文件头文件尾总结</h1><table><thead><tr><th>文件类型</th><th>文件头</th><th>文件尾</th></tr></thead><tbody><tr><td>JPEG (jpg)</td><td>FF D8 FF</td><td>FF D9</td></tr><tr><td>PNG (png)</td><td>89 50 4E 47</td><td>AE 42 60 82</td></tr><tr><td>GIF (gif)</td><td>47 49 46 38</td><td>00 3B</td></tr><tr><td>ZIP Archive (zip)</td><td>50 4B 03 04</td><td>50 4B</td></tr><tr><td>TIFF (tif)</td><td>49 49 2A 00</td><td></td></tr><tr><td>Windows Bitmap (bmp)</td><td>42 4D</td><td></td></tr><tr><td>CAD (dwg)</td><td>41 43 31 30</td><td></td></tr><tr><td>Adobe Photoshop (psd)</td><td>38 42 50 53</td><td></td></tr><tr><td>Rich Text Format (rtf)</td><td>7B 5C 72 74</td><td></td></tr><tr><td>XML (xml)</td><td>3C 3F 78 6D</td><td></td></tr><tr><td>HTML (html)</td><td>68 74 6D 6C</td><td>3E</td></tr><tr><td>Email [thorough only] (eml)</td><td>44 65 6C 69 76 65 72 79 2D 64 61 74 65 3A</td><td></td></tr><tr><td>Outlook Express (dbx)</td><td>CF AD 12 FE C5 FD 74 6F</td><td></td></tr><tr><td>Outlook (pst)</td><td>21 42 44 4E</td><td></td></tr><tr><td>MS Word&#x2F;Excel (xls.or.doc)</td><td>D0 CF 11 E0</td><td></td></tr><tr><td>MS Access (mdb)</td><td>53 74 61 6E  64 61 72 64 20 4A</td><td></td></tr><tr><td>WordPerfect (wpd)</td><td>FF 57 50 43</td><td></td></tr><tr><td>Adobe Acrobat (pdf)</td><td>25 50 44 46  2D 31 2E</td><td></td></tr><tr><td>Quicken (qdf)</td><td>AC 9E BD 8F</td><td></td></tr><tr><td>Windows Password (pwl)</td><td>E3 82 85 96</td><td></td></tr><tr><td>RAR Archive (rar)</td><td>52 61 72 21</td><td></td></tr><tr><td>Wave (wav)</td><td>57 41 56 45</td><td></td></tr><tr><td>AVI (avi)</td><td>41 56 49 20</td><td></td></tr><tr><td>Real Audio (ram)</td><td>2E 72 61 FD</td><td></td></tr><tr><td>Real Media (rm)</td><td>2E 52 4D 46</td><td></td></tr><tr><td>MPEG (mpg)</td><td>00 00 01 BA</td><td></td></tr><tr><td>MPEG (mpg)</td><td>00 00 01 B3</td><td></td></tr><tr><td>Quicktime (mov)</td><td>6D 6F 6F 76</td><td></td></tr><tr><td>Windows Media (asf)</td><td>30 26 B2 75  8E 66 CF 11</td><td></td></tr><tr><td>MIDI (mid)</td><td>4D 54 68 64</td><td></td></tr></tbody></table>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
+      
+    
+    
+    
+    
+    <category term="CTF" scheme="https://waltyoung.github.io/tags/CTF/"/>
+    
+  </entry>
   
   <entry>
     <title>Python反编译之exe文件反编译</title>
@@ -494,32 +516,6 @@
     <updated>2023-09-16T16:16:56.962Z</updated>
     
     <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="CTF-Misc-N种方法解决"><a href="#CTF-Misc-N种方法解决" class="headerlink" title="CTF-Misc-N种方法解决"></a>CTF-Misc-N种方法解决</h1><p>原题链接：<a href="https://buuoj.cn/challenges#N%E7%A7%8D%E6%96%B9%E6%B3%95%E8%A7%A3%E5%86%B3" title="N种方法解决">https://buuoj.cn/challenges#N%E7%A7%8D%E6%96%B9%E6%B3%95%E8%A7%A3%E5%86%B3</a></p><p>本题如题名有N种方法解决</p><h2 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h2><p>使用十六进制编辑器打开文件，可见 base64 编码的字符</p><p><img src="https://s2.loli.net/2023/09/16/9BgidRnlHkDTJ4C.png" alt="N种方法解决_1.1.png"></p><p>文件尾也符合 base64 编码的特征，故将其间一整段字符使用 base64 解码。</p><p><img src="https://s2.loli.net/2023/09/16/6XtxJCQELD2fngq.png" alt="N种方法解决_1.2.png"></p><p><strong>需要注意的是 base64 解码的结果必须直接以十六进制展示，不能将 base64 解码得到的乱码复制到十六进制编辑器再计算其十六进制（后者的操作将导致数据不完整）</strong></p><p>下图是正确解码的结果</p><p><img src="https://s2.loli.net/2023/09/16/7nK514ty3eaOHoA.png" alt="N种方法解决_1.3.png"></p><p>复制结果，保存为 png 图片（<code>89 50 4E 47</code>是 PNG 的文件头）</p><p>得到一张二维码，置于草料二维码解码器<a href="https://cli.im/deqr/other" title="草料二维码解码器">https://cli.im/deqr/other</a>解码</p><hr><h2 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h2><p>PHP 内置很多 URL 风格的封装协议，可用于类似 fopen()、 copy()、 file_exists() 和 filesize() 的文件系统函数。</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">file:<span class="comment">// — 访问本地文件系统</span></span><br><span class="line">http:<span class="comment">// — 访问 HTTP(s) 网址</span></span><br><span class="line">ftp:<span class="comment">// — 访问 FTP(s) URLs</span></span><br><span class="line">php:<span class="comment">// — 访问各个输入/输出流（I/O streams）</span></span><br><span class="line">zlib:<span class="comment">// — 压缩流</span></span><br><span class="line">data:<span class="comment">// — 数据（RFC 2397）</span></span><br><span class="line">glob:<span class="comment">// — 查找匹配的文件路径模式</span></span><br><span class="line">phar:<span class="comment">// — PHP 归档</span></span><br><span class="line">ssh2:<span class="comment">// — Secure Shell 2</span></span><br><span class="line">rar:<span class="comment">// — RAR</span></span><br><span class="line">ogg:<span class="comment">// — 音频流</span></span><br><span class="line">expect:<span class="comment">// — 处理交互式的流</span></span><br></pre></td></tr></table></figure><p>如下图所示，这是 PHP 伪协议的例子</p><p><img src="https://s2.loli.net/2023/09/16/NltSmE5exIipaOn.png" alt="N种方法解决_2.0.png"></p><p>本题中存在类似的 PHP 伪协议</p><p><img src="https://s2.loli.net/2023/09/16/4a2Qw3xUTNrCJz7.png" alt="N种方法解决_2.1.png"></p><p>直接将十六进制的字符复制到浏览器</p><p><img src="https://s2.loli.net/2023/09/16/tvlUh5TbQ93RP4j.png" alt="N种方法解决_2.2.png"></p><p>得到一张二维码，置于草料二维码解码器<a href="https://cli.im/deqr/other" title="草料二维码解码器">https://cli.im/deqr/other</a>解码</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
-      
-    
-    
-    
-    
-    <category term="CTF" scheme="https://waltyoung.github.io/tags/CTF/"/>
-    
-    <category term="Misc" scheme="https://waltyoung.github.io/tags/Misc/"/>
-    
-    <category term="隐写" scheme="https://waltyoung.github.io/tags/%E9%9A%90%E5%86%99/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>CTF-Misc-另外一个世界</title>
-    <link href="https://waltyoung.github.io/2023/09/16/CTF-Misc-%E5%8F%A6%E5%A4%96%E4%B8%80%E4%B8%AA%E4%B8%96%E7%95%8C/"/>
-    <id>https://waltyoung.github.io/2023/09/16/CTF-Misc-%E5%8F%A6%E5%A4%96%E4%B8%80%E4%B8%AA%E4%B8%96%E7%95%8C/</id>
-    <published>2023-09-15T16:32:22.000Z</published>
-    <updated>2023-09-15T16:33:46.217Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="CTF-Misc-另外一个世界"><a href="#CTF-Misc-另外一个世界" class="headerlink" title="CTF-Misc-另外一个世界"></a>CTF-Misc-另外一个世界</h1><p>原题链接：<a href="https://buuoj.cn/challenges#%E5%8F%A6%E5%A4%96%E4%B8%80%E4%B8%AA%E4%B8%96%E7%95%8C" title="另外一个世界">https://buuoj.cn/challenges#%E5%8F%A6%E5%A4%96%E4%B8%80%E4%B8%AA%E4%B8%96%E7%95%8C</a></p><p>笔者在做该题时，首先尝试了 Stegsolve，没有获得有效信息，然后打开了十六进制编辑器，在文件末尾发现了一段可疑的二进制序列。（需要注意的是查看文件的十六进制时，不仅需要关注到文件的头尾，而且在没有思路的时候需要关注到文件的中间部分，可能遗漏信息）</p><p><img src="https://s2.loli.net/2023/09/15/6FMyEBNQfTOglax.png" alt="另外一个世界_1.png"></p><p>笔者没有思路，选择了看 wp (writeup)<em>(笔者太笨了QAQ)</em></p><p>二进制序列以8位为一组，转换为十进制，再对照 ASCII 码表得出字符，最后以flag格式提交</p><p><img src="https://s2.loli.net/2023/09/15/9uqXYGHoKfIBaL2.png" alt="另外一个世界_2.png"></p>]]></content>
     
     
       
