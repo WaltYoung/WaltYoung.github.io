@@ -1,0 +1,250 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>记一次存储空间充裕情况下但不能写入文件的排查过程 | WaltYoung</title><meta name="author" content="WaltYoung"><meta name="copyright" content="WaltYoung"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="记一次存储空间充裕情况下但不能写入文件的排查过程问题现象笔者接到公司的需求，完成开发后，下班前交给服务器运行，但次日早晨发现程序遭遇意外错误 下图为程序的实际报错No space left on device。可见是该卷的存储空间不足  排查过程首先，笔者使用df -h查看存储空间 1df -h  从下图可见&#x2F;media&#x2F;cra&#x2F;新加卷路径下仍有 2.6T 的剩余存储空间  然后，笔者尝试直接向该">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次存储空间充裕情况下但不能写入文件的排查过程">
+<meta property="og:url" content="https://waltyoung.github.io/2026/04/04/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4%E5%85%85%E8%A3%95%E6%83%85%E5%86%B5%E4%B8%8B%E4%BD%86%E4%B8%8D%E8%83%BD%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6%E7%9A%84%E6%8E%92%E6%9F%A5%E8%BF%87%E7%A8%8B/index.html">
+<meta property="og:site_name" content="WaltYoung">
+<meta property="og:description" content="记一次存储空间充裕情况下但不能写入文件的排查过程问题现象笔者接到公司的需求，完成开发后，下班前交给服务器运行，但次日早晨发现程序遭遇意外错误 下图为程序的实际报错No space left on device。可见是该卷的存储空间不足  排查过程首先，笔者使用df -h查看存储空间 1df -h  从下图可见&#x2F;media&#x2F;cra&#x2F;新加卷路径下仍有 2.6T 的剩余存储空间  然后，笔者尝试直接向该">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp">
+<meta property="article:published_time" content="2026-04-04T07:08:05.000Z">
+<meta property="article:modified_time" content="2026-04-04T07:15:21.947Z">
+<meta property="article:author" content="WaltYoung">
+<meta property="article:tag" content="记一次XXX">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp"><link rel="shortcut icon" href="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp"><link rel="canonical" href="https://waltyoung.github.io/2026/04/04/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4%E5%85%85%E8%A3%95%E6%83%85%E5%86%B5%E4%B8%8B%E4%BD%86%E4%B8%8D%E8%83%BD%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6%E7%9A%84%E6%8E%92%E6%9F%A5%E8%BF%87%E7%A8%8B/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '记一次存储空间充裕情况下但不能写入文件的排查过程',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-04-04 15:15:21'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="WaltYoung" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">57</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s2.loli.net/2023/07/25/5fu7CQnLBJ6ENIT.png')"><nav id="nav"><span id="blog-info"><a href="/" title="WaltYoung"><span class="site-name">WaltYoung</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">记一次存储空间充裕情况下但不能写入文件的排查过程</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-04-04T07:08:05.000Z" title="发表于 2026-04-04 15:08:05">2026-04-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-04-04T07:15:21.947Z" title="更新于 2026-04-04 15:15:21">2026-04-04</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>3分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="记一次存储空间充裕情况下但不能写入文件的排查过程"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="记一次存储空间充裕情况下但不能写入文件的排查过程"><a href="#记一次存储空间充裕情况下但不能写入文件的排查过程" class="headerlink" title="记一次存储空间充裕情况下但不能写入文件的排查过程"></a>记一次存储空间充裕情况下但不能写入文件的排查过程</h1><h2 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h2><p>笔者接到公司的需求，完成开发后，下班前交给服务器运行，但次日早晨发现程序遭遇意外错误</p>
+<p>下图为程序的实际报错<code>No space left on device</code>。可见是该卷的存储空间不足</p>
+<p><img src="https://files.seeusercontent.com/2026/04/04/A5ld/fb15ab8.png" alt="程序的实际报错.png"></p>
+<h2 id="排查过程"><a href="#排查过程" class="headerlink" title="排查过程"></a>排查过程</h2><p>首先，笔者使用<code>df -h</code>查看存储空间</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">df</span> -h</span><br></pre></td></tr></table></figure>
+
+<p>从下图可见<code>/media/cra/新加卷</code>路径下仍有 2.6T 的剩余存储空间</p>
+<p><img src="https://files.seeusercontent.com/2026/04/04/lT5i/df-h.png" alt="使用df -h查看存储空间.png"></p>
+<p>然后，笔者尝试直接向该卷写入测试文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">touch</span> /media/cra/新加卷/test.txt</span><br></pre></td></tr></table></figure>
+
+<p>命令返回 <code>No space left on device</code>。</p>
+<p>其次，笔者怀疑是否启用了用户配额或项目配额。由于笔者没有甲方服务器的 root 权限，故使用了<code>mount</code>命令。如果读者拥有 root 权限，可以直接使用<code>quota -vs</code>命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount | grep /media/cra/新加卷</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://files.seeusercontent.com/2026/04/04/r3wJ/mount.png" alt="使用mount查看挂载选项.png"></p>
+<p>从输出可见，未出现 <code>usrquota</code> 或 <code>grpquota</code> 字样，排除配额因素。</p>
+<p>再次，可能是某些进程打开了大文件并删除，但未释放句柄，导致磁盘空间实际上被占用，而 <code>df</code> 统计却认为已释放。笔者执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof 2&gt;/dev/null | grep deleted | grep <span class="string">&#x27;/media/cra/新加卷&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>没有输出，说明不存在这种情况。</p>
+<p>笔者尝试查看内核日志中是否有相关错误，可惜笔者没有甲方服务器的 root 权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dmesg | <span class="built_in">tail</span> -20</span><br></pre></td></tr></table></figure>
+
+<p>结合上述排查排除了配额、僵尸文件等原因，且故障表现为“无论大小，无法创建任何新文件”，笔者回忆起 Linux 文件系统中还有一个独立于磁盘块空间的资源——<strong>inode</strong>，推测<strong>文件系统的元数据资源</strong>出了问题。</p>
+<p>笔者使用<code>df -i</code>查看inode使用情况</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">df</span> -i</span><br></pre></td></tr></table></figure>
+
+<p>随即，笔者发现inode确被消耗光了(笔者彼时忙于排障，没有及时截下图，此乃遗憾之至QAQ)</p>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>编写脚本删除程序创建的大量小文件。删除完成后，再次使用<code>df -i</code>查看inode使用情况</p>
+<p><img src="https://files.seeusercontent.com/2026/04/04/atV8/df-iinode.png" alt="使用df -i查看inode使用情况.png"></p>
+<h2 id="原理深度剖析"><a href="#原理深度剖析" class="headerlink" title="原理深度剖析"></a>原理深度剖析</h2><h3 id="inode概念"><a href="#inode概念" class="headerlink" title="inode概念"></a>inode概念</h3><p><code>inode</code>（索引节点）是 Linux 文件系统管理文件元数据的核心数据结构。每个文件（包括目录、设备文件、符号链接等）都对应一个唯一的 inode，用于存储文件的元信息，包括：</p>
+<ul>
+<li>文件类型（普通文件、目录、设备文件等）</li>
+<li>文件权限（rwx 位及 setuid&#x2F;setgid&#x2F;sticky bit）</li>
+<li>文件大小（字节数）</li>
+<li>链接计数（指向该 inode 的硬链接数量）</li>
+<li>所有者 UID 与组 GID</li>
+<li>三个时间戳：atime（访问时间）、mtime（修改时间）、ctime（状态改变时间）</li>
+<li><strong>数据块指针</strong>：指向文件内容所在磁盘块的地址</li>
+</ul>
+<p><strong>数据块索引结构（混合索引）</strong>：<br>inode 中包含多个数据块指针，典型 Unix 文件系统（如 ext2&#x2F;ext3&#x2F;ext4）采用混合索引方式：</p>
+<ul>
+<li>12 个直接块指针（直接指向数据块）</li>
+<li>1 个一级间接块指针（指向一个数据块，该块内存放若干直接指针）</li>
+<li>1 个二级间接块指针</li>
+<li>1 个三级间接块指针</li>
+</ul>
+<p>这种结构既能高效访问小文件（通过直接指针），又能支持大文件（通过多级间接指针）。<strong>对于海量小文件的场景，每个小文件都会消耗一个完整的 inode</strong>，但仅占用很少的数据块——这正是本次故障中 inode 迅速耗尽而磁盘块空间依然充裕的根本原因。</p>
+<p>每个文件（包括目录、设备文件等）都必须占用一个 inode。<strong>inode 数量在格式化文件系统时就已经固定</strong>（ext2&#x2F;ext3&#x2F;ext4 如此；动态 inode 的文件系统如 <code>XFS</code>除外，但多数仍受限制）。</p>
+<h3 id="本次故障的根本原因"><a href="#本次故障的根本原因" class="headerlink" title="本次故障的根本原因"></a>本次故障的根本原因</h3><p><code>df -h</code> 查看的是<strong>磁盘块空间</strong></p>
+<p><code>df -i</code> 查看的是 <strong>inode 空间</strong></p>
+<p>两者相互独立：</p>
+<table>
+<thead>
+<tr>
+<th>资源类型</th>
+<th>耗尽表现</th>
+<th>报错</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>磁盘块空间</td>
+<td>无法写入新数据</td>
+<td><code>No space left on device</code></td>
+</tr>
+<tr>
+<td>inode 空间</td>
+<td>无法创建新文件（即使磁盘还有空间）</td>
+<td><code>No space left on device</code></td>
+</tr>
+</tbody></table>
+<p>当程序创建了海量小文件（如缓存、日志、临时文件），每个文件消耗一个 inode，但占用的磁盘块很少。于是出现“磁盘还有 2.6T，但系统却提示无空间”的假象。</p>
+<h3 id="inode-耗尽的其他影响"><a href="#inode-耗尽的其他影响" class="headerlink" title="inode 耗尽的其他影响"></a>inode 耗尽的其他影响</h3><ul>
+<li>无法创建新文件、目录、符号链接</li>
+<li>无法修改文件权限、所有者（这些操作不消耗新 inode，但可能受限于文件系统状态）</li>
+<li>部分系统工具（如 <code>touch</code>、<code>mkdir</code>）也会失败</li>
+</ul>
+<h3 id="经验与教训"><a href="#经验与教训" class="headerlink" title="经验与教训"></a>经验与教训</h3><p>尽量<strong>避免程序创建大量小文件</strong></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://waltyoung.github.io">WaltYoung</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://waltyoung.github.io/2026/04/04/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4%E5%85%85%E8%A3%95%E6%83%85%E5%86%B5%E4%B8%8B%E4%BD%86%E4%B8%8D%E8%83%BD%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6%E7%9A%84%E6%8E%92%E6%9F%A5%E8%BF%87%E7%A8%8B/">https://waltyoung.github.io/2026/04/04/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4%E5%85%85%E8%A3%95%E6%83%85%E5%86%B5%E4%B8%8B%E4%BD%86%E4%B8%8D%E8%83%BD%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6%E7%9A%84%E6%8E%92%E6%9F%A5%E8%BF%87%E7%A8%8B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://WaltYoung.github.io" target="_blank">WaltYoung</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%B0%E4%B8%80%E6%AC%A1XXX/">记一次XXX</a><a class="post-meta__tags" href="/tags/Linux/">Linux</a></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" data-sites="wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2025/12/04/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%BC%BA%E5%88%B6%E7%BB%88%E6%AD%A2%E8%BF%9B%E7%A8%8B%E5%90%8ECUDA%E6%98%BE%E5%AD%98%E6%9C%AA%E9%87%8A%E6%94%BE%E9%97%AE%E9%A2%98%E7%9A%84%E6%8E%92%E6%9F%A5%E8%BF%87%E7%A8%8B/" title="记一次强制终止进程后CUDA显存未释放问题的排查过程"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">记一次强制终止进程后CUDA显存未释放问题的排查过程</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2025/12/04/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%BC%BA%E5%88%B6%E7%BB%88%E6%AD%A2%E8%BF%9B%E7%A8%8B%E5%90%8ECUDA%E6%98%BE%E5%AD%98%E6%9C%AA%E9%87%8A%E6%94%BE%E9%97%AE%E9%A2%98%E7%9A%84%E6%8E%92%E6%9F%A5%E8%BF%87%E7%A8%8B/" title="记一次强制终止进程后CUDA显存未释放问题的排查过程"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-04</div><div class="title">记一次强制终止进程后CUDA显存未释放问题的排查过程</div></div></a></div><div><a href="/2023/09/12/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%A0%B9%E6%8D%AE%E6%8A%93%E5%8C%85%E5%92%8CRequest-Id%EF%BC%88%E6%97%A5%E5%BF%97%EF%BC%89%E6%8E%92%E9%94%99/" title="记一次开发过程中根据抓包和Request-Id（日志）排错"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-12</div><div class="title">记一次开发过程中根据抓包和Request-Id（日志）排错</div></div></a></div><div><a href="/2023/09/13/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E7%9A%84%E6%8E%A2%E7%B4%A2/" title="记一次一句话木马的探索"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-13</div><div class="title">记一次一句话木马的探索</div></div></a></div><div><a href="/2025/01/10/%E8%AE%B0%E4%B8%80%E6%AC%A1R45G%E9%A1%B9%E7%9B%AE%E7%9A%84Code-Review/" title="记一次R45G项目的Code Review"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-10</div><div class="title">记一次R45G项目的Code Review</div></div></a></div><div><a href="/2023/08/29/%E4%B8%8D%E5%90%8C%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AF%B9%E5%BE%85%E6%8D%A2%E8%A1%8C%E7%AC%A6%E7%9A%84%E4%B8%8D%E5%90%8C%E6%80%81%E5%BA%A6/" title="不同操作系统对待换行符的不同态度"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-29</div><div class="title">不同操作系统对待换行符的不同态度</div></div></a></div><div><a href="/2023/09/22/Vim%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/" title="Vim优化指南"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-22</div><div class="title">Vim优化指南</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">WaltYoung</div><div class="author-info__description">为世界上所有美好而战</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">57</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/WaltYoung"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/WaltYoung" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">我的小窝</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4%E5%85%85%E8%A3%95%E6%83%85%E5%86%B5%E4%B8%8B%E4%BD%86%E4%B8%8D%E8%83%BD%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6%E7%9A%84%E6%8E%92%E6%9F%A5%E8%BF%87%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">记一次存储空间充裕情况下但不能写入文件的排查过程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E7%8E%B0%E8%B1%A1"><span class="toc-number">1.1.</span> <span class="toc-text">问题现象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%92%E6%9F%A5%E8%BF%87%E7%A8%8B"><span class="toc-number">1.2.</span> <span class="toc-text">排查过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="toc-number">1.3.</span> <span class="toc-text">解决方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">原理深度剖析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#inode%E6%A6%82%E5%BF%B5"><span class="toc-number">1.4.1.</span> <span class="toc-text">inode概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E6%AC%A1%E6%95%85%E9%9A%9C%E7%9A%84%E6%A0%B9%E6%9C%AC%E5%8E%9F%E5%9B%A0"><span class="toc-number">1.4.2.</span> <span class="toc-text">本次故障的根本原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#inode-%E8%80%97%E5%B0%BD%E7%9A%84%E5%85%B6%E4%BB%96%E5%BD%B1%E5%93%8D"><span class="toc-number">1.4.3.</span> <span class="toc-text">inode 耗尽的其他影响</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%8F%E9%AA%8C%E4%B8%8E%E6%95%99%E8%AE%AD"><span class="toc-number">1.4.4.</span> <span class="toc-text">经验与教训</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/04/04/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4%E5%85%85%E8%A3%95%E6%83%85%E5%86%B5%E4%B8%8B%E4%BD%86%E4%B8%8D%E8%83%BD%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6%E7%9A%84%E6%8E%92%E6%9F%A5%E8%BF%87%E7%A8%8B/" title="记一次存储空间充裕情况下但不能写入文件的排查过程">记一次存储空间充裕情况下但不能写入文件的排查过程</a><time datetime="2026-04-04T07:08:05.000Z" title="发表于 2026-04-04 15:08:05">2026-04-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/12/04/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%BC%BA%E5%88%B6%E7%BB%88%E6%AD%A2%E8%BF%9B%E7%A8%8B%E5%90%8ECUDA%E6%98%BE%E5%AD%98%E6%9C%AA%E9%87%8A%E6%94%BE%E9%97%AE%E9%A2%98%E7%9A%84%E6%8E%92%E6%9F%A5%E8%BF%87%E7%A8%8B/" title="记一次强制终止进程后CUDA显存未释放问题的排查过程">记一次强制终止进程后CUDA显存未释放问题的排查过程</a><time datetime="2025-12-04T13:25:59.000Z" title="发表于 2025-12-04 21:25:59">2025-12-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/05/Git-LFS-%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97%EF%BC%9A%E5%A4%A7%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86%E4%B8%8E%E6%92%A4%E9%94%80%E6%93%8D%E4%BD%9C%E5%AE%9E%E6%88%98/" title="Git LFS 完整指南：大文件管理与撤销操作实战">Git LFS 完整指南：大文件管理与撤销操作实战</a><time datetime="2025-11-04T16:22:55.000Z" title="发表于 2025-11-05 00:22:55">2025-11-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/14/Go%E8%AF%AD%E8%A8%80%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90%EF%BC%9A%E6%A0%88%E4%B8%8E%E5%A0%86%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/" title="Go语言逃逸分析：栈与堆的内存分配策略解析">Go语言逃逸分析：栈与堆的内存分配策略解析</a><time datetime="2025-07-14T14:46:59.000Z" title="发表于 2025-07-14 22:46:59">2025-07-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/13/Go%E8%AF%AD%E8%A8%80%E4%B8%AD%E8%AE%BF%E9%97%AE%E7%A7%81%E6%9C%89%E6%88%90%E5%91%98%E7%9A%844%E7%A7%8D%E6%96%B9%E6%B3%95/" title="Go语言中访问私有成员的4种方法">Go语言中访问私有成员的4种方法</a><time datetime="2025-07-13T14:18:39.000Z" title="发表于 2025-07-13 22:18:39">2025-07-13</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2026 By WaltYoung</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
