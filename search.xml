@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>软件项目初期报价编制要点</title>
+      <link href="/2026/09/25/%E8%BD%AF%E4%BB%B6%E9%A1%B9%E7%9B%AE%E5%88%9D%E6%9C%9F%E6%8A%A5%E4%BB%B7%E7%BC%96%E5%88%B6%E8%A6%81%E7%82%B9/"/>
+      <url>/2026/09/25/%E8%BD%AF%E4%BB%B6%E9%A1%B9%E7%9B%AE%E5%88%9D%E6%9C%9F%E6%8A%A5%E4%BB%B7%E7%BC%96%E5%88%B6%E8%A6%81%E7%82%B9/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h1 id="软件项目初期报价编制要点"><a href="#软件项目初期报价编制要点" class="headerlink" title="软件项目初期报价编制要点"></a>软件项目初期报价编制要点</h1><p><em>可参考文件《智慧营销管理系统报价单.docx》</em></p><ol><li><p><strong>提出总价，是否按模块报价要根据领导的意见</strong><br>须提供项目总价，便于客户快速评估预算。是否按功能模块（如营销费用管控、新媒体矩阵、社群管理等）分别列示小计，应事先征询管理层意见，以匹配客户对不同板块价值的关注度。</p></li><li><p><strong>明确区分基础开发与定制服务（即第三方对接、现场部署(含差旅)）</strong><br>基础开发部分（标准化功能模块）与定制服务（如第三方系统对接、、现场部署(含差旅)）应分项报价，并在报价说明中突出定制服务中的第三方系统对接、、现场部署(含差旅)为2个部分。</p></li><li><p><strong>不必将硬件服务器的成本纳入初期报价</strong><br>初期报价仅涵盖软件授权、开发、实施及差旅等相关费用，不包含服务器、网络设备、云资源等硬件基础设施的采购或租赁成本，须在报价条款中明确标注，防止后期产生误解。</p></li><li><p><strong>功能描述须完整清晰</strong><br>每一项报价均应附带准确、详细的功能描述，使客户清晰了解交付内容，便于后续需求变更时进行范围界定。</p></li><li><p><strong>报价表格的专业化与自动化要求</strong>  </p><ul><li>表格设计应遵循专业可视化标准，包括表头突出显示、行色交替、文本自动换行、列宽自适应、冻结首行等，确保直观易读。  </li><li>所有金额计算须内置自动核算逻辑，单价或数量调整后，对应小计及合计总价应自动刷新，保证核算准确高效。</li></ul></li><li><p><strong>明确报价有效期</strong><br>建议注明报价的有效期限（例如30个自然日或3个工作日），以规避因人力成本、汇率或第三方接口费用变动带来的价格风险。</p></li><li><p><strong>税费及发票说明</strong><br>报价单应注明价格是否含增值税，以及适用税率（如6%、13%等）和发票类型（增值税专用&#x2F;普通发票）。若初期未确定，须单独说明税费将另行计算。<strong>报价默认含税6%</strong></p></li><li><p><strong>一次性费用与持续性费用区分</strong><br>现有报价均为一次性开发或实施费用，不包含后续年度维护费、系统升级费、API调用超额费、数据订阅费等持续性支出。应在报价说明中提示客户，运维阶段成本另行协商。</p></li><li><p><strong>模块依赖与范围边界</strong><br>部分功能（如多平台发布、舆情监测）依赖第三方开放接口，报价未含第三方可能收取的接口调用费或数据购买费。需在备注中提示客户该类费用由客户自行承担或按实际发生额计费。</p></li></ol>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 管理 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>基于DataX的自Trino到MySQL的大规模数据同步工程实践(一)</title>
       <link href="/2026/04/15/%E5%9F%BA%E4%BA%8EDataX%E7%9A%84%E8%87%AATrino%E5%88%B0MySQL%E7%9A%84%E5%A4%A7%E8%A7%84%E6%A8%A1%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/"/>
       <url>/2026/04/15/%E5%9F%BA%E4%BA%8EDataX%E7%9A%84%E8%87%AATrino%E5%88%B0MySQL%E7%9A%84%E5%A4%A7%E8%A7%84%E6%A8%A1%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</url>
