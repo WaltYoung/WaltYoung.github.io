@@ -1,0 +1,569 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>基于Qwen3-14B基座模型进行思维链微调的可解释ICD-10病案编码专家模型 | WaltYoung</title><meta name="author" content="WaltYoung"><meta name="copyright" content="WaltYoung"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Qwen3-14B ICD-10 病案编码思维链微调技术文档 目标：在 Qwen3-14B 模型上，通过 LoRA + 思维链（Chain-of-Thought）监督微调，构建可输出 ICD-10 &#x2F; ICD-9-CM-3 编码结果及依据的病案编码专家模型。   1. 概述1.1 业务目标将大模型微调为资深病案编码专家，输入结构化&#x2F;半结构化病历后，自动输出：    输出项 标准">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于Qwen3-14B基座模型进行思维链微调的可解释ICD-10病案编码专家模型">
+<meta property="og:url" content="https://waltyoung.github.io/2026/10/12/%E5%9F%BA%E4%BA%8EQwen3-14B%E5%9F%BA%E5%BA%A7%E6%A8%A1%E5%9E%8B%E8%BF%9B%E8%A1%8C%E6%80%9D%E7%BB%B4%E9%93%BE%E5%BE%AE%E8%B0%83%E7%9A%84%E5%8F%AF%E8%A7%A3%E9%87%8AICD-10%E7%97%85%E6%A1%88%E7%BC%96%E7%A0%81%E4%B8%93%E5%AE%B6%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="WaltYoung">
+<meta property="og:description" content="Qwen3-14B ICD-10 病案编码思维链微调技术文档 目标：在 Qwen3-14B 模型上，通过 LoRA + 思维链（Chain-of-Thought）监督微调，构建可输出 ICD-10 &#x2F; ICD-9-CM-3 编码结果及依据的病案编码专家模型。   1. 概述1.1 业务目标将大模型微调为资深病案编码专家，输入结构化&#x2F;半结构化病历后，自动输出：    输出项 标准">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp">
+<meta property="article:published_time" content="2026-10-12T10:16:30.000Z">
+<meta property="article:modified_time" content="2026-10-12T10:21:32.396Z">
+<meta property="article:author" content="WaltYoung">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="微调">
+<meta property="article:tag" content="Qwen3">
+<meta property="article:tag" content="LoRA">
+<meta property="article:tag" content="Unsloth">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp"><link rel="shortcut icon" href="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp"><link rel="canonical" href="https://waltyoung.github.io/2026/10/12/%E5%9F%BA%E4%BA%8EQwen3-14B%E5%9F%BA%E5%BA%A7%E6%A8%A1%E5%9E%8B%E8%BF%9B%E8%A1%8C%E6%80%9D%E7%BB%B4%E9%93%BE%E5%BE%AE%E8%B0%83%E7%9A%84%E5%8F%AF%E8%A7%A3%E9%87%8AICD-10%E7%97%85%E6%A1%88%E7%BC%96%E7%A0%81%E4%B8%93%E5%AE%B6%E6%A8%A1%E5%9E%8B/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '基于Qwen3-14B基座模型进行思维链微调的可解释ICD-10病案编码专家模型',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-10-12 18:21:32'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="WaltYoung" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">63</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">50</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s2.loli.net/2023/07/25/5fu7CQnLBJ6ENIT.png')"><nav id="nav"><span id="blog-info"><a href="/" title="WaltYoung"><span class="site-name">WaltYoung</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">基于Qwen3-14B基座模型进行思维链微调的可解释ICD-10病案编码专家模型</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-12T10:16:30.000Z" title="发表于 2026-10-12 18:16:30">2026-10-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-12T10:21:32.396Z" title="更新于 2026-10-12 18:21:32">2026-10-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI%E7%97%85%E6%A1%88%E7%BC%96%E7%A0%81/">AI病案编码</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>7分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="基于Qwen3-14B基座模型进行思维链微调的可解释ICD-10病案编码专家模型"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Qwen3-14B-ICD-10-病案编码思维链微调技术文档"><a href="#Qwen3-14B-ICD-10-病案编码思维链微调技术文档" class="headerlink" title="Qwen3-14B ICD-10 病案编码思维链微调技术文档"></a>Qwen3-14B ICD-10 病案编码思维链微调技术文档</h1><blockquote>
+<p>目标：在 Qwen3-14B 模型上，通过 LoRA + 思维链（Chain-of-Thought）监督微调，构建可输出 ICD-10 &#x2F; ICD-9-CM-3 编码结果及依据的病案编码专家模型。</p>
+</blockquote>
+<hr>
+<h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h2><h3 id="1-1-业务目标"><a href="#1-1-业务目标" class="headerlink" title="1.1 业务目标"></a>1.1 业务目标</h3><p>将大模型微调为<strong>资深病案编码专家</strong>，输入结构化&#x2F;半结构化病历后，自动输出：</p>
+<table>
+<thead>
+<tr>
+<th>输出项</th>
+<th>标准</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主要诊断及 ICD-10 编码</td>
+<td>《疾病分类与代码国家临床版》</td>
+</tr>
+<tr>
+<td>次要诊断及 ICD-10 编码</td>
+<td>《疾病分类与代码国家临床版》</td>
+</tr>
+<tr>
+<td>主要手术&#x2F;操作及 ICD-9-CM-3 编码</td>
+<td>《手术操作分类代码国家临床版》</td>
+</tr>
+<tr>
+<td>编码选择依据</td>
+<td>基于病历原文 + 编码规则的可追溯说明</td>
+</tr>
+<tr>
+<td>异常场景</td>
+<td>逻辑不充分时输出「需人工干预」预警</td>
+</tr>
+</tbody></table>
+<h3 id="1-2-技术路线"><a href="#1-2-技术路线" class="headerlink" title="1.2 技术路线"></a>1.2 技术路线</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">基座模型加载 → LoRA 注入 → 思维链数据构造 → SFT 训练</span><br><span class="line">    → 保存 LoRA → 导出 GGUF → Ollama 部署 → 推理评测</span><br></pre></td></tr></table></figure>
+
+<p>核心特点：</p>
+<ul>
+<li>使用 <strong>Unsloth</strong> 加速训练与推理</li>
+<li>训练样本为 <strong>System Prompt + 病历 + <code>&lt;think&gt;思维链&lt;/think&gt; + 最终答案</code></strong></li>
+<li>推理时开启 <code>enable_thinking=True</code>，保留可解释推理过程</li>
+</ul>
+<hr>
+<h2 id="2-环境与依赖"><a href="#2-环境与依赖" class="headerlink" title="2. 环境与依赖"></a>2. 环境与依赖</h2><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PyTorch + CUDA</td>
+<td>模型训练与推理</td>
+</tr>
+<tr>
+<td>Unsloth (<code>FastLanguageModel</code>)</td>
+<td>高效加载、LoRA、推理加速</td>
+</tr>
+<tr>
+<td>HuggingFace <code>datasets</code></td>
+<td>数据集加载与 map 转换</td>
+</tr>
+<tr>
+<td>TRL (<code>SFTTrainer</code> &#x2F; <code>SFTConfig</code>)</td>
+<td>监督微调</td>
+</tr>
+<tr>
+<td>Transformers (<code>TextStreamer</code>)</td>
+<td>流式生成与解码</td>
+</tr>
+<tr>
+<td>llama.cpp</td>
+<td>GGUF 量化导出</td>
+</tr>
+<tr>
+<td>Ollama</td>
+<td>本地推理服务</td>
+</tr>
+</tbody></table>
+<p>显存检查：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;可用显存: <span class="subst">&#123;torch.cuda.mem_get_info()[<span class="number">0</span>]/<span class="number">1024</span>**<span class="number">3</span>:<span class="number">.2</span>f&#125;</span> GB&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="3-模型加载"><a href="#3-模型加载" class="headerlink" title="3. 模型加载"></a>3. 模型加载</h2><h3 id="3-1-关键参数"><a href="#3-1-关键参数" class="headerlink" title="3.1 关键参数"></a>3.1 关键参数</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>取值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>base_model_name</code></td>
+<td><code>.../icd10-qwen3-14b-1121-think-remerge</code></td>
+<td>已具备 ICD 能力的 Qwen3-14B 中间版本（可切换其他 checkpoint）</td>
+</tr>
+<tr>
+<td><code>max_seq_length</code></td>
+<td><code>20480</code></td>
+<td>长病历上下文窗口大小，后续证明需要更长的上下文窗口，如<code>40960</code></td>
+</tr>
+<tr>
+<td><code>dtype</code></td>
+<td><code>None</code></td>
+<td>由 GPU 自动选择精度</td>
+</tr>
+<tr>
+<td><code>load_in_4bit</code></td>
+<td><code>False</code></td>
+<td>本次训练未启用 4bit 量化加载</td>
+</tr>
+<tr>
+<td><code>device_map</code></td>
+<td><code>&quot;balanced&quot;</code></td>
+<td>多卡均衡映射</td>
+</tr>
+</tbody></table>
+<h3 id="3-2-加载代码要点"><a href="#3-2-加载代码要点" class="headerlink" title="3.2 加载代码要点"></a>3.2 加载代码要点</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> unsloth <span class="keyword">import</span> FastLanguageModel</span><br><span class="line"></span><br><span class="line">model, tokenizer = FastLanguageModel.from_pretrained(</span><br><span class="line">    model_name = base_model_name,</span><br><span class="line">    max_seq_length = <span class="number">20480</span>,</span><br><span class="line">    dtype = <span class="literal">None</span>,</span><br><span class="line">    load_in_4bit = <span class="literal">False</span>,</span><br><span class="line">    device_map = <span class="string">&quot;balanced&quot;</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="4-LoRA-配置"><a href="#4-LoRA-配置" class="headerlink" title="4. LoRA 配置"></a>4. LoRA 配置</h2><p>通过 <code>FastLanguageModel.get_peft_model</code> 注入 LoRA：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>取值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>r</code></td>
+<td><code>8</code></td>
+<td>LoRA 秩（可选 8&#x2F;16&#x2F;32&#x2F;64&#x2F;128）</td>
+</tr>
+<tr>
+<td><code>lora_alpha</code></td>
+<td><code>16</code></td>
+<td>缩放系数，通常约为 <code>2 * r</code></td>
+</tr>
+<tr>
+<td><code>lora_dropout</code></td>
+<td><code>0</code></td>
+<td>防过拟合；复杂任务可适当提高，建议 ≤ 0.5</td>
+</tr>
+<tr>
+<td><code>bias</code></td>
+<td><code>&quot;none&quot;</code></td>
+<td>不训练偏置（Unsloth 优化路径）</td>
+</tr>
+<tr>
+<td><code>use_gradient_checkpointing</code></td>
+<td><code>True</code></td>
+<td>降低显存，适合长上下文</td>
+</tr>
+<tr>
+<td><code>random_state</code></td>
+<td><code>3407</code></td>
+<td>随机种子</td>
+</tr>
+<tr>
+<td><code>use_rslora</code></td>
+<td><code>False</code></td>
+<td>未启用 Rank-Stabilized LoRA</td>
+</tr>
+<tr>
+<td><code>loftq_config</code></td>
+<td><code>None</code></td>
+<td>未启用 LoftQ</td>
+</tr>
+</tbody></table>
+<p><strong>Target modules（注意力 + MLP 全覆盖）：</strong></p>
+<ul>
+<li>Attention：<code>q_proj</code>, <code>k_proj</code>, <code>v_proj</code>, <code>o_proj</code></li>
+<li>MLP：<code>gate_proj</code>, <code>up_proj</code>, <code>down_proj</code></li>
+</ul>
+<hr>
+<h2 id="5-System-Prompt-设计"><a href="#5-System-Prompt-设计" class="headerlink" title="5. System Prompt 设计"></a>5. System Prompt 设计</h2><p>代码中定义了超长 <code>PROMPT</code>，将模型角色、编码标准、决策树与输出格式固化为 System Message。</p>
+<h3 id="5-1-角色与标准"><a href="#5-1-角色与标准" class="headerlink" title="5.1 角色与标准"></a>5.1 角色与标准</h3><ul>
+<li><strong>角色</strong>：资深病案编码专家</li>
+<li><strong>诊断标准</strong>：ICD-10 国家临床版</li>
+<li><strong>手术标准</strong>：ICD-9-CM-3 国家临床版</li>
+<li><strong>硬约束</strong>：禁止输出标准库外名称&#x2F;编码；禁止将出院诊断直接当作分析依据</li>
+</ul>
+<h3 id="5-2-编码思路（决策流水线）"><a href="#5-2-编码思路（决策流水线）" class="headerlink" title="5.2 编码思路（决策流水线）"></a>5.2 编码思路（决策流水线）</h3><ol>
+<li><strong>入院目的拆分</strong><ul>
+<li>随诊检查判定（含排除条件：计划性治疗、诊断性再评估、阳性新发现）</li>
+<li>按历史治疗方式细分随诊编码（术后 &#x2F; 放化疗后等）</li>
+</ul>
+</li>
+<li><strong>诊断明确与核实</strong><ul>
+<li>数据源：主诉、现病史、病理&#x2F;影像&#x2F;手术&#x2F;操作记录</li>
+<li>非肿瘤：按系统分析（含肠梗阻路径 A&#x2F;B）</li>
+<li>全身性肿瘤：以细胞分型为编码依据</li>
+<li>部位肿瘤：解剖亚部位 + 分布类型（单一 &#x2F; 交搭跨越 &#x2F; 多处 &#x2F; 复合癌）</li>
+<li>乳腺部位：钟表法 → 象限&#x2F;编码部位映射</li>
+</ul>
+</li>
+<li><strong>治疗方式核实</strong><ul>
+<li>手术 vs 非手术（化疗 &#x2F; 放疗 &#x2F; 同位素 &#x2F; 免疫 &#x2F; 靶向 &#x2F; 内分泌 &#x2F; 支持）</li>
+<li>术前&#x2F;术后判定；多治疗时优先级：放疗 &gt; 免疫 &gt; 靶向 &gt; 化疗</li>
+</ul>
+</li>
+<li><strong>诊断与治疗逻辑匹配</strong><ul>
+<li>匹配正确 → 输出主要&#x2F;次要诊断与手术操作</li>
+<li>不充分或错误 → 「预警：无法编码，需人工干预」</li>
+</ul>
+</li>
+</ol>
+<h3 id="5-3-结构化输出格式"><a href="#5-3-结构化输出格式" class="headerlink" title="5.3 结构化输出格式"></a>5.3 结构化输出格式</h3><p>成功场景：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">### 主要诊断及编码</span><br><span class="line">疾病名称：...</span><br><span class="line">ICD-10编码：...</span><br><span class="line">选择依据：</span><br><span class="line">1.诊疗经过：...</span><br><span class="line">2.编码依据：...</span><br><span class="line"></span><br><span class="line">### 次要诊断</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">### 主要手术/操作</span><br><span class="line">手术名称：...</span><br><span class="line">ICD-9-CM-3编码：...</span><br><span class="line">选择依据：...</span><br></pre></td></tr></table></figure>
+
+<p>失败场景：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">预警：无法编码，需人工干预</span><br><span class="line">原因：...</span><br></pre></td></tr></table></figure>
+
+<p>另有实验性 Prompt <code>ZYMD_PROMPT</code>，仅用于「住院目的 + 治疗经过」子任务评测。</p>
+<hr>
+<h2 id="6-数据集构造"><a href="#6-数据集构造" class="headerlink" title="6. 数据集构造"></a>6. 数据集构造</h2><h3 id="6-1-数据源"><a href="#6-1-数据源" class="headerlink" title="6.1 数据源"></a>6.1 数据源</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/media/cra/新加卷/ocr_pdf/alpaca_format_input_train_乳腺.json</span><br></pre></td></tr></table></figure>
+
+<p>字段约定（Alpaca + CoT）：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>input</code></td>
+<td>病历文本</td>
+</tr>
+<tr>
+<td><code>cot</code></td>
+<td>思维链（推理过程）</td>
+</tr>
+<tr>
+<td><code>output</code></td>
+<td>最终编码结果</td>
+</tr>
+</tbody></table>
+<h3 id="6-2-对话格式"><a href="#6-2-对话格式" class="headerlink" title="6.2 对话格式"></a>6.2 对话格式</h3><p>每条样本转为三轮对话：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">  &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;system&quot;</span>, <span class="string">&quot;content&quot;</span>: PROMPT&#125;,</span><br><span class="line">  &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: problem&#125;,</span><br><span class="line">  &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">f&quot;&lt;think&gt;<span class="subst">&#123;cot&#125;</span>&lt;/think&gt;\n<span class="subst">&#123;solution&#125;</span>&quot;</span>&#125;,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li>Assistant 显式包含 <code>&lt;think&gt;...&lt;/think&gt;</code>，训练模型先推理再给结论</li>
+<li>使用 <code>tokenizer.apply_chat_template</code> 转为训练文本字段 <code>text</code></li>
+<li>经 <code>pandas</code> 拼接后 <code>Dataset.shuffle(seed=3407)</code> 打乱</li>
+</ul>
+<hr>
+<h2 id="7-训练配置"><a href="#7-训练配置" class="headerlink" title="7. 训练配置"></a>7. 训练配置</h2><p>使用 TRL <code>SFTTrainer</code>：</p>
+<table>
+<thead>
+<tr>
+<th>超参</th>
+<th>取值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>dataset_text_field</code></td>
+<td><code>&quot;text&quot;</code></td>
+<td>训练文本字段</td>
+</tr>
+<tr>
+<td><code>per_device_train_batch_size</code></td>
+<td><code>2</code></td>
+<td>单卡 batch</td>
+</tr>
+<tr>
+<td><code>gradient_accumulation_steps</code></td>
+<td><code>4</code></td>
+<td>等效全局 batch ≈ 8（单卡）</td>
+</tr>
+<tr>
+<td><code>warmup_steps</code></td>
+<td><code>5</code></td>
+<td>学习率预热</td>
+</tr>
+<tr>
+<td><code>max_steps</code></td>
+<td><code>200</code></td>
+<td>步数制训练（也可改 <code>num_train_epochs</code>）</td>
+</tr>
+<tr>
+<td><code>learning_rate</code></td>
+<td><code>5e-6</code></td>
+<td>较低 LR，适合已微调基座继续训练（通常为[1e-5,3e-5]）</td>
+</tr>
+<tr>
+<td><code>logging_steps</code></td>
+<td><code>2</code></td>
+<td>日志频率</td>
+</tr>
+<tr>
+<td><code>optim</code></td>
+<td><code>&quot;adamw_8bit&quot;</code></td>
+<td>8bit AdamW，省显存</td>
+</tr>
+<tr>
+<td><code>weight_decay</code></td>
+<td><code>0.01</code></td>
+<td>权重衰减</td>
+</tr>
+<tr>
+<td><code>lr_scheduler_type</code></td>
+<td><code>&quot;cosine&quot;</code></td>
+<td>余弦退火</td>
+</tr>
+<tr>
+<td><code>seed</code></td>
+<td><code>3407</code></td>
+<td>可复现</td>
+</tr>
+<tr>
+<td><code>output_dir</code></td>
+<td><code>&quot;outputs_1202_think&quot;</code></td>
+<td>checkpoint 目录</td>
+</tr>
+<tr>
+<td><code>report_to</code></td>
+<td><code>&quot;none&quot;</code></td>
+<td>未接入 WandB 等</td>
+</tr>
+</tbody></table>
+<p>启动训练：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">trainer_stats = trainer.train()</span><br><span class="line"><span class="comment"># 断点续训：</span></span><br><span class="line"><span class="comment"># trainer.train(resume_from_checkpoint=True)</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="8-模型保存与部署"><a href="#8-模型保存与部署" class="headerlink" title="8. 模型保存与部署"></a>8. 模型保存与部署</h2><h3 id="8-1-保存-LoRA-x2F-适配权重"><a href="#8-1-保存-LoRA-x2F-适配权重" class="headerlink" title="8.1 保存 LoRA &#x2F; 适配权重"></a>8.1 保存 LoRA &#x2F; 适配权重</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">newModelSavePath = <span class="string">&quot;/media/cra/新加卷/icd10-qwen3-14b-1202-think&quot;</span></span><br><span class="line">model.save_pretrained(newModelSavePath)</span><br><span class="line">tokenizer.save_pretrained(newModelSavePath)</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-2-导出-GGUF（q4-k-m）"><a href="#8-2-导出-GGUF（q4-k-m）" class="headerlink" title="8.2 导出 GGUF（q4_k_m）"></a>8.2 导出 GGUF（q4_k_m）</h3><p>依赖本地 llama.cpp：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LLAMA_CPP_DIR=/home/cra/下载/llama.cpp</span><br><span class="line">LLAMA_CPP_QUANTIZE_PATH=.../llama-quantize</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">model.save_pretrained_gguf(</span><br><span class="line">    newModelSavePath,</span><br><span class="line">    tokenizer,</span><br><span class="line">    quantization_method=<span class="string">&quot;q4_k_m&quot;</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-3-Ollama-注册"><a href="#8-3-Ollama-注册" class="headerlink" title="8.3 Ollama 注册"></a>8.3 Ollama 注册</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ollama create icd10-qwen3-1202-think:14b \</span><br><span class="line">  -f /media/cra/新加卷/icd10-qwen3-14b-1202-think/Modelfile</span><br></pre></td></tr></table></figure>
+
+<p>可通过 <code>http://localhost:11434/api/generate</code> 调用</p>
+<hr>
+<h2 id="9-推理与评测"><a href="#9-推理与评测" class="headerlink" title="9. 推理与评测"></a>9. 推理与评测</h2><h3 id="9-1-推理开关"><a href="#9-1-推理开关" class="headerlink" title="9.1 推理开关"></a>9.1 推理开关</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FastLanguageModel.for_inference(model)  <span class="comment"># Unsloth 原生加速推理</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="9-2-生成参数（主流测用法）"><a href="#9-2-生成参数（主流测用法）" class="headerlink" title="9.2 生成参数（主流测用法）"></a>9.2 生成参数（主流测用法）</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>取值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>max_new_tokens</code></td>
+<td><code>10240</code> ~ <code>20480</code></td>
+</tr>
+<tr>
+<td><code>temperature</code></td>
+<td><code>0.1</code></td>
+</tr>
+<tr>
+<td><code>top_p</code></td>
+<td><code>0.95</code></td>
+</tr>
+<tr>
+<td><code>top_k</code></td>
+<td><code>20</code></td>
+</tr>
+<tr>
+<td><code>enable_thinking</code></td>
+<td><code>True</code>（chat template）</td>
+</tr>
+</tbody></table>
+<h3 id="9-3-乳腺验证集批量评测"><a href="#9-3-乳腺验证集批量评测" class="headerlink" title="9.3 乳腺验证集批量评测"></a>9.3 乳腺验证集批量评测</h3><ul>
+<li><strong>验证用于测试的 PID 列表</strong>：<code>.../ocr_pdf/乳腺/validationSetPID.txt</code></li>
+<li><strong>提取病历文件</strong>：递归匹配 <code>*final2*.json</code></li>
+<li><strong>对照思维链</strong>：对应 <code>*cot_results6*.json</code></li>
+<li><strong>流程</strong>：<ol>
+<li>读取用于测试的指定 PID 的病历，剔除医生诊断描述等答案字段</li>
+<li>用 System Prompt + 病历生成</li>
+<li>取 <code>&lt;/think&gt;</code> 之后的正式答案</li>
+<li>正则抽取「疾病名称 &#x2F; ICD-10编码」</li>
+<li>与标准比对，将测试结果写入 <code>test_results_乳腺.csv</code></li>
+</ol>
+</li>
+<li><strong>匹配规则</strong>：疾病名称全等，且预测编码包含于金标准编码，且无「预警」字样 → 记为「匹配」</li>
+</ul>
+<hr>
+<h2 id="10-端到端流程总览"><a href="#10-端到端流程总览" class="headerlink" title="10. 端到端流程总览"></a>10. 端到端流程总览</h2><p><a target="_blank" rel="noopener" href="https://sm.ms/VZZQR" title="Qwen3-14B训练流程总览图">https://sm.ms/VZZQR</a></p>
+<p><em>基于Mermaid作图</em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    A[检查 GPU 显存] --&gt; B[加载 Qwen3-14B 基座]</span><br><span class="line">    B --&gt; C[注入 LoRA r=8]</span><br><span class="line">    C --&gt; D[加载乳腺癌 Alpaca+CoT 数据]</span><br><span class="line">    D --&gt; E[构造 system、user、assistant（含 think）的对话]</span><br><span class="line">    E --&gt; F[SFT: 200 steps, learning_rate=5e-6]</span><br><span class="line">    F --&gt; G[保存 LoRA 权重]</span><br><span class="line">    G --&gt; H[导出 GGUF q4_k_m]</span><br><span class="line">    H --&gt; I[Ollama create]</span><br><span class="line">    G --&gt; J[Unsloth 本地推理评测]</span><br><span class="line">    J --&gt; K[乳腺癌验证集 CSV 对比]</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="11-训练实践注意点"><a href="#11-训练实践注意点" class="headerlink" title="11. 训练实践注意点"></a>11. 训练实践注意点</h2><ol>
+<li><strong>长上下文成本高</strong>：<code>max_seq_length=20480</code>，务必开启梯度检查点，并关注多卡 <code>balanced</code> 负载。</li>
+<li><strong>继续微调学习率宜低</strong>：当前 <code>5e-6</code>，避免冲掉已有 ICD 能力。</li>
+<li><strong>思维链质量决定上限</strong>：训练依赖 <code>cot</code> 字段质量；<code>&lt;think&gt;</code> 格式需与推理侧 <code>enable_thinking</code> 一致。</li>
+</ol>
+<hr>
+<p><em>本文根据 <code>微调qwen3-think copy.ipynb</code> 整理编撰，路径与超参以实际配置为准。</em></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://waltyoung.github.io">WaltYoung</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://waltyoung.github.io/2026/10/12/%E5%9F%BA%E4%BA%8EQwen3-14B%E5%9F%BA%E5%BA%A7%E6%A8%A1%E5%9E%8B%E8%BF%9B%E8%A1%8C%E6%80%9D%E7%BB%B4%E9%93%BE%E5%BE%AE%E8%B0%83%E7%9A%84%E5%8F%AF%E8%A7%A3%E9%87%8AICD-10%E7%97%85%E6%A1%88%E7%BC%96%E7%A0%81%E4%B8%93%E5%AE%B6%E6%A8%A1%E5%9E%8B/">https://waltyoung.github.io/2026/10/12/%E5%9F%BA%E4%BA%8EQwen3-14B%E5%9F%BA%E5%BA%A7%E6%A8%A1%E5%9E%8B%E8%BF%9B%E8%A1%8C%E6%80%9D%E7%BB%B4%E9%93%BE%E5%BE%AE%E8%B0%83%E7%9A%84%E5%8F%AF%E8%A7%A3%E9%87%8AICD-10%E7%97%85%E6%A1%88%E7%BC%96%E7%A0%81%E4%B8%93%E5%AE%B6%E6%A8%A1%E5%9E%8B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://WaltYoung.github.io" target="_blank">WaltYoung</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/LLM/">LLM</a><a class="post-meta__tags" href="/tags/%E5%BE%AE%E8%B0%83/">微调</a><a class="post-meta__tags" href="/tags/Qwen3/">Qwen3</a><a class="post-meta__tags" href="/tags/LoRA/">LoRA</a><a class="post-meta__tags" href="/tags/Unsloth/">Unsloth</a></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" data-sites="wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2026/09/26/MySQL%E7%A9%BA%E9%97%B4%E6%B8%85%E7%90%86%EF%BC%9A%E6%97%A5%E5%BF%97%E6%B8%85%E7%90%86%E4%B8%8E%E7%A2%8E%E7%89%87%E5%9B%9E%E6%94%B6/" title="MySQL空间清理：日志清理与碎片回收"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">MySQL空间清理：日志清理与碎片回收</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">WaltYoung</div><div class="author-info__description">为世界上所有美好而战</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">63</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">50</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/WaltYoung"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/WaltYoung" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">我的小窝</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Qwen3-14B-ICD-10-%E7%97%85%E6%A1%88%E7%BC%96%E7%A0%81%E6%80%9D%E7%BB%B4%E9%93%BE%E5%BE%AE%E8%B0%83%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3"><span class="toc-number">1.</span> <span class="toc-text">Qwen3-14B ICD-10 病案编码思维链微调技术文档</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%A6%82%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">1. 概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%B8%9A%E5%8A%A1%E7%9B%AE%E6%A0%87"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.1 业务目标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E6%8A%80%E6%9C%AF%E8%B7%AF%E7%BA%BF"><span class="toc-number">1.1.2.</span> <span class="toc-text">1.2 技术路线</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%8E%AF%E5%A2%83%E4%B8%8E%E4%BE%9D%E8%B5%96"><span class="toc-number">1.2.</span> <span class="toc-text">2. 环境与依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%A8%A1%E5%9E%8B%E5%8A%A0%E8%BD%BD"><span class="toc-number">1.3.</span> <span class="toc-text">3. 模型加载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%85%B3%E9%94%AE%E5%8F%82%E6%95%B0"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.1 关键参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%8A%A0%E8%BD%BD%E4%BB%A3%E7%A0%81%E8%A6%81%E7%82%B9"><span class="toc-number">1.3.2.</span> <span class="toc-text">3.2 加载代码要点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-LoRA-%E9%85%8D%E7%BD%AE"><span class="toc-number">1.4.</span> <span class="toc-text">4. LoRA 配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-System-Prompt-%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.5.</span> <span class="toc-text">5. System Prompt 设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E8%A7%92%E8%89%B2%E4%B8%8E%E6%A0%87%E5%87%86"><span class="toc-number">1.5.1.</span> <span class="toc-text">5.1 角色与标准</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E7%BC%96%E7%A0%81%E6%80%9D%E8%B7%AF%EF%BC%88%E5%86%B3%E7%AD%96%E6%B5%81%E6%B0%B4%E7%BA%BF%EF%BC%89"><span class="toc-number">1.5.2.</span> <span class="toc-text">5.2 编码思路（决策流水线）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E7%BB%93%E6%9E%84%E5%8C%96%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.5.3.</span> <span class="toc-text">5.3 结构化输出格式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%95%B0%E6%8D%AE%E9%9B%86%E6%9E%84%E9%80%A0"><span class="toc-number">1.6.</span> <span class="toc-text">6. 数据集构造</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E6%95%B0%E6%8D%AE%E6%BA%90"><span class="toc-number">1.6.1.</span> <span class="toc-text">6.1 数据源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E5%AF%B9%E8%AF%9D%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.6.2.</span> <span class="toc-text">6.2 对话格式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E8%AE%AD%E7%BB%83%E9%85%8D%E7%BD%AE"><span class="toc-number">1.7.</span> <span class="toc-text">7. 训练配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E6%A8%A1%E5%9E%8B%E4%BF%9D%E5%AD%98%E4%B8%8E%E9%83%A8%E7%BD%B2"><span class="toc-number">1.8.</span> <span class="toc-text">8. 模型保存与部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-%E4%BF%9D%E5%AD%98-LoRA-x2F-%E9%80%82%E9%85%8D%E6%9D%83%E9%87%8D"><span class="toc-number">1.8.1.</span> <span class="toc-text">8.1 保存 LoRA &#x2F; 适配权重</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-%E5%AF%BC%E5%87%BA-GGUF%EF%BC%88q4-k-m%EF%BC%89"><span class="toc-number">1.8.2.</span> <span class="toc-text">8.2 导出 GGUF（q4_k_m）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-3-Ollama-%E6%B3%A8%E5%86%8C"><span class="toc-number">1.8.3.</span> <span class="toc-text">8.3 Ollama 注册</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E6%8E%A8%E7%90%86%E4%B8%8E%E8%AF%84%E6%B5%8B"><span class="toc-number">1.9.</span> <span class="toc-text">9. 推理与评测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-%E6%8E%A8%E7%90%86%E5%BC%80%E5%85%B3"><span class="toc-number">1.9.1.</span> <span class="toc-text">9.1 推理开关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-%E7%94%9F%E6%88%90%E5%8F%82%E6%95%B0%EF%BC%88%E4%B8%BB%E6%B5%81%E6%B5%8B%E7%94%A8%E6%B3%95%EF%BC%89"><span class="toc-number">1.9.2.</span> <span class="toc-text">9.2 生成参数（主流测用法）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-3-%E4%B9%B3%E8%85%BA%E9%AA%8C%E8%AF%81%E9%9B%86%E6%89%B9%E9%87%8F%E8%AF%84%E6%B5%8B"><span class="toc-number">1.9.3.</span> <span class="toc-text">9.3 乳腺验证集批量评测</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E7%AB%AF%E5%88%B0%E7%AB%AF%E6%B5%81%E7%A8%8B%E6%80%BB%E8%A7%88"><span class="toc-number">1.10.</span> <span class="toc-text">10. 端到端流程总览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E8%AE%AD%E7%BB%83%E5%AE%9E%E8%B7%B5%E6%B3%A8%E6%84%8F%E7%82%B9"><span class="toc-number">1.11.</span> <span class="toc-text">11. 训练实践注意点</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/12/%E5%9F%BA%E4%BA%8EQwen3-14B%E5%9F%BA%E5%BA%A7%E6%A8%A1%E5%9E%8B%E8%BF%9B%E8%A1%8C%E6%80%9D%E7%BB%B4%E9%93%BE%E5%BE%AE%E8%B0%83%E7%9A%84%E5%8F%AF%E8%A7%A3%E9%87%8AICD-10%E7%97%85%E6%A1%88%E7%BC%96%E7%A0%81%E4%B8%93%E5%AE%B6%E6%A8%A1%E5%9E%8B/" title="基于Qwen3-14B基座模型进行思维链微调的可解释ICD-10病案编码专家模型">基于Qwen3-14B基座模型进行思维链微调的可解释ICD-10病案编码专家模型</a><time datetime="2026-10-12T10:16:30.000Z" title="发表于 2026-10-12 18:16:30">2026-10-12</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/26/MySQL%E7%A9%BA%E9%97%B4%E6%B8%85%E7%90%86%EF%BC%9A%E6%97%A5%E5%BF%97%E6%B8%85%E7%90%86%E4%B8%8E%E7%A2%8E%E7%89%87%E5%9B%9E%E6%94%B6/" title="MySQL空间清理：日志清理与碎片回收">MySQL空间清理：日志清理与碎片回收</a><time datetime="2026-09-26T08:42:57.000Z" title="发表于 2026-09-26 16:42:57">2026-09-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/25/%E8%BD%AF%E4%BB%B6%E9%A1%B9%E7%9B%AE%E5%88%9D%E6%9C%9F%E6%8A%A5%E4%BB%B7%E7%BC%96%E5%88%B6%E8%A6%81%E7%82%B9/" title="软件项目初期报价编制要点">软件项目初期报价编制要点</a><time datetime="2026-09-25T01:16:20.000Z" title="发表于 2026-09-25 09:16:20">2026-09-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/04/15/%E5%9F%BA%E4%BA%8EDataX%E7%9A%84%E8%87%AATrino%E5%88%B0MySQL%E7%9A%84%E5%A4%A7%E8%A7%84%E6%A8%A1%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" title="基于DataX的自Trino到MySQL的大规模数据同步工程实践(一)">基于DataX的自Trino到MySQL的大规模数据同步工程实践(一)</a><time datetime="2026-04-15T13:58:01.000Z" title="发表于 2026-04-15 21:58:01">2026-04-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/04/08/%E5%9F%BA%E4%BA%8EGithub-Action%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%9A%84Python%E5%BA%94%E7%94%A8%E8%87%AA%E5%8A%A8%E5%8C%96%E8%B7%A8%E5%B9%B3%E5%8F%B0%E6%9E%84%E5%BB%BA%E4%B8%8E%E5%8F%91%E5%B8%83%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88/" title="基于Github Action工作流的Python应用自动化跨平台构建与发布的实现方案">基于Github Action工作流的Python应用自动化跨平台构建与发布的实现方案</a><time datetime="2026-04-08T14:54:37.000Z" title="发表于 2026-04-08 22:54:37">2026-04-08</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2026 By WaltYoung</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
