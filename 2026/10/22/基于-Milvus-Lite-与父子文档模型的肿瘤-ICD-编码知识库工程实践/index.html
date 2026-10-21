@@ -1,0 +1,630 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>基于 Milvus Lite 与父子文档模型的肿瘤 ICD 编码知识库工程实践 | WaltYoung</title><meta name="author" content="WaltYoung"><meta name="copyright" content="WaltYoung"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="基于 Milvus Lite 与父子文档模型的肿瘤 ICD 编码知识库工程实践前言笔者在智能病案编码场景中接到一个需求：给定病历片段、诊断名或“右乳2点”这类短文本，召回候选 ICD-10 肿瘤章（C00–D48）诊断码，并给出可人工复核的命中证据。 若把整条诊断说明拼成一个长向量做检索，短查询容易被长上下文稀释，尤其是钟点、别称这类短文本；若只做精确字符串匹配，又无法覆盖同义表述。遂有此文——以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于 Milvus Lite 与父子文档模型的肿瘤 ICD 编码知识库工程实践">
+<meta property="og:url" content="https://waltyoung.github.io/2026/10/22/%E5%9F%BA%E4%BA%8E-Milvus-Lite-%E4%B8%8E%E7%88%B6%E5%AD%90%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%82%BF%E7%98%A4-ICD-%E7%BC%96%E7%A0%81%E7%9F%A5%E8%AF%86%E5%BA%93%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/index.html">
+<meta property="og:site_name" content="WaltYoung">
+<meta property="og:description" content="基于 Milvus Lite 与父子文档模型的肿瘤 ICD 编码知识库工程实践前言笔者在智能病案编码场景中接到一个需求：给定病历片段、诊断名或“右乳2点”这类短文本，召回候选 ICD-10 肿瘤章（C00–D48）诊断码，并给出可人工复核的命中证据。 若把整条诊断说明拼成一个长向量做检索，短查询容易被长上下文稀释，尤其是钟点、别称这类短文本；若只做精确字符串匹配，又无法覆盖同义表述。遂有此文——以">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp">
+<meta property="article:published_time" content="2026-10-21T16:21:21.000Z">
+<meta property="article:modified_time" content="2026-10-21T16:23:04.651Z">
+<meta property="article:author" content="WaltYoung">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="RAG">
+<meta property="article:tag" content="Milvus">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp"><link rel="shortcut icon" href="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp"><link rel="canonical" href="https://waltyoung.github.io/2026/10/22/%E5%9F%BA%E4%BA%8E-Milvus-Lite-%E4%B8%8E%E7%88%B6%E5%AD%90%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%82%BF%E7%98%A4-ICD-%E7%BC%96%E7%A0%81%E7%9F%A5%E8%AF%86%E5%BA%93%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '基于 Milvus Lite 与父子文档模型的肿瘤 ICD 编码知识库工程实践',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-10-22 00:23:04'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="WaltYoung" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">64</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s2.loli.net/2023/07/25/5fu7CQnLBJ6ENIT.png')"><nav id="nav"><span id="blog-info"><a href="/" title="WaltYoung"><span class="site-name">WaltYoung</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">基于 Milvus Lite 与父子文档模型的肿瘤 ICD 编码知识库工程实践</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-21T16:21:21.000Z" title="发表于 2026-10-22 00:21:21">2026-10-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-21T16:23:04.651Z" title="更新于 2026-10-22 00:23:04">2026-10-22</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI%E7%97%85%E6%A1%88%E7%BC%96%E7%A0%81/">AI病案编码</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">4.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>15分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="基于 Milvus Lite 与父子文档模型的肿瘤 ICD 编码知识库工程实践"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="基于-Milvus-Lite-与父子文档模型的肿瘤-ICD-编码知识库工程实践"><a href="#基于-Milvus-Lite-与父子文档模型的肿瘤-ICD-编码知识库工程实践" class="headerlink" title="基于 Milvus Lite 与父子文档模型的肿瘤 ICD 编码知识库工程实践"></a>基于 Milvus Lite 与父子文档模型的肿瘤 ICD 编码知识库工程实践</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>笔者在智能病案编码场景中接到一个需求：给定病历片段、诊断名或“右乳2点”这类短文本，召回候选 ICD-10 肿瘤章（C00–D48）诊断码，并给出可人工复核的命中证据。</p>
+<p>若把整条诊断说明拼成一个长向量做检索，短查询容易被长上下文稀释，尤其是钟点、别称这类短文本；若只做精确字符串匹配，又无法覆盖同义表述。遂有此文——以工程实践为落点，介绍技术选型、父子文档模型、入库版本切换和检索聚合，并说明实际工程中的取舍。</p>
+<h2 id="1-业务目标与约束"><a href="#1-业务目标与约束" class="headerlink" title="1. 业务目标与约束"></a>1. 业务目标与约束</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>约定</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>输入</td>
+<td>疾病名称、诊断名称、钟点等短文本</td>
+</tr>
+<tr>
+<td>输出</td>
+<td>Top-K <code>diag_code</code> + <code>diag_name</code> + <code>matched_keywords</code> 或 <code>evidence</code></td>
+</tr>
+</tbody></table>
+<p>当前规模约为三千条父级诊断记录、1.3 万条子向量。部署环境以内网和离线为主，模型与向量库需要能打进本地包，不依赖常驻向量服务集群。</p>
+<p>这里的相似度是加权余弦相似度，用于候选排序和证据展示，不代表校准后的医学概率。</p>
+<h2 id="2-技术选型"><a href="#2-技术选型" class="headerlink" title="2. 技术选型"></a>2. 技术选型</h2><h3 id="2-1-总体选型"><a href="#2-1-总体选型" class="headerlink" title="2.1 总体选型"></a>2.1 总体选型</h3><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>选择</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>向量库</td>
+<td>Milvus Lite</td>
+<td>使用目录型 <code>.db</code>，开发和交付环境一致，适合内网单机部署</td>
+</tr>
+<tr>
+<td>Collection</td>
+<td><code>tumor_kw_vectors</code></td>
+<td>一行对应一个关键词子向量</td>
+</tr>
+<tr>
+<td>嵌入模型</td>
+<td>BAAI&#x2F;bge-m3</td>
+<td>中文短词和较长上下文表现稳定，dense 向量为 1024 维</td>
+</tr>
+<tr>
+<td>向量维度与归一化</td>
+<td>1024，L2 normalize</td>
+<td>与 BGE dense 使用惯例一致，配合 COSINE</td>
+</tr>
+<tr>
+<td>距离度量</td>
+<td>COSINE</td>
+<td>归一化后等价于内积，便于实现和调参</td>
+</tr>
+<tr>
+<td>索引</td>
+<td>FLAT</td>
+<td>当前为万级实体，暴力检索延迟可接受</td>
+</tr>
+<tr>
+<td>max_length</td>
+<td>8192</td>
+<td>尽量不截断业务侧长关键词</td>
+</tr>
+<tr>
+<td>API</td>
+<td>FastAPI + uvicorn</td>
+<td>提供轻量 HTTP 接口和 Swagger 文档</td>
+</tr>
+<tr>
+<td>配置</td>
+<td><code>configs/milvus.yaml</code></td>
+<td>集中管理模型、库路径和版本参数</td>
+</tr>
+</tbody></table>
+<h3 id="2-2-向量库选型"><a href="#2-2-向量库选型" class="headerlink" title="2.2 向量库选型"></a>2.2 向量库选型</h3><table>
+<thead>
+<tr>
+<th>方案</th>
+<th>优点</th>
+<th>（针对本项目）短板</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>FAISS</td>
+<td>纯本地、性能强</td>
+<td>Schema、标量过滤和版本切换需要自己实现</td>
+</tr>
+<tr>
+<td>Chroma</td>
+<td>上手快</td>
+<td>元数据和版本治理能力偏弱</td>
+</tr>
+<tr>
+<td>PGVector</td>
+<td>SQL 和事务能力强</td>
+<td>会引入数据库运维成本，不利于医院内网离线交付引入 DB 运维</td>
+</tr>
+<tr>
+<td><strong>Milvus Lite</strong></td>
+<td>与 Milvus Server 使用同一套 API；本地目录库；原生支持字段和倒排索引</td>
+<td>后续如果数据量到百万级，再迁移到 Milvus Server</td>
+</tr>
+</tbody></table>
+<p>笔者判断先用 Milvus Lite 跑稳数据模型与检索契约，后续如果数据量到百万级再迁移到 Milvus Server，应用层 <code>MilvusClient</code>的调用方式可以复用。</p>
+<h3 id="2-3-嵌入模型选型"><a href="#2-3-嵌入模型选型" class="headerlink" title="2.3 嵌入模型选型"></a>2.3 嵌入模型选型</h3><p>BGE-M3 支持 dense、sparse 和 multi-vector（ColBERT 风格）三种表示。三者是同一模型在一次编码中产出的不同粒度表示，区别在于<strong>用多少条向量表示一段文本</strong>，以及<strong>查询与文档在什么阶段交互</strong>。</p>
+<p><strong>Dense（稠密向量）</strong>：<strong>把整段文本压缩成一条固定维度的向量</strong>，每个维度均为非零值。检索时查询和文档各编码为一条向量，直接计算余弦相似度或点积。其优势是语义泛化能力强，能匹配“右乳房”与“乳腺”这类字面不同但含义相近的表达；短板是精确匹配弱，疾病代码、钟点、型号等硬信号容易被长上下文稀释，命中后也难以直接指出匹配了哪段文本。</p>
+<p><strong>Sparse（稀疏向量）</strong>：保留词汇级表示，<strong>每个维度对应词表中的一个词</strong>，值为该词的重要性权重，绝大多数维度为零。传统 BM25 是稀疏检索的经典形式；BGE-M3 的 sparse 模式生成的是上下文感知的类 BM25 权重。其优势是精确关键词匹配强、可解释，适合代码、专有名词、钟点等必须字面对上的信号；局限是缺乏语义泛化，难以自动识别同义表述。</p>
+<p><strong>Multi-vector（ColBERT 风格）</strong>：<strong>为每个 token 产出一条向量</strong>，查询和文档先独立编码成向量序列，交互延迟到打分阶段，因此称为延迟交互。打分采用 MaxSim：对查询中的每个 token 向量，在文档的所有 token 向量中找最相似的一个，再将最大值求和。它比单向量 dense 保留更细的匹配粒度，又不像 Cross-Encoder 那样对每个查询-文档对做全量注意力；代价是存储和计算开销显著更高，文档不再是一条向量，而是几十到几百条 token 向量。</p>
+<table>
+<thead>
+<tr>
+<th>表示</th>
+<th>文本表示</th>
+<th>匹配信号</th>
+<th>交互时机</th>
+<th>强项</th>
+<th>弱项</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Dense</td>
+<td>一段文本 → 1 条稠密向量</td>
+<td>语义相似</td>
+<td>无（向量点积）</td>
+<td>语义泛化、跨语言</td>
+<td>精确匹配弱</td>
+</tr>
+<tr>
+<td>Sparse</td>
+<td>一段文本 → 1 个稀疏权重字典</td>
+<td>词汇&#x2F;关键词重叠</td>
+<td>无（词项共现加权）</td>
+<td>精确匹配</td>
+<td>无语义泛化</td>
+</tr>
+<tr>
+<td>Multi-vector</td>
+<td>一段文本 → 每个 token 1 条向量</td>
+<td>token 级细粒度对齐</td>
+<td>延迟（编码后 MaxSim）</td>
+<td>长查询、细粒度语义对齐</td>
+<td>存储&#x2F;计算成本高</td>
+</tr>
+</tbody></table>
+<p>当前实现只使用 dense，Collection 中仅保存 dense 向量，sparse 和 multi-vector 不落库，原因如下：</p>
+<ol>
+<li><code>dense + FLOAT_VECTOR + COSINE + L2 normalize</code> 的链路简单，便于离线复现。</li>
+<li>关键词库本身已经按词汇级切分，每个关键词对应一条子向量，这在一定程度上替代了 sparse 想解决的细粒度匹配问题；sparse 对钟点类短查询的增量收益有限，但会增加管线复杂度。</li>
+<li>ColBERT 类晚期交互对算力和存储要求更高，当前目标是候选召回和人工复核，不是榜单评测。</li>
+</ol>
+<p>编码时使用 <code>max_length=8192</code>，CPU 和 GPU 均开启 <code>use_fp16=True</code>。长关键词会完整进入模型，编码速度较慢，但通过 <code>content_hash</code> 缓存可以断点续跑。</p>
+<h3 id="2-4-索引选型"><a href="#2-4-索引选型" class="headerlink" title="2.4 索引选型"></a>2.4 索引选型</h3><p>在本项目中主要考虑以下三点：</p>
+<ol>
+<li><strong>规模</strong>：当前子向量在万级以内，FLAT 的扫描延迟可以接受。  </li>
+<li><strong>工程现实</strong>：在 Windows 系统上并且仓库路径包含中文时，HNSW&#x2F;IVF 落盘曾出现不稳定。  </li>
+<li><strong>可预期性</strong>：FLAT 没有近似误差，评测和排障更直接。</li>
+</ol>
+<p>规模上升后，优先选择 IVF_FLAT 或 HNSW，并使用 Linux 绝对路径部署。</p>
+<h2 id="3-父子文档模型"><a href="#3-父子文档模型" class="headerlink" title="3. 父子文档模型"></a>3. 父子文档模型</h2><h3 id="3-1-概念定义"><a href="#3-1-概念定义" class="headerlink" title="3.1 概念定义"></a>3.1 概念定义</h3><table>
+<thead>
+<tr>
+<th>概念</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>父文档</strong></td>
+<td>一条 ICD 诊断，包含诊断代码、名称、系统或器官等字段以及关键词</td>
+</tr>
+<tr>
+<td><strong>子文档</strong></td>
+<td>每个去重后的关键词编码为一条向量；同一 <code>diag_code</code> 对应多行实体</td>
+</tr>
+<tr>
+<td><strong>检索单位</strong></td>
+<td>子向量</td>
+</tr>
+<tr>
+<td><strong>返回单位</strong></td>
+<td>父级诊断码</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">父文档：C50.912  右乳房上外象限恶性肿瘤  keywords=[码, 名, 部位长句, 右乳2点, ...]</span><br><span class="line">        │</span><br><span class="line">        ├─ 子文档₁  kw=诊断名        kw_type=name</span><br><span class="line">        ├─ 子文档₂  kw=右乳2点       kw_type=clock</span><br><span class="line">        └─ 子文档₃  kw=长 context…   kw_type=raw_kw</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-不直接用全文向量的原因"><a href="#3-2-不直接用全文向量的原因" class="headerlink" title="3.2 不直接用全文向量的原因"></a>3.2 不直接用全文向量的原因</h3><p>如果把诊断码、名称、部位、钟点和临床特征拼成一段文本再编码，会存在三个问题：</p>
+<ul>
+<li>短查询与长拼接文本的相似度被稀释</li>
+<li>钟点、别称等窄信号容易被噪声淹没</li>
+<li>命中后难以说明到底匹配了哪段证据</li>
+</ul>
+<p>父子模型把检索粒度下沉到关键词，把返回粒度保留在诊断码，既保证短查询召回，也方便展示证据。</p>
+<h3 id="3-3-使用多行实体的原因"><a href="#3-3-使用多行实体的原因" class="headerlink" title="3.3 使用多行实体的原因"></a>3.3 使用多行实体的原因</h3><p>Milvus Collection 的 Schema 字段数固定，但一条诊断的关键词数量不固定。</p>
+<ul>
+<li>如果使用<strong>多向量列</strong>：容易造成字段数膨胀或被迫截断到固定数量；  </li>
+<li>如果使用<strong>多行实体</strong>，每行保存一个 <code>(diag_code, kw_text, vector)</code>，可以自然适配变长关键词。</li>
+</ul>
+<h3 id="3-4-子行类型与权重"><a href="#3-4-子行类型与权重" class="headerlink" title="3.4 子行类型与权重"></a>3.4 子行类型与权重</h3><p>解析后对关键词打标，但不丢弃：</p>
+<table>
+<thead>
+<tr>
+<th><code>kw_type</code></th>
+<th>规则</th>
+<th>检索权重</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>等于诊断名称</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td><code>clock</code></td>
+<td>钟点正则，如“右乳2点”“3-5点”</td>
+<td>0.95</td>
+</tr>
+<tr>
+<td><code>raw_kw</code></td>
+<td>其他关键词，包括长上下文</td>
+<td>0.9</td>
+</tr>
+</tbody></table>
+<p>聚合时计算 <code>fused = cosine_score × weight</code>，<code>cosine_score</code>是 Milvus 检索阶段返回的、查询向量与某条子向量之间的余弦相似度，同一 <code>diag_code</code> 取 <code>Max(fused)</code>。</p>
+<p><strong>使用 Max 而不是 Sum 或 Mean 的原因</strong>：</p>
+<ul>
+<li>Sum 会让关键词数量多的诊断码占优；</li>
+<li>Mean 会被大量弱匹配拉低，强证据可能被淹没；</li>
+<li><strong>Max</strong> 以最强单条证据代表该诊断码，与“给出一条命中证据”的产品需求一致。</li>
+</ul>
+<h3 id="3-5-与常规-RAG-分块方案的区别"><a href="#3-5-与常规-RAG-分块方案的区别" class="headerlink" title="3.5 与常规 RAG 分块方案的区别"></a>3.5 与常规 RAG 分块方案的区别</h3><p>本方案在结构上类似 RAG 中常见的父子检索思路，但切分依据和返回目标不同。</p>
+<table>
+<thead>
+<tr>
+<th>常规 RAG</th>
+<th>本方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>将长文档按长度或标题切分成若干片段</td>
+<td>将诊断说明拆成专家整理的关键词</td>
+</tr>
+<tr>
+<td>对文本片段做向量检索</td>
+<td>对关键词子向量做检索</td>
+</tr>
+<tr>
+<td>命中后回填片段原文</td>
+<td>回填 <code>diag_code</code> 和命中的 <code>kw_text</code></td>
+</tr>
+</tbody></table>
+<p>两者的主要区在于：常规 RAG 的文本片段多由通用规则切分，目的是给大模型提供上下文；本方案的子文档是编码知识中的业务关键词，包括诊断名、钟点、别称和长上下文，目的是提高短查询的召回效果，父文档保留 ICD 诊断码这一业务主键，便于聚合结果。</p>
+<h2 id="4-端到端流水线"><a href="#4-端到端流水线" class="headerlink" title="4. 端到端流水线"></a>4. 端到端流水线</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">raw TXT（`&amp;&amp;&amp;&amp;` 分块）  </span><br><span class="line">　↓  </span><br><span class="line">`text2json.py`——构造父 JSONL（结构化字段 + `keywords[]`）  </span><br><span class="line">　↓  </span><br><span class="line">`json4embed.py`——通过子行展开和BGE-M3模型生成`embeddings.jsonl`  </span><br><span class="line">　↓  </span><br><span class="line">`embedding2db.py`——写入 `&#123;kb_version&#125;.db` → promote 为 `tumor_ch2.db`  </span><br><span class="line">　↓  </span><br><span class="line">`services/main.py` → query → 子向量 Top-K → 按 `diag_code` 聚合 → HTTP</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>脚本</th>
+<th>输入</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>解析</td>
+<td><code>scripts/text2json.py</code></td>
+<td><code>data/raw/*.txt</code></td>
+<td><code>data/parsed/parsed.jsonl</code></td>
+</tr>
+<tr>
+<td>编码</td>
+<td><code>scripts/json4embed.py</code></td>
+<td>parsed.jsonl</td>
+<td><code>data/embeddings/embeddings.jsonl</code></td>
+</tr>
+<tr>
+<td>入库</td>
+<td><code>scripts/embedding2db.py</code></td>
+<td>embeddings.jsonl</td>
+<td><code>data/milvus/tumor_ch2.db</code></td>
+</tr>
+<tr>
+<td>检索</td>
+<td><code>services/main.py</code></td>
+<td>HTTP query</td>
+<td>Top-K 诊断及证据</td>
+</tr>
+</tbody></table>
+<p>编码阶段使用 <code>content_hash = sha256(diag_code + &#39;\0&#39; + kw_text)</code>，并拼接上 <code>model_name|dim</code> 作为缓存键，以支持断点续跑。</p>
+<p><code>.db</code>、embeddings、parsed 等本地大产物不进入 Git。离线包中模型目录和向量库各自独立，可以分开上传。</p>
+<h2 id="5-Collection-Schema-与索引"><a href="#5-Collection-Schema-与索引" class="headerlink" title="5. Collection Schema 与索引"></a>5. Collection Schema 与索引</h2><p>一行对应一个子向量，每行各字段的类型与作用如下：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>id</code></td>
+<td>INT64 PK</td>
+<td>行号主键，入库时显式赋值</td>
+</tr>
+<tr>
+<td><code>vector</code></td>
+<td>FLOAT_VECTOR(1024)</td>
+<td>关键词 dense 向量</td>
+</tr>
+<tr>
+<td><code>diag_code</code></td>
+<td>VARCHAR(64) + INVERTED</td>
+<td>聚合键和回传字段</td>
+</tr>
+<tr>
+<td><code>diag_name</code></td>
+<td>VARCHAR(512)</td>
+<td>回传诊断名称</td>
+</tr>
+<tr>
+<td><code>kw_text</code></td>
+<td>VARCHAR(8192)</td>
+<td>证据原文，可包含长上下文</td>
+</tr>
+<tr>
+<td><code>kw_type</code></td>
+<td>VARCHAR(32) + INVERTED</td>
+<td>加权类型</td>
+</tr>
+<tr>
+<td><code>kb_version</code></td>
+<td>VARCHAR(64)</td>
+<td>版本追溯</td>
+</tr>
+<tr>
+<td><code>content_hash</code></td>
+<td>VARCHAR(64)</td>
+<td>与编码缓存对齐</td>
+</tr>
+</tbody></table>
+<p>配置示例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">uri:</span> <span class="string">data/milvus/tumor_ch2.db</span></span><br><span class="line"><span class="attr">collection:</span> <span class="string">tumor_kw_vectors</span></span><br><span class="line"><span class="attr">embedding:</span></span><br><span class="line">  <span class="attr">model_name:</span> <span class="string">BAAI/bge-m3</span></span><br><span class="line">  <span class="attr">dim:</span> <span class="number">1024</span></span><br><span class="line">  <span class="attr">normalize:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">max_length:</span> <span class="number">8192</span></span><br><span class="line"><span class="attr">metric:</span> <span class="string">COSINE</span></span><br><span class="line"><span class="attr">index:</span> <span class="string">FLAT</span></span><br><span class="line"><span class="attr">kb_version:</span> <span class="string">tumor_ch2_v20250916</span></span><br></pre></td></tr></table></figure>
+
+<p>在<code>diag_code</code> 和 <code>kw_type</code>字段上已建立倒排索引，但没有正式启用（传值）。当前依赖纯向量召回，避免过早加硬过滤影响召回。</p>
+<h3 id="5-1-“倒排索引”名词解释"><a href="#5-1-“倒排索引”名词解释" class="headerlink" title="5.1 “倒排索引”名词解释"></a>5.1 “倒排索引”名词解释</h3><p>倒排索引（inverted index）是 Milvus 的标量字段索引，和向量字段上的向量索引（FLAT）是两套不同的机制。</p>
+<p>以下用 MySQL 来类比：</p>
+<p>建立一张表并插入数据举例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> diag_kw (</span><br><span class="line">  id        <span class="type">BIGINT</span> <span class="keyword">PRIMARY</span> KEY,</span><br><span class="line">  diag_code <span class="type">VARCHAR</span>(<span class="number">64</span>),</span><br><span class="line">  kw_text   <span class="type">VARCHAR</span>(<span class="number">255</span>),</span><br><span class="line">  kw_type   <span class="type">VARCHAR</span>(<span class="number">32</span>)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> diag_kw <span class="keyword">VALUES</span></span><br><span class="line">(<span class="number">1</span>, <span class="string">&#x27;C50.912&#x27;</span>, <span class="string">&#x27;右乳2点&#x27;</span>,                <span class="string">&#x27;clock&#x27;</span>),</span><br><span class="line">(<span class="number">2</span>, <span class="string">&#x27;C50.912&#x27;</span>, <span class="string">&#x27;右乳房上外象限恶性肿瘤&#x27;</span>, <span class="string">&#x27;name&#x27;</span>),</span><br><span class="line">(<span class="number">3</span>, <span class="string">&#x27;C50.912&#x27;</span>, <span class="string">&#x27;右乳&#x27;</span>,                   <span class="string">&#x27;raw_kw&#x27;</span>),</span><br><span class="line">(<span class="number">4</span>, <span class="string">&#x27;C50.911&#x27;</span>, <span class="string">&#x27;左乳2点&#x27;</span>,                <span class="string">&#x27;clock&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>正向索引：从“行”出发找内容。</strong> ：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> diag_kw <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+
+<p>如上所示查询 <code>id=2</code> 的记录</p>
+<p><strong>倒排索引：从“词”出发找行。</strong> 先把文本拆成词项，再建立“词项 → 行集合”的映射。MySQL 里对应的是 FULLTEXT 全文索引：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> diag_kw</span><br><span class="line">  <span class="keyword">ADD</span> FULLTEXT INDEX ft_kw_text (kw_text) <span class="keyword">WITH</span> PARSER ngram;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> diag_kw</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">MATCH</span>(kw_text) AGAINST(<span class="string">&#x27;右乳&#x27;</span> <span class="keyword">IN</span> <span class="type">BOOLEAN</span> MODE);</span><br></pre></td></tr></table></figure>
+
+<p>它内部维护的结构大致是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x27;右乳&#x27;     → [1, 2, 3]</span><br><span class="line">&#x27;2点&#x27;      → [1, 4]</span><br><span class="line">&#x27;恶性肿瘤&#x27; → [2]</span><br><span class="line">&#x27;左乳&#x27;     → [4]</span><br></pre></td></tr></table></figure>
+
+<p>故<strong>倒排索引的本质，是按“内容里出现了哪个词”组织数据，而不是按行号组织。</strong></p>
+<p>本知识库中真正承担“按内容语义找行”的，是向量字段上的<code>FLAT</code>向量索引。在 <code>diag_code</code> 和 <code>kw_type</code> 字段上已建立倒排索引，但没有正式启用（传值）。</p>
+<h2 id="6-检索服务：子向量召回与按码聚合"><a href="#6-检索服务：子向量召回与按码聚合" class="headerlink" title="6. 检索服务：子向量召回与按码聚合"></a>6. 检索服务：子向量召回与按码聚合</h2><p>检索流程如下：</p>
+<ol>
+<li>查询时使用与入库相同的 BGE-M3 进行编码。</li>
+<li>调用 Milvus <code>search(limit=candidate_k)</code>，默认 <code>candidate_k=80</code>。</li>
+<li>对每个命中计算 <code>fused = cosine_score × weight[kw_type]</code>。</li>
+<li>按 <code>diag_code</code> 保留 Max(fused)，并收集该码下的命中词，按加权分排序取前 5 个。</li>
+<li>全局排序后截断 <code>top_k</code>，默认 5。</li>
+</ol>
+<p>请求示例：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">POST /search</span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;query&quot;</span><span class="punctuation">:</span> <span class="string">&quot;右乳2点&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;top_k&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;candidate_k&quot;</span><span class="punctuation">:</span> <span class="number">80</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>响应中的 <code>score</code> 是聚合分，<code>evidence</code> 取该诊断码下加权分最高的命中词文本。</p>
+<p><code>candidate_k</code> 和 <code>top_k</code> 分开设置，是因为聚合前需要多召回一些子行。否则同一诊断码的多个关键词可能挤占候选名额，其他诊断码无法进入候选池。经验上从 <code>candidate_k ≈ 10～20 × top_k</code> 起步，再根据测试结果调整。</p>
+<p>模型采用懒加载：<code>/health</code> 先检查库是否可用，第一次 <code>/search</code> 时再加载 BGE 模型，缩短冷启动和打包探活时间。</p>
+<h2 id="7-版本化与版本切换"><a href="#7-版本化与版本切换" class="headerlink" title="7. 版本化与版本切换"></a>7. 版本化与版本切换</h2><p>入库时不直接覆盖正在服务的库文件，而是先写入版本库，确认写入完成后再切换到服务路径。具体流程如下：</p>
+<ol>
+<li>写入 <code>data/milvus/&#123;kb_version&#125;.db</code>。</li>
+<li>执行 drop&#x2F;create、insert、flush、load。</li>
+<li>关闭 Milvus client。</li>
+<li>将版本库替换为 <code>data/milvus/tumor_ch2.db</code>。</li>
+</ol>
+<p>第 4 步在 Windows 下可能遇到文件锁，因此采用先复制、再改名的方式：</p>
+<ol>
+<li>将版本库复制为 <code>tumor_ch2.db.tmp_promote</code>。</li>
+<li>将当前 <code>tumor_ch2.db</code> 改名为 <code>tumor_ch2.db.bak</code>。</li>
+<li>将 <code>tumor_ch2.db.tmp_promote</code> 改名为 <code>tumor_ch2.db</code>。</li>
+</ol>
+<p>服务启动时只读取配置中的当前 URI，不感知版本目录名。运维流程为：重建版本库、版本切换、重启服务。</p>
+<p>当前增量策略如下：</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>策略</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Embedding</td>
+<td>JSONL 级 hash 缓存续跑</td>
+</tr>
+<tr>
+<td>Milvus</td>
+<td>全量重建，不做 upsert 差分</td>
+</tr>
+</tbody></table>
+<p>选择全量重建的原因：</p>
+<ol>
+<li>万级实体重建成本低，一致性好；半增量同步容易留下幽灵向量</li>
+<li>向量化的主要成本在 embedding，不在写库。</li>
+</ol>
+<h2 id="8-常见问题与设计取舍"><a href="#8-常见问题与设计取舍" class="headerlink" title="8. 常见问题与设计取舍"></a>8. 常见问题与设计取舍</h2><p><strong>Q1：父子文档和普通文本分块有什么区别？</strong><br>普通文本分块通常按长度或标题切分，目的是给大模型提供上下文。本项目的子文档是编码知识中的业务关键词，包括钟点、别称和长上下文；父文档是 ICD 诊断业务主键。切分依据来自医疗领域语料结构，不是通用文本切窗。</p>
+<p><strong>Q2：为什么加权聚合使用 Max？会不会漏掉多个关键词同时命中的情况？</strong><br>Sum 会让关键词数量多的诊断码占优；Mean 会被大量弱匹配拉低，强证据可能被淹没。取 Max 确实可能漏掉多个关键词同时命中的情况。如果业务确认多证据同时命中应当加分，可以改为 <code>Max + λ·log(1+#hits)</code>，或对前 m 条证据做有界求和，但需要先建立测试集验证效果。</p>
+<p><strong>Q3：为什么不在线使用 Cross-Encoder 重排？</strong><br>当前定位是高召回候选加AI筛选。Cross-Encoder 能提升排序效果，但会增加延迟和模型运维成本。后续可以在聚合后对 Top-N 诊断做二阶段重排序。</p>
+<p><strong>Q4：FLAT 如何保证性能？</strong><br>FLAT 复杂度为 O(N·d)。N 约为 1e4、d&#x3D;1024 时，单次扫描通常在毫秒到十几毫秒级。实际瓶颈在 BGE 编码，而不是检索。优化顺序应是批处理、模型量化或 ONNX，再考虑更换索引。</p>
+<p><strong>Q5：如何保证入库向量和查询向量一致？</strong><br>编码和查询服务共用 <code>scripts/embed_model.py</code>，配置文件固定 <code>model_name</code>、<code>dim</code>、<code>normalize</code> 和 <code>max_length</code>。更换模型必须修改 <code>kb_version</code> 并全量重编码，不混用旧库。</p>
+<p><strong>Q6：content_hash 能否用于增量 upsert？</strong><br>可以用于差分设计，但当前仍选择全量重建。如果要改为增量更新，需要以 <code>content_hash</code> 作为业务键执行 upsert，并显式处理父记录删除关键词时的删除集，否则库中会残留已不存在的子向量。</p>
+<p><strong>Q7：建了倒排索引为什么不用 filter？</strong><br>当前预留了按诊断码或类型过滤的能力，但过早使用 filter 可能误杀，因此先走纯向量召回，等有明确业务规则后再添加。</p>
+<p><strong>Q8：如何评测这套知识库？</strong><br>构造标准数据，格式为 <code>(query, diag_codes[])</code>，统计 Recall@K、MRR，以及命中的证据词是否落在可接受集合内。钟点类和别称类查询应单独分类统计，避免被普通诊断名查询的平均结果掩盖。</p>
+<h2 id="9-已知局限与后续改进"><a href="#9-已知局限与后续改进" class="headerlink" title="9. 已知局限与后续改进"></a>9. 已知局限与后续改进</h2><table>
+<thead>
+<tr>
+<th>现状</th>
+<th>风险与改进方向</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>无正式评测集</td>
+<td>调 <code>top_k</code> 和权重主要靠经验</td>
+</tr>
+<tr>
+<td>无 Cross-Encoder</td>
+<td>精排上限受限；可作为二阶段</td>
+</tr>
+<tr>
+<td>钟点主要靠关键词入库和轻微加权</td>
+<td>可叠加规则预检或结构化钟点解析</td>
+</tr>
+<tr>
+<td>全量重建库</td>
+<td>语料频繁小改时成本偏高；可做 hash 差分 upsert</td>
+</tr>
+<tr>
+<td>BGE 仅使用 dense</td>
+<td>可评估 sparse 混合召回，尤其是别称场景</td>
+</tr>
+<tr>
+<td>FLAT</td>
+<td>规模上升后迁移 IVF&#x2F;HNSW，并使用 Linux 路径</td>
+</tr>
+</tbody></table>
+<h2 id="写在文后"><a href="#写在文后" class="headerlink" title="写在文后"></a>写在文后</h2><p>本文实现的知识库是一套完整的父子文档模型的实现：<strong>父文档定义业务对象，子文档定义检索粒度，加权 Max 定义排序语义，版本库与 promote 定义发布方式</strong>。</p>
+<p>工程上需要重点关注的是</p>
+<ol>
+<li>为什么选择检索粒度与返回粒度不一致？</li>
+<li>为什么使用多行实体而不是多向量列？</li>
+<li>为什么聚合使用 Max 而不是 Sum？</li>
+<li>为什么当前规模下 FLAT 是合理选择？</li>
+<li>如何保证 embedding 入库与服务查询一致，避免换库时出现半更新？</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://waltyoung.github.io">WaltYoung</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://waltyoung.github.io/2026/10/22/%E5%9F%BA%E4%BA%8E-Milvus-Lite-%E4%B8%8E%E7%88%B6%E5%AD%90%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%82%BF%E7%98%A4-ICD-%E7%BC%96%E7%A0%81%E7%9F%A5%E8%AF%86%E5%BA%93%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">https://waltyoung.github.io/2026/10/22/%E5%9F%BA%E4%BA%8E-Milvus-Lite-%E4%B8%8E%E7%88%B6%E5%AD%90%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%82%BF%E7%98%A4-ICD-%E7%BC%96%E7%A0%81%E7%9F%A5%E8%AF%86%E5%BA%93%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://WaltYoung.github.io" target="_blank">WaltYoung</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/LLM/">LLM</a><a class="post-meta__tags" href="/tags/RAG/">RAG</a><a class="post-meta__tags" href="/tags/Milvus/">Milvus</a></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" data-sites="wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2026/10/12/%E5%9F%BA%E4%BA%8EQwen3-14B%E5%9F%BA%E5%BA%A7%E6%A8%A1%E5%9E%8B%E8%BF%9B%E8%A1%8C%E6%80%9D%E7%BB%B4%E9%93%BE%E5%BE%AE%E8%B0%83%E7%9A%84%E5%8F%AF%E8%A7%A3%E9%87%8AICD-10%E7%97%85%E6%A1%88%E7%BC%96%E7%A0%81%E4%B8%93%E5%AE%B6%E6%A8%A1%E5%9E%8B/" title="基于Qwen3-14B基座模型进行思维链微调的可解释ICD-10病案编码专家模型"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">基于Qwen3-14B基座模型进行思维链微调的可解释ICD-10病案编码专家模型</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2026/10/12/%E5%9F%BA%E4%BA%8EQwen3-14B%E5%9F%BA%E5%BA%A7%E6%A8%A1%E5%9E%8B%E8%BF%9B%E8%A1%8C%E6%80%9D%E7%BB%B4%E9%93%BE%E5%BE%AE%E8%B0%83%E7%9A%84%E5%8F%AF%E8%A7%A3%E9%87%8AICD-10%E7%97%85%E6%A1%88%E7%BC%96%E7%A0%81%E4%B8%93%E5%AE%B6%E6%A8%A1%E5%9E%8B/" title="基于Qwen3-14B基座模型进行思维链微调的可解释ICD-10病案编码专家模型"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-12</div><div class="title">基于Qwen3-14B基座模型进行思维链微调的可解释ICD-10病案编码专家模型</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">WaltYoung</div><div class="author-info__description">为世界上所有美好而战</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">64</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/WaltYoung"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/WaltYoung" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">我的小窝</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E-Milvus-Lite-%E4%B8%8E%E7%88%B6%E5%AD%90%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%82%BF%E7%98%A4-ICD-%E7%BC%96%E7%A0%81%E7%9F%A5%E8%AF%86%E5%BA%93%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.</span> <span class="toc-text">基于 Milvus Lite 与父子文档模型的肿瘤 ICD 编码知识库工程实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%B8%9A%E5%8A%A1%E7%9B%AE%E6%A0%87%E4%B8%8E%E7%BA%A6%E6%9D%9F"><span class="toc-number">1.2.</span> <span class="toc-text">1. 业务目标与约束</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B"><span class="toc-number">1.3.</span> <span class="toc-text">2. 技术选型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E6%80%BB%E4%BD%93%E9%80%89%E5%9E%8B"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1 总体选型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%90%91%E9%87%8F%E5%BA%93%E9%80%89%E5%9E%8B"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.2 向量库选型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B%E9%80%89%E5%9E%8B"><span class="toc-number">1.3.3.</span> <span class="toc-text">2.3 嵌入模型选型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E7%B4%A2%E5%BC%95%E9%80%89%E5%9E%8B"><span class="toc-number">1.3.4.</span> <span class="toc-text">2.4 索引选型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%88%B6%E5%AD%90%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.4.</span> <span class="toc-text">3. 父子文档模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E6%A6%82%E5%BF%B5%E5%AE%9A%E4%B9%89"><span class="toc-number">1.4.1.</span> <span class="toc-text">3.1 概念定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%B8%8D%E7%9B%B4%E6%8E%A5%E7%94%A8%E5%85%A8%E6%96%87%E5%90%91%E9%87%8F%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-number">1.4.2.</span> <span class="toc-text">3.2 不直接用全文向量的原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E4%BD%BF%E7%94%A8%E5%A4%9A%E8%A1%8C%E5%AE%9E%E4%BD%93%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-number">1.4.3.</span> <span class="toc-text">3.3 使用多行实体的原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E5%AD%90%E8%A1%8C%E7%B1%BB%E5%9E%8B%E4%B8%8E%E6%9D%83%E9%87%8D"><span class="toc-number">1.4.4.</span> <span class="toc-text">3.4 子行类型与权重</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E4%B8%8E%E5%B8%B8%E8%A7%84-RAG-%E5%88%86%E5%9D%97%E6%96%B9%E6%A1%88%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.4.5.</span> <span class="toc-text">3.5 与常规 RAG 分块方案的区别</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%AB%AF%E5%88%B0%E7%AB%AF%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="toc-number">1.5.</span> <span class="toc-text">4. 端到端流水线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Collection-Schema-%E4%B8%8E%E7%B4%A2%E5%BC%95"><span class="toc-number">1.6.</span> <span class="toc-text">5. Collection Schema 与索引</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E2%80%9C%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95%E2%80%9D%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A"><span class="toc-number">1.6.1.</span> <span class="toc-text">5.1 “倒排索引”名词解释</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%A3%80%E7%B4%A2%E6%9C%8D%E5%8A%A1%EF%BC%9A%E5%AD%90%E5%90%91%E9%87%8F%E5%8F%AC%E5%9B%9E%E4%B8%8E%E6%8C%89%E7%A0%81%E8%81%9A%E5%90%88"><span class="toc-number">1.7.</span> <span class="toc-text">6. 检索服务：子向量召回与按码聚合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E7%89%88%E6%9C%AC%E5%8C%96%E4%B8%8E%E7%89%88%E6%9C%AC%E5%88%87%E6%8D%A2"><span class="toc-number">1.8.</span> <span class="toc-text">7. 版本化与版本切换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E8%AE%BE%E8%AE%A1%E5%8F%96%E8%88%8D"><span class="toc-number">1.9.</span> <span class="toc-text">8. 常见问题与设计取舍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E5%B7%B2%E7%9F%A5%E5%B1%80%E9%99%90%E4%B8%8E%E5%90%8E%E7%BB%AD%E6%94%B9%E8%BF%9B"><span class="toc-number">1.10.</span> <span class="toc-text">9. 已知局限与后续改进</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%96%87%E5%90%8E"><span class="toc-number">1.11.</span> <span class="toc-text">写在文后</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/22/%E5%9F%BA%E4%BA%8E-Milvus-Lite-%E4%B8%8E%E7%88%B6%E5%AD%90%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%82%BF%E7%98%A4-ICD-%E7%BC%96%E7%A0%81%E7%9F%A5%E8%AF%86%E5%BA%93%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" title="基于 Milvus Lite 与父子文档模型的肿瘤 ICD 编码知识库工程实践">基于 Milvus Lite 与父子文档模型的肿瘤 ICD 编码知识库工程实践</a><time datetime="2026-10-21T16:21:21.000Z" title="发表于 2026-10-22 00:21:21">2026-10-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/12/%E5%9F%BA%E4%BA%8EQwen3-14B%E5%9F%BA%E5%BA%A7%E6%A8%A1%E5%9E%8B%E8%BF%9B%E8%A1%8C%E6%80%9D%E7%BB%B4%E9%93%BE%E5%BE%AE%E8%B0%83%E7%9A%84%E5%8F%AF%E8%A7%A3%E9%87%8AICD-10%E7%97%85%E6%A1%88%E7%BC%96%E7%A0%81%E4%B8%93%E5%AE%B6%E6%A8%A1%E5%9E%8B/" title="基于Qwen3-14B基座模型进行思维链微调的可解释ICD-10病案编码专家模型">基于Qwen3-14B基座模型进行思维链微调的可解释ICD-10病案编码专家模型</a><time datetime="2026-10-12T10:16:30.000Z" title="发表于 2026-10-12 18:16:30">2026-10-12</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/26/MySQL%E7%A9%BA%E9%97%B4%E6%B8%85%E7%90%86%EF%BC%9A%E6%97%A5%E5%BF%97%E6%B8%85%E7%90%86%E4%B8%8E%E7%A2%8E%E7%89%87%E5%9B%9E%E6%94%B6/" title="MySQL空间清理：日志清理与碎片回收">MySQL空间清理：日志清理与碎片回收</a><time datetime="2026-09-26T08:42:57.000Z" title="发表于 2026-09-26 16:42:57">2026-09-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/25/%E8%BD%AF%E4%BB%B6%E9%A1%B9%E7%9B%AE%E5%88%9D%E6%9C%9F%E6%8A%A5%E4%BB%B7%E7%BC%96%E5%88%B6%E8%A6%81%E7%82%B9/" title="软件项目初期报价编制要点">软件项目初期报价编制要点</a><time datetime="2026-09-25T01:16:20.000Z" title="发表于 2026-09-25 09:16:20">2026-09-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/04/15/%E5%9F%BA%E4%BA%8EDataX%E7%9A%84%E8%87%AATrino%E5%88%B0MySQL%E7%9A%84%E5%A4%A7%E8%A7%84%E6%A8%A1%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" title="基于DataX的自Trino到MySQL的大规模数据同步工程实践(一)">基于DataX的自Trino到MySQL的大规模数据同步工程实践(一)</a><time datetime="2026-04-15T13:58:01.000Z" title="发表于 2026-04-15 21:58:01">2026-04-15</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2026 By WaltYoung</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
