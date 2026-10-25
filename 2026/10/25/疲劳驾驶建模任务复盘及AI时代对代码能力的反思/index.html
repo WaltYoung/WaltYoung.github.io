@@ -1,0 +1,1250 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>疲劳驾驶建模任务复盘及AI时代对代码能力的反思 | WaltYoung</title><meta name="author" content="WaltYoung"><meta name="copyright" content="WaltYoung"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="疲劳驾驶建模任务复盘及AI时代对代码能力的反思前言笔者接到公司任务，前往某地交警局，完成建模计划。据警官说，“疲劳驾驶”预警模型的难度相对较大，故优先处理 正文需求疲劳驾驶的判定标准：在大于4个小时的驾驶过程中，任意两个卡口之间的时间都小于10分钟；若任意两个卡口之间的时间超过了20分钟，则视司机进行了休息，停止计算疲劳驾驶的累计时长；须输出车牌号、疲劳驾驶的起止时间和时长 示例 注：为简化计算，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="疲劳驾驶建模任务复盘及AI时代对代码能力的反思">
+<meta property="og:url" content="https://waltyoung.github.io/2026/10/25/%E7%96%B2%E5%8A%B3%E9%A9%BE%E9%A9%B6%E5%BB%BA%E6%A8%A1%E4%BB%BB%E5%8A%A1%E5%A4%8D%E7%9B%98%E5%8F%8AAI%E6%97%B6%E4%BB%A3%E5%AF%B9%E4%BB%A3%E7%A0%81%E8%83%BD%E5%8A%9B%E7%9A%84%E5%8F%8D%E6%80%9D/index.html">
+<meta property="og:site_name" content="WaltYoung">
+<meta property="og:description" content="疲劳驾驶建模任务复盘及AI时代对代码能力的反思前言笔者接到公司任务，前往某地交警局，完成建模计划。据警官说，“疲劳驾驶”预警模型的难度相对较大，故优先处理 正文需求疲劳驾驶的判定标准：在大于4个小时的驾驶过程中，任意两个卡口之间的时间都小于10分钟；若任意两个卡口之间的时间超过了20分钟，则视司机进行了休息，停止计算疲劳驾驶的累计时长；须输出车牌号、疲劳驾驶的起止时间和时长 示例 注：为简化计算，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp">
+<meta property="article:published_time" content="2026-10-25T15:02:53.000Z">
+<meta property="article:modified_time" content="2026-10-25T15:04:56.178Z">
+<meta property="article:author" content="WaltYoung">
+<meta property="article:tag" content="SQL">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp"><link rel="shortcut icon" href="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp"><link rel="canonical" href="https://waltyoung.github.io/2026/10/25/%E7%96%B2%E5%8A%B3%E9%A9%BE%E9%A9%B6%E5%BB%BA%E6%A8%A1%E4%BB%BB%E5%8A%A1%E5%A4%8D%E7%9B%98%E5%8F%8AAI%E6%97%B6%E4%BB%A3%E5%AF%B9%E4%BB%A3%E7%A0%81%E8%83%BD%E5%8A%9B%E7%9A%84%E5%8F%8D%E6%80%9D/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '疲劳驾驶建模任务复盘及AI时代对代码能力的反思',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-10-25 23:04:56'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="WaltYoung" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">65</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">53</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s2.loli.net/2023/07/25/5fu7CQnLBJ6ENIT.png')"><nav id="nav"><span id="blog-info"><a href="/" title="WaltYoung"><span class="site-name">WaltYoung</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">疲劳驾驶建模任务复盘及AI时代对代码能力的反思</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-25T15:02:53.000Z" title="发表于 2026-10-25 23:02:53">2026-10-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-25T15:04:56.178Z" title="更新于 2026-10-25 23:04:56">2026-10-25</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>14分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="疲劳驾驶建模任务复盘及AI时代对代码能力的反思"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="疲劳驾驶建模任务复盘及AI时代对代码能力的反思"><a href="#疲劳驾驶建模任务复盘及AI时代对代码能力的反思" class="headerlink" title="疲劳驾驶建模任务复盘及AI时代对代码能力的反思"></a>疲劳驾驶建模任务复盘及AI时代对代码能力的反思</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>笔者接到公司任务，前往某地交警局，完成建模计划。据警官说，“疲劳驾驶”预警模型的难度相对较大，故优先处理</p>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><h3 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h3><p>疲劳驾驶的判定标准：在大于4个小时的驾驶过程中，任意两个卡口之间的时间都小于10分钟；若任意两个卡口之间的时间超过了20分钟，则视司机进行了休息，停止计算疲劳驾驶的累计时长；须输出车牌号、疲劳驾驶的起止时间和时长</p>
+<h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><blockquote>
+<p>注：为简化计算，所有时间从 <code>00:00</code> 开始，间隔均取整数分钟（≤10 的用 <code>9</code> 分钟，&gt;20 的用 <code>30</code> 分钟）。</p>
+</blockquote>
+<h5 id="示例-1：触发预警-——-连续驾驶无休息"><a href="#示例-1：触发预警-——-连续驾驶无休息" class="headerlink" title="示例 1：触发预警 —— 连续驾驶无休息"></a>示例 1：触发预警 —— 连续驾驶无休息</h5><ul>
+<li><strong>卡口数</strong>：30 个（间隔 29 个）</li>
+<li><strong>所有间隔</strong>：均为 9 分钟（驾驶）</li>
+<li><strong>结果</strong>：第 28 个卡口时累计已达 243 分钟（＞4 小时），触发预警。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>卡口序号</th>
+<th>卡口名称</th>
+<th>经过时间</th>
+<th>与上一卡口间隔（分钟）</th>
+<th>判定</th>
+<th>疲劳累计时长（分钟）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>C1</td>
+<td>00:00</td>
+<td>-</td>
+<td>开始</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>C2</td>
+<td>00:09</td>
+<td>9</td>
+<td>驾驶</td>
+<td>9</td>
+</tr>
+<tr>
+<td>3</td>
+<td>C3</td>
+<td>00:18</td>
+<td>9</td>
+<td>驾驶</td>
+<td>18</td>
+</tr>
+<tr>
+<td>4</td>
+<td>C4</td>
+<td>00:27</td>
+<td>9</td>
+<td>驾驶</td>
+<td>27</td>
+</tr>
+<tr>
+<td>5</td>
+<td>C5</td>
+<td>00:36</td>
+<td>9</td>
+<td>驾驶</td>
+<td>36</td>
+</tr>
+<tr>
+<td>6</td>
+<td>C6</td>
+<td>00:45</td>
+<td>9</td>
+<td>驾驶</td>
+<td>45</td>
+</tr>
+<tr>
+<td>7</td>
+<td>C7</td>
+<td>00:54</td>
+<td>9</td>
+<td>驾驶</td>
+<td>54</td>
+</tr>
+<tr>
+<td>8</td>
+<td>C8</td>
+<td>01:03</td>
+<td>9</td>
+<td>驾驶</td>
+<td>63</td>
+</tr>
+<tr>
+<td>9</td>
+<td>C9</td>
+<td>01:12</td>
+<td>9</td>
+<td>驾驶</td>
+<td>72</td>
+</tr>
+<tr>
+<td>10</td>
+<td>C10</td>
+<td>01:21</td>
+<td>9</td>
+<td>驾驶</td>
+<td>81</td>
+</tr>
+<tr>
+<td>11</td>
+<td>C11</td>
+<td>01:30</td>
+<td>9</td>
+<td>驾驶</td>
+<td>90</td>
+</tr>
+<tr>
+<td>12</td>
+<td>C12</td>
+<td>01:39</td>
+<td>9</td>
+<td>驾驶</td>
+<td>99</td>
+</tr>
+<tr>
+<td>13</td>
+<td>C13</td>
+<td>01:48</td>
+<td>9</td>
+<td>驾驶</td>
+<td>108</td>
+</tr>
+<tr>
+<td>14</td>
+<td>C14</td>
+<td>01:57</td>
+<td>9</td>
+<td>驾驶</td>
+<td>117</td>
+</tr>
+<tr>
+<td>15</td>
+<td>C15</td>
+<td>02:06</td>
+<td>9</td>
+<td>驾驶</td>
+<td>126</td>
+</tr>
+<tr>
+<td>16</td>
+<td>C16</td>
+<td>02:15</td>
+<td>9</td>
+<td>驾驶</td>
+<td>135</td>
+</tr>
+<tr>
+<td>17</td>
+<td>C17</td>
+<td>02:24</td>
+<td>9</td>
+<td>驾驶</td>
+<td>144</td>
+</tr>
+<tr>
+<td>18</td>
+<td>C18</td>
+<td>02:33</td>
+<td>9</td>
+<td>驾驶</td>
+<td>153</td>
+</tr>
+<tr>
+<td>19</td>
+<td>C19</td>
+<td>02:42</td>
+<td>9</td>
+<td>驾驶</td>
+<td>162</td>
+</tr>
+<tr>
+<td>20</td>
+<td>C20</td>
+<td>02:51</td>
+<td>9</td>
+<td>驾驶</td>
+<td>171</td>
+</tr>
+<tr>
+<td>21</td>
+<td>C21</td>
+<td>03:00</td>
+<td>9</td>
+<td>驾驶</td>
+<td>180</td>
+</tr>
+<tr>
+<td>22</td>
+<td>C22</td>
+<td>03:09</td>
+<td>9</td>
+<td>驾驶</td>
+<td>189</td>
+</tr>
+<tr>
+<td>23</td>
+<td>C23</td>
+<td>03:18</td>
+<td>9</td>
+<td>驾驶</td>
+<td>198</td>
+</tr>
+<tr>
+<td>24</td>
+<td>C24</td>
+<td>03:27</td>
+<td>9</td>
+<td>驾驶</td>
+<td>207</td>
+</tr>
+<tr>
+<td>25</td>
+<td>C25</td>
+<td>03:36</td>
+<td>9</td>
+<td>驾驶</td>
+<td>216</td>
+</tr>
+<tr>
+<td>26</td>
+<td>C26</td>
+<td>03:45</td>
+<td>9</td>
+<td>驾驶</td>
+<td>225</td>
+</tr>
+<tr>
+<td>27</td>
+<td>C27</td>
+<td>03:54</td>
+<td>9</td>
+<td>驾驶</td>
+<td>234</td>
+</tr>
+<tr>
+<td>28</td>
+<td>C28</td>
+<td>04:03</td>
+<td>9</td>
+<td>驾驶</td>
+<td><strong>243（触发）</strong></td>
+</tr>
+<tr>
+<td>29</td>
+<td>C29</td>
+<td>04:12</td>
+<td>9</td>
+<td>驾驶</td>
+<td>252</td>
+</tr>
+<tr>
+<td>30</td>
+<td>C30</td>
+<td>04:21</td>
+<td>9</td>
+<td>驾驶</td>
+<td>261</td>
+</tr>
+</tbody></table>
+<p><strong>结论</strong>：从 C1 到 C28 连续驾驶 243 分钟（&gt;4 小时），<strong>触发预警</strong>。</p>
+<p>疲劳驾驶起止时间：00:00 至 04:21</p>
+<p>疲劳驾驶时长：261 分钟</p>
+<h5 id="示例-2：不触发预警-——-多次长休息（间隔＞20-分钟）"><a href="#示例-2：不触发预警-——-多次长休息（间隔＞20-分钟）" class="headerlink" title="示例 2：不触发预警 —— 多次长休息（间隔＞20 分钟）"></a>示例 2：不触发预警 —— 多次长休息（间隔＞20 分钟）</h5><ul>
+<li><strong>卡口数</strong>：24 个（间隔 23 个）</li>
+<li><strong>间隔模式</strong>：5个9分钟 → 30分钟休息 → 5个9分钟 → 30分钟休息 → 5个9分钟 → 30分钟休息 → 5个9分钟</li>
+<li><strong>结果</strong>：每次累计最多 45 分钟，休息后清零，全程未达 4 小时。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>卡口序号</th>
+<th>卡口名称</th>
+<th>经过时间</th>
+<th>与上一卡口间隔（分钟）</th>
+<th>判定</th>
+<th>疲劳累计时长（分钟）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>D1</td>
+<td>00:00</td>
+<td>-</td>
+<td>开始</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>D2</td>
+<td>00:09</td>
+<td>9</td>
+<td>驾驶</td>
+<td>9</td>
+</tr>
+<tr>
+<td>3</td>
+<td>D3</td>
+<td>00:18</td>
+<td>9</td>
+<td>驾驶</td>
+<td>18</td>
+</tr>
+<tr>
+<td>4</td>
+<td>D4</td>
+<td>00:27</td>
+<td>9</td>
+<td>驾驶</td>
+<td>27</td>
+</tr>
+<tr>
+<td>5</td>
+<td>D5</td>
+<td>00:36</td>
+<td>9</td>
+<td>驾驶</td>
+<td>36</td>
+</tr>
+<tr>
+<td>6</td>
+<td>D6</td>
+<td>00:45</td>
+<td>9</td>
+<td>驾驶</td>
+<td>45</td>
+</tr>
+<tr>
+<td>7</td>
+<td>D7</td>
+<td>01:15</td>
+<td>30</td>
+<td>休息，清零</td>
+<td>0</td>
+</tr>
+<tr>
+<td>8</td>
+<td>D8</td>
+<td>01:24</td>
+<td>9</td>
+<td>驾驶</td>
+<td>9</td>
+</tr>
+<tr>
+<td>9</td>
+<td>D9</td>
+<td>01:33</td>
+<td>9</td>
+<td>驾驶</td>
+<td>18</td>
+</tr>
+<tr>
+<td>10</td>
+<td>D10</td>
+<td>01:42</td>
+<td>9</td>
+<td>驾驶</td>
+<td>27</td>
+</tr>
+<tr>
+<td>11</td>
+<td>D11</td>
+<td>01:51</td>
+<td>9</td>
+<td>驾驶</td>
+<td>36</td>
+</tr>
+<tr>
+<td>12</td>
+<td>D12</td>
+<td>02:00</td>
+<td>9</td>
+<td>驾驶</td>
+<td>45</td>
+</tr>
+<tr>
+<td>13</td>
+<td>D13</td>
+<td>02:30</td>
+<td>30</td>
+<td>休息，清零</td>
+<td>0</td>
+</tr>
+<tr>
+<td>14</td>
+<td>D14</td>
+<td>02:39</td>
+<td>9</td>
+<td>驾驶</td>
+<td>9</td>
+</tr>
+<tr>
+<td>15</td>
+<td>D15</td>
+<td>02:48</td>
+<td>9</td>
+<td>驾驶</td>
+<td>18</td>
+</tr>
+<tr>
+<td>16</td>
+<td>D16</td>
+<td>02:57</td>
+<td>9</td>
+<td>驾驶</td>
+<td>27</td>
+</tr>
+<tr>
+<td>17</td>
+<td>D17</td>
+<td>03:06</td>
+<td>9</td>
+<td>驾驶</td>
+<td>36</td>
+</tr>
+<tr>
+<td>18</td>
+<td>D18</td>
+<td>03:15</td>
+<td>9</td>
+<td>驾驶</td>
+<td>45</td>
+</tr>
+<tr>
+<td>19</td>
+<td>D19</td>
+<td>03:45</td>
+<td>30</td>
+<td>休息，清零</td>
+<td>0</td>
+</tr>
+<tr>
+<td>20</td>
+<td>D20</td>
+<td>03:54</td>
+<td>9</td>
+<td>驾驶</td>
+<td>9</td>
+</tr>
+<tr>
+<td>21</td>
+<td>D21</td>
+<td>04:03</td>
+<td>9</td>
+<td>驾驶</td>
+<td>18</td>
+</tr>
+<tr>
+<td>22</td>
+<td>D22</td>
+<td>04:12</td>
+<td>9</td>
+<td>驾驶</td>
+<td>27</td>
+</tr>
+<tr>
+<td>23</td>
+<td>D23</td>
+<td>04:21</td>
+<td>9</td>
+<td>驾驶</td>
+<td>36</td>
+</tr>
+<tr>
+<td>24</td>
+<td>D24</td>
+<td>04:30</td>
+<td>9</td>
+<td>驾驶</td>
+<td>45</td>
+</tr>
+</tbody></table>
+<p><strong>结论</strong>：每个驾驶片段仅 45 分钟，且被长时间休息（30 分钟）隔开，累计从未超过 4 小时，<strong>不触发预警</strong>。</p>
+<h5 id="示例-3：触发预警-——-休息后再次连续驾驶超-4-小时"><a href="#示例-3：触发预警-——-休息后再次连续驾驶超-4-小时" class="headerlink" title="示例 3：触发预警 —— 休息后再次连续驾驶超 4 小时"></a>示例 3：触发预警 —— 休息后再次连续驾驶超 4 小时</h5><ul>
+<li><strong>卡口数</strong>：39 个（间隔 38 个）</li>
+<li><strong>间隔模式</strong>：前 10 个间隔为 9 分钟 → 1 个 30 分钟休息 → 后 27 个间隔为 9 分钟</li>
+<li><strong>结果</strong>：休息后从第 12 个卡口重新计时，累计到第 39 个卡口时达 243 分钟，触发预警。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>卡口序号</th>
+<th>卡口名称</th>
+<th>经过时间</th>
+<th>与上一卡口间隔（分钟）</th>
+<th>判定</th>
+<th>疲劳累计时长（分钟）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>E1</td>
+<td>00:00</td>
+<td>-</td>
+<td>开始</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>E2</td>
+<td>00:09</td>
+<td>9</td>
+<td>驾驶</td>
+<td>9</td>
+</tr>
+<tr>
+<td>3</td>
+<td>E3</td>
+<td>00:18</td>
+<td>9</td>
+<td>驾驶</td>
+<td>18</td>
+</tr>
+<tr>
+<td>4</td>
+<td>E4</td>
+<td>00:27</td>
+<td>9</td>
+<td>驾驶</td>
+<td>27</td>
+</tr>
+<tr>
+<td>5</td>
+<td>E5</td>
+<td>00:36</td>
+<td>9</td>
+<td>驾驶</td>
+<td>36</td>
+</tr>
+<tr>
+<td>6</td>
+<td>E6</td>
+<td>00:45</td>
+<td>9</td>
+<td>驾驶</td>
+<td>45</td>
+</tr>
+<tr>
+<td>7</td>
+<td>E7</td>
+<td>00:54</td>
+<td>9</td>
+<td>驾驶</td>
+<td>54</td>
+</tr>
+<tr>
+<td>8</td>
+<td>E8</td>
+<td>01:03</td>
+<td>9</td>
+<td>驾驶</td>
+<td>63</td>
+</tr>
+<tr>
+<td>9</td>
+<td>E9</td>
+<td>01:12</td>
+<td>9</td>
+<td>驾驶</td>
+<td>72</td>
+</tr>
+<tr>
+<td>10</td>
+<td>E10</td>
+<td>01:21</td>
+<td>9</td>
+<td>驾驶</td>
+<td>81</td>
+</tr>
+<tr>
+<td>11</td>
+<td>E11</td>
+<td>01:30</td>
+<td>9</td>
+<td>驾驶</td>
+<td>90</td>
+</tr>
+<tr>
+<td>12</td>
+<td>E12</td>
+<td>02:00</td>
+<td>30</td>
+<td>休息，清零</td>
+<td>0</td>
+</tr>
+<tr>
+<td>13</td>
+<td>E13</td>
+<td>02:09</td>
+<td>9</td>
+<td>驾驶</td>
+<td>9</td>
+</tr>
+<tr>
+<td>14</td>
+<td>E14</td>
+<td>02:18</td>
+<td>9</td>
+<td>驾驶</td>
+<td>18</td>
+</tr>
+<tr>
+<td>15</td>
+<td>E15</td>
+<td>02:27</td>
+<td>9</td>
+<td>驾驶</td>
+<td>27</td>
+</tr>
+<tr>
+<td>16</td>
+<td>E16</td>
+<td>02:36</td>
+<td>9</td>
+<td>驾驶</td>
+<td>36</td>
+</tr>
+<tr>
+<td>17</td>
+<td>E17</td>
+<td>02:45</td>
+<td>9</td>
+<td>驾驶</td>
+<td>45</td>
+</tr>
+<tr>
+<td>18</td>
+<td>E18</td>
+<td>02:54</td>
+<td>9</td>
+<td>驾驶</td>
+<td>54</td>
+</tr>
+<tr>
+<td>19</td>
+<td>E19</td>
+<td>03:03</td>
+<td>9</td>
+<td>驾驶</td>
+<td>63</td>
+</tr>
+<tr>
+<td>20</td>
+<td>E20</td>
+<td>03:12</td>
+<td>9</td>
+<td>驾驶</td>
+<td>72</td>
+</tr>
+<tr>
+<td>21</td>
+<td>E21</td>
+<td>03:21</td>
+<td>9</td>
+<td>驾驶</td>
+<td>81</td>
+</tr>
+<tr>
+<td>22</td>
+<td>E22</td>
+<td>03:30</td>
+<td>9</td>
+<td>驾驶</td>
+<td>90</td>
+</tr>
+<tr>
+<td>23</td>
+<td>E23</td>
+<td>03:39</td>
+<td>9</td>
+<td>驾驶</td>
+<td>99</td>
+</tr>
+<tr>
+<td>24</td>
+<td>E24</td>
+<td>03:48</td>
+<td>9</td>
+<td>驾驶</td>
+<td>108</td>
+</tr>
+<tr>
+<td>25</td>
+<td>E25</td>
+<td>03:57</td>
+<td>9</td>
+<td>驾驶</td>
+<td>117</td>
+</tr>
+<tr>
+<td>26</td>
+<td>E26</td>
+<td>04:06</td>
+<td>9</td>
+<td>驾驶</td>
+<td>126</td>
+</tr>
+<tr>
+<td>27</td>
+<td>E27</td>
+<td>04:15</td>
+<td>9</td>
+<td>驾驶</td>
+<td>135</td>
+</tr>
+<tr>
+<td>28</td>
+<td>E28</td>
+<td>04:24</td>
+<td>9</td>
+<td>驾驶</td>
+<td>144</td>
+</tr>
+<tr>
+<td>29</td>
+<td>E29</td>
+<td>04:33</td>
+<td>9</td>
+<td>驾驶</td>
+<td>153</td>
+</tr>
+<tr>
+<td>30</td>
+<td>E30</td>
+<td>04:42</td>
+<td>9</td>
+<td>驾驶</td>
+<td>162</td>
+</tr>
+<tr>
+<td>31</td>
+<td>E31</td>
+<td>04:51</td>
+<td>9</td>
+<td>驾驶</td>
+<td>171</td>
+</tr>
+<tr>
+<td>32</td>
+<td>E32</td>
+<td>05:00</td>
+<td>9</td>
+<td>驾驶</td>
+<td>180</td>
+</tr>
+<tr>
+<td>33</td>
+<td>E33</td>
+<td>05:09</td>
+<td>9</td>
+<td>驾驶</td>
+<td>189</td>
+</tr>
+<tr>
+<td>34</td>
+<td>E34</td>
+<td>05:18</td>
+<td>9</td>
+<td>驾驶</td>
+<td>198</td>
+</tr>
+<tr>
+<td>35</td>
+<td>E35</td>
+<td>05:27</td>
+<td>9</td>
+<td>驾驶</td>
+<td>207</td>
+</tr>
+<tr>
+<td>36</td>
+<td>E36</td>
+<td>05:36</td>
+<td>9</td>
+<td>驾驶</td>
+<td>216</td>
+</tr>
+<tr>
+<td>37</td>
+<td>E37</td>
+<td>05:45</td>
+<td>9</td>
+<td>驾驶</td>
+<td>225</td>
+</tr>
+<tr>
+<td>38</td>
+<td>E38</td>
+<td>05:54</td>
+<td>9</td>
+<td>驾驶</td>
+<td>234</td>
+</tr>
+<tr>
+<td>39</td>
+<td>E39</td>
+<td>06:03</td>
+<td>9</td>
+<td>驾驶</td>
+<td><strong>243（触发）</strong></td>
+</tr>
+</tbody></table>
+<p><strong>结论</strong>：休息（E11→E12）后，从 E12 开始连续驾驶 243 分钟（E12→E39），<strong>触发预警</strong>。</p>
+<p>疲劳驾驶起止时间：02:00 至 06:03</p>
+<p>疲劳驾驶时长：243 分钟</p>
+<h5 id="示例-4：不触发预警-——-极短驾驶片段，频繁休息"><a href="#示例-4：不触发预警-——-极短驾驶片段，频繁休息" class="headerlink" title="示例 4：不触发预警 —— 极短驾驶片段，频繁休息"></a>示例 4：不触发预警 —— 极短驾驶片段，频繁休息</h5><ul>
+<li><strong>卡口数</strong>：24 个（间隔 23 个）</li>
+<li><strong>间隔模式</strong>：3个9分钟 → 30分钟休息 → 重复 5 次 → 最后再 3个9分钟</li>
+<li><strong>结果</strong>：每个驾驶片段仅 27 分钟，休息后清零，全程安全。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>卡口序号</th>
+<th>卡口名称</th>
+<th>经过时间</th>
+<th>与上一卡口间隔（分钟）</th>
+<th>判定</th>
+<th>疲劳累计时长（分钟）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>F1</td>
+<td>00:00</td>
+<td>-</td>
+<td>开始</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>F2</td>
+<td>00:09</td>
+<td>9</td>
+<td>驾驶</td>
+<td>9</td>
+</tr>
+<tr>
+<td>3</td>
+<td>F3</td>
+<td>00:18</td>
+<td>9</td>
+<td>驾驶</td>
+<td>18</td>
+</tr>
+<tr>
+<td>4</td>
+<td>F4</td>
+<td>00:27</td>
+<td>9</td>
+<td>驾驶</td>
+<td>27</td>
+</tr>
+<tr>
+<td>5</td>
+<td>F5</td>
+<td>00:57</td>
+<td>30</td>
+<td>休息，清零</td>
+<td>0</td>
+</tr>
+<tr>
+<td>6</td>
+<td>F6</td>
+<td>01:06</td>
+<td>9</td>
+<td>驾驶</td>
+<td>9</td>
+</tr>
+<tr>
+<td>7</td>
+<td>F7</td>
+<td>01:15</td>
+<td>9</td>
+<td>驾驶</td>
+<td>18</td>
+</tr>
+<tr>
+<td>8</td>
+<td>F8</td>
+<td>01:24</td>
+<td>9</td>
+<td>驾驶</td>
+<td>27</td>
+</tr>
+<tr>
+<td>9</td>
+<td>F9</td>
+<td>01:54</td>
+<td>30</td>
+<td>休息，清零</td>
+<td>0</td>
+</tr>
+<tr>
+<td>10</td>
+<td>F10</td>
+<td>02:03</td>
+<td>9</td>
+<td>驾驶</td>
+<td>9</td>
+</tr>
+<tr>
+<td>11</td>
+<td>F11</td>
+<td>02:12</td>
+<td>9</td>
+<td>驾驶</td>
+<td>18</td>
+</tr>
+<tr>
+<td>12</td>
+<td>F12</td>
+<td>02:21</td>
+<td>9</td>
+<td>驾驶</td>
+<td>27</td>
+</tr>
+<tr>
+<td>13</td>
+<td>F13</td>
+<td>02:51</td>
+<td>30</td>
+<td>休息，清零</td>
+<td>0</td>
+</tr>
+<tr>
+<td>14</td>
+<td>F14</td>
+<td>03:00</td>
+<td>9</td>
+<td>驾驶</td>
+<td>9</td>
+</tr>
+<tr>
+<td>15</td>
+<td>F15</td>
+<td>03:09</td>
+<td>9</td>
+<td>驾驶</td>
+<td>18</td>
+</tr>
+<tr>
+<td>16</td>
+<td>F16</td>
+<td>03:18</td>
+<td>9</td>
+<td>驾驶</td>
+<td>27</td>
+</tr>
+<tr>
+<td>17</td>
+<td>F17</td>
+<td>03:48</td>
+<td>30</td>
+<td>休息，清零</td>
+<td>0</td>
+</tr>
+<tr>
+<td>18</td>
+<td>F18</td>
+<td>03:57</td>
+<td>9</td>
+<td>驾驶</td>
+<td>9</td>
+</tr>
+<tr>
+<td>19</td>
+<td>F19</td>
+<td>04:06</td>
+<td>9</td>
+<td>驾驶</td>
+<td>18</td>
+</tr>
+<tr>
+<td>20</td>
+<td>F20</td>
+<td>04:15</td>
+<td>9</td>
+<td>驾驶</td>
+<td>27</td>
+</tr>
+<tr>
+<td>21</td>
+<td>F21</td>
+<td>04:45</td>
+<td>30</td>
+<td>休息，清零</td>
+<td>0</td>
+</tr>
+<tr>
+<td>22</td>
+<td>F22</td>
+<td>04:54</td>
+<td>9</td>
+<td>驾驶</td>
+<td>9</td>
+</tr>
+<tr>
+<td>23</td>
+<td>F23</td>
+<td>05:03</td>
+<td>9</td>
+<td>驾驶</td>
+<td>18</td>
+</tr>
+<tr>
+<td>24</td>
+<td>F24</td>
+<td>05:12</td>
+<td>9</td>
+<td>驾驶</td>
+<td>27</td>
+</tr>
+</tbody></table>
+<p><strong>结论</strong>：每次连续驾驶仅 27 分钟，均被 30 分钟休息打断，累计时长从未接近 4 小时，<strong>不触发预警</strong>。</p>
+<h3 id="算法逻辑"><a href="#算法逻辑" class="headerlink" title="算法逻辑"></a>算法逻辑</h3><h4 id="原算法逻辑"><a href="#原算法逻辑" class="headerlink" title="原算法逻辑"></a>原算法逻辑</h4><p>按车牌号分组，检查每个卡口之间的时间间隔是否大于20分钟，并且从第一个卡口起是否经过了24个卡口</p>
+<h4 id="优化后的算法逻辑"><a href="#优化后的算法逻辑" class="headerlink" title="优化后的算法逻辑"></a>优化后的算法逻辑</h4><p>在选定的时间范围内，按车牌号分组，按两个卡口之间大于20分钟的时间间隔分批次，计算每个批次是否超过了4小时</p>
+<p>故先针对数据源按卡口经过时间排序，再计算2个卡口之间的时间差，再以大于20分钟的时间差为间隔划分批次，最后计算每个批次的时长是否超过了4小时</p>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><p>以串行方式，上一个节点的输出作为下一个节点的输入，从节点1至节点5顺序执行</p>
+<h4 id="节点1：经过时间排序"><a href="#节点1：经过时间排序" class="headerlink" title="节点1：经过时间排序"></a>节点1：经过时间排序</h4><p>因为数据源是乱序的，没有按时间排序</p>
+<p>该节点实现按车牌号、卡口经过时间排序</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> t1.plateno, t1.passtime</span><br><span class="line"><span class="keyword">FROM</span> tmp t1</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> t1.plateno, t1.passtime;</span><br></pre></td></tr></table></figure>
+
+<h4 id="节点2：计算时间差"><a href="#节点2：计算时间差" class="headerlink" title="节点2：计算时间差"></a>节点2：计算时间差</h4><p>经上一节点，已保证在车牌号相同的情况下，经过时间递增</p>
+<p>该节点实现在车牌号相同的情况下，计算相邻卡口的时间差</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    plateno,</span><br><span class="line">    <span class="built_in">floor</span>(</span><br><span class="line">        (unix_timestamp(passtime, <span class="string">&#x27;yyyyMMddHHmmss&#x27;</span>)</span><br><span class="line">        <span class="operator">-</span> unix_timestamp(<span class="built_in">LAG</span>(passtime, <span class="number">1</span>) <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> plateno <span class="keyword">ORDER</span> <span class="keyword">BY</span> passtime), <span class="string">&#x27;yyyyMMddHHmmss&#x27;</span>))</span><br><span class="line">        <span class="operator">/</span> <span class="number">60</span></span><br><span class="line">    ) <span class="keyword">AS</span> passtime_diff</span><br><span class="line"><span class="keyword">FROM</span> (</span><br><span class="line">    <span class="keyword">SELECT</span></span><br><span class="line">        plateno,</span><br><span class="line">        passtime</span><br><span class="line">    <span class="keyword">FROM</span> d_jxkx_mxds_dev.tmp_view_eda_26080416292191801</span><br><span class="line">    <span class="keyword">WHERE</span> plateno <span class="keyword">IN</span> (</span><br><span class="line">        <span class="keyword">SELECT</span></span><br><span class="line">            plateno</span><br><span class="line">        <span class="keyword">FROM</span> d_jxkx_mxds_dev.tmp_view_eda_26080416292191801</span><br><span class="line">        <span class="keyword">GROUP</span> <span class="keyword">BY</span> plateno</span><br><span class="line">        <span class="keyword">HAVING</span> <span class="built_in">count</span>(<span class="operator">*</span>) <span class="operator">&gt;</span> <span class="number">24</span></span><br><span class="line">    )</span><br><span class="line">) t;</span><br></pre></td></tr></table></figure>
+
+<h4 id="节点3：时间差分批"><a href="#节点3：时间差分批" class="headerlink" title="节点3：时间差分批"></a>节点3：时间差分批</h4><p>经上一节点，已得到相邻卡口的时间差</p>
+<p>该节点实现按车牌号分组，再按经过时间的时间递增顺序分批</p>
+<blockquote>
+<p>如同一车牌号下(以经过时间递增排序)的时间差为0，2，3，10，100，3，2，5，30，5，8<br>预期划分为第一批为0，2，3，10，第二批为100，3，2，5，第三批为30，5，8；而不是第一批为0，2，3，10，3，2，5，5，8，第二批为100，30。</p>
+</blockquote>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    plateno,</span><br><span class="line">    passtime,</span><br><span class="line">    passtime_diff,</span><br><span class="line">    <span class="built_in">SUM</span>(batch_flag) <span class="keyword">OVER</span> (</span><br><span class="line">        <span class="keyword">PARTITION</span> <span class="keyword">BY</span> plateno</span><br><span class="line">        <span class="keyword">ORDER</span> <span class="keyword">BY</span> passtime_ts</span><br><span class="line">        <span class="keyword">ROWS</span> <span class="keyword">BETWEEN</span> UNBOUNDED PRECEDING <span class="keyword">AND</span> <span class="keyword">CURRENT</span> <span class="type">ROW</span></span><br><span class="line">    ) <span class="keyword">AS</span> batch_id</span><br><span class="line"><span class="keyword">FROM</span> (</span><br><span class="line">    <span class="keyword">SELECT</span></span><br><span class="line">        plateno,</span><br><span class="line">        passtime,</span><br><span class="line">        passtime_diff,</span><br><span class="line">        unix_timestamp(passtime, <span class="string">&#x27;yyyyMMddHHmmss&#x27;</span>) <span class="keyword">AS</span> passtime_ts,</span><br><span class="line">        <span class="keyword">CASE</span></span><br><span class="line">            <span class="keyword">WHEN</span> passtime_diff <span class="operator">&gt;</span> <span class="number">20</span> <span class="keyword">THEN</span> <span class="number">1</span> <span class="keyword">ELSE</span> <span class="number">0</span></span><br><span class="line">        <span class="keyword">END</span> <span class="keyword">AS</span> batch_flag</span><br><span class="line">    <span class="keyword">FROM</span> d_jxkx_mxds_dev.tmp_calc_diff_out</span><br><span class="line">) t</span><br></pre></td></tr></table></figure>
+
+<p>该节点的代码面向<code>ODPS</code>(阿里云的数据仓库，现更名”MaxCompute”)系统优化，更通用易懂的版本如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    plateno,</span><br><span class="line">    passtime,</span><br><span class="line">    passtime_diff,</span><br><span class="line">    <span class="built_in">SUM</span>(IF(passtime_diff <span class="operator">&gt;</span> <span class="number">20</span>,<span class="number">1</span>,<span class="number">0</span>)) <span class="keyword">OVER</span>(</span><br><span class="line">        <span class="keyword">PARTITION</span> <span class="keyword">BY</span> plateno</span><br><span class="line">        <span class="keyword">ORDER</span> <span class="keyword">BY</span> passtime</span><br><span class="line">        <span class="keyword">ROWS</span> <span class="keyword">BETWEEN</span> UNBOUNDED PRECEDING <span class="keyword">AND</span> <span class="keyword">CURRENT</span> <span class="type">ROW</span></span><br><span class="line">    ) <span class="keyword">AS</span> batch_id</span><br><span class="line"><span class="keyword">FROM</span> (</span><br><span class="line">    <span class="keyword">SELECT</span></span><br><span class="line">        plateno,</span><br><span class="line">        passtime,</span><br><span class="line">        passtime_diff</span><br><span class="line">    <span class="keyword">FROM</span> d_jxkx_mxds_dev.tmp_calc_diff_out</span><br><span class="line">) t</span><br></pre></td></tr></table></figure>
+
+<p>两份代码关于实现“时间差分批”的核心逻辑是相同的，区别在于<code>ODPS</code>版本用数值时间戳开窗，不对字符串做 RANGE</p>
+<h4 id="节点4：筛选24个波段"><a href="#节点4：筛选24个波段" class="headerlink" title="节点4：筛选24个波段"></a>节点4：筛选24个波段</h4><p>该节点应甲方要求，筛选至少经过24个卡口的批次</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> t.plateno, t.passtime, t.passtime_diff, t.batch_id</span><br><span class="line"><span class="keyword">FROM</span> tmp_eda_2026 t</span><br><span class="line"><span class="keyword">WHERE</span> (t.plateno, t.batch_id) <span class="keyword">IN</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> plateno, batch_id</span><br><span class="line">    <span class="keyword">FROM</span> tmp_eda_2026</span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span> plateno, batch_id</span><br><span class="line">    <span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="operator">&gt;</span> <span class="number">24</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h4 id="节点5：筛选总时间大于4小时"><a href="#节点5：筛选总时间大于4小时" class="headerlink" title="节点5：筛选总时间大于4小时"></a>节点5：筛选总时间大于4小时</h4><p>该节点通过将字符串时间转换成UNIX时间戳计算时间差，实现筛选疲劳驾驶时长大于4小时的批次和对应的起止时间。</p>
+<p>valid_time字段的单位是分钟</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    plateno,</span><br><span class="line">    batch_id,</span><br><span class="line">    <span class="built_in">MIN</span>(passtime) <span class="keyword">AS</span> start_time,</span><br><span class="line">    <span class="built_in">MAX</span>(passtime) <span class="keyword">AS</span> end_time,</span><br><span class="line">    <span class="built_in">floor</span>((unix_timestamp(<span class="built_in">MAX</span>(passtime), <span class="string">&#x27;yyyyMMddHHmmss&#x27;</span>) <span class="operator">-</span> unix_timestamp(<span class="built_in">MIN</span>(passtime), <span class="string">&#x27;yyyyMMddHHmmss&#x27;</span>))</span><br><span class="line">        <span class="operator">/</span> <span class="number">60</span></span><br><span class="line">    ) <span class="keyword">AS</span> valid_time</span><br><span class="line"><span class="keyword">FROM</span> filtered</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> plateno, batch_id</span><br><span class="line"><span class="keyword">HAVING</span> valid_time <span class="operator">&gt;</span> <span class="number">240</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="写在文后"><a href="#写在文后" class="headerlink" title="写在文后"></a>写在文后</h2><p>本文只记录了完成该任务的核心算法与实现。实际上的业务还涉及到了计算批次中哪个部门的摄像头出现次数最多，从而选择分发给哪个部门处理；并且最终分发给各个部门的数量应是一致的*(人情世故)*</p>
+<p>这里主要记录关于“分发给各个部门的数量应是一致的”这一需求的实现</p>
+<p>因为符合条件的记录多达 4k 条，故不需要计算各个部门的“疲劳驾驶”批次数的最小值；所以直接按部门分组，取疲劳驾驶时间最长的5条记录即可</p>
+<p>取每个分组中需要排序字段最大的5条记录，最标准、高效的方法是使用窗口函数（Window Function）。</p>
+<p>下面是具体的SQL写法，<strong>可以当作一个模板来使用</strong>。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> <span class="operator">*</span>,</span><br><span class="line">           <span class="built_in">ROW_NUMBER</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> 分组字段 <span class="keyword">ORDER</span> <span class="keyword">BY</span> 排序字段 <span class="keyword">DESC</span>) <span class="keyword">AS</span> rnk</span><br><span class="line">    <span class="keyword">FROM</span> 表名</span><br><span class="line">) t</span><br><span class="line"><span class="keyword">WHERE</span> t.rnk <span class="operator">&lt;=</span> <span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>函数选择与场景说明：</strong></p>
+<ul>
+<li><strong><code>ROW_NUMBER()</code><strong>：最常用，为每个分组内的行分配一个从1开始递增的唯一序号。当排序字段值</strong>有并列</strong>时，它会随机打破平局，每组<strong>严格返回5条</strong>记录。</li>
+<li><strong><code>RANK()</code><strong>：当排序字段值</strong>有并列</strong>时，会<strong>跳过</strong>后续排名（例如：1, 2, 2, 4）。</li>
+<li><strong><code>DENSE_RANK()</code><strong>：当排序字段值</strong>有并列</strong>时，<strong>不会跳过</strong>后续排名（例如：1, 2, 2, 3）。</li>
+<li><strong>并列处理建议</strong>：如果你需要保留所有并列的记录，将 <code>ROW_NUMBER()</code> 替换为 <code>RANK()</code> 或 <code>DENSE_RANK()</code> 即可。</li>
+</ul>
+<h3 id="AI时代对代码能力的反思"><a href="#AI时代对代码能力的反思" class="headerlink" title="AI时代对代码能力的反思"></a>AI时代对代码能力的反思</h3><p>*(Situation, 情境)*笔者平时大量使用 AI Agent 写代码、完成开发任务，但警局内部的公安网没有 AI，互联网侧的 AI 也不能接入公安网；同时，AI 也无法了解内网的数据质量。如正文所述，车牌号识别结果不一定准确，数据源是乱序的，没有按卡口经过时间排序。即使向 AI 描述内网的数据情况，也很难描述完善，且效率极低。</p>
+<p>*(Task, 任务)*我给自己设定的目标是：优化原有算法逻辑，降低代码实现难度；由我确定每个模块的具体功能，再交由 AI 实现各模块的具体代码。</p>
+<p>*(Action, 行动)*因此，我设计了新的算法逻辑，并明确每个模块要完成的功能；同时手动完成节点 1 之前的数据治理代码，确保交给 AI 处理的数据不受数据质量问题影响。</p>
+<p>*(Result, 结果)*优化后的算法逻辑比原逻辑节省约 70% 的时间，也降低了实现难度；同时对数据源做了有效的数据治理。</p>
+<p>结合本次为某地交警局完成“疲劳驾驶”预警模型的任务，我反思了自己在 AI 时代完成开发任务的现状。在内网无 AI 的环境下，初期上手时有些许不适应(因为许久没有古法编程了)。但执行任务的过程中我确认了一点：AI 时代仍然需要代码能力。你需要能判断 AI 给出的思路是否可行，也要能 review 关键代码。如果完全交由 AI 完成，至少会出现 3 个问题：</p>
+<ol>
+<li>一旦出现故障，难以定位问题的根本原因</li>
+<li>对现有代码缺少理解<em>（这一问题尚可交由 AI 分析来解决）</em></li>
+<li>在依赖 AI 快速生成代码的情况下，会迅速累积技术债：AI 往往一次产出大段代码，但其中实现粗糙的代码，便容易沉淀为后续维护负担。</li>
+</ol>
+<p>AI 不会阻碍你了解项目，但会让“不了解”更加隐蔽。过去，若不了解代码，程序往往无法运行，障碍是显性的；如今，即便不了解也能运行，障碍转为隐性的——它可能出现在数月后的一次重构中，也可能暴露于一次难以解释的并发 bug 中。</p>
+<p>更需要发力的有几个方向：</p>
+<ol>
+<li><strong>提问的精度</strong>：与 AI 协作时，问题含糊，回答也会含糊。要尽量把需求拆解到 AI 不容易误解的程度，这能减少大量返工和沟通成本。</li>
+<li><strong>判断力</strong>：哪段代码有效、哪个方案可行，要做到心里有数，不能照单全收（但这也需要经验）</li>
+<li><strong>阅读代码的耐心</strong>：工作中写的是需要维护的商业代码，不是自己的 demo。要理解它的设计，更要能找到它的问题所在。</li>
+</ol>
+<p>AI把写代码这个环节的成本和时间压缩到极致，但依然需要人类做判断、决策。*(也可能伴随着AI的发展，不需要人类介入了)*</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://waltyoung.github.io">WaltYoung</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://waltyoung.github.io/2026/10/25/%E7%96%B2%E5%8A%B3%E9%A9%BE%E9%A9%B6%E5%BB%BA%E6%A8%A1%E4%BB%BB%E5%8A%A1%E5%A4%8D%E7%9B%98%E5%8F%8AAI%E6%97%B6%E4%BB%A3%E5%AF%B9%E4%BB%A3%E7%A0%81%E8%83%BD%E5%8A%9B%E7%9A%84%E5%8F%8D%E6%80%9D/">https://waltyoung.github.io/2026/10/25/%E7%96%B2%E5%8A%B3%E9%A9%BE%E9%A9%B6%E5%BB%BA%E6%A8%A1%E4%BB%BB%E5%8A%A1%E5%A4%8D%E7%9B%98%E5%8F%8AAI%E6%97%B6%E4%BB%A3%E5%AF%B9%E4%BB%A3%E7%A0%81%E8%83%BD%E5%8A%9B%E7%9A%84%E5%8F%8D%E6%80%9D/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://WaltYoung.github.io" target="_blank">WaltYoung</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/SQL/">SQL</a><a class="post-meta__tags" href="/tags/AI/">AI</a></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" data-sites="wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2026/10/22/%E5%9F%BA%E4%BA%8E-Milvus-Lite-%E4%B8%8E%E7%88%B6%E5%AD%90%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%82%BF%E7%98%A4-ICD-%E7%BC%96%E7%A0%81%E7%9F%A5%E8%AF%86%E5%BA%93%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" title="基于 Milvus Lite 与父子文档模型的肿瘤 ICD 编码知识库工程实践"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">基于 Milvus Lite 与父子文档模型的肿瘤 ICD 编码知识库工程实践</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/09/05/LEFT-JOIN%E4%B8%8EJOIN%E7%9A%84%E5%8C%BA%E5%88%AB/" title="LEFT JOIN与JOIN的区别"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-05</div><div class="title">LEFT JOIN与JOIN的区别</div></div></a></div><div><a href="/2023/09/07/WHERE%E3%80%81CHECK%E3%80%81HAVING%E7%9A%84%E5%8C%BA%E5%88%AB/" title="WHERE、CHECK、HAVING的区别"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-07</div><div class="title">WHERE、CHECK、HAVING的区别</div></div></a></div><div><a href="/2023/09/06/WHERE%E5%AD%90%E5%8F%A5%E5%8F%AF%E5%90%8E%E6%8E%A5%E7%9A%84%E5%85%B3%E9%94%AE%E5%AD%97/" title="WHERE子句可后接的关键字"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-06</div><div class="title">WHERE子句可后接的关键字</div></div></a></div><div><a href="/2025/04/29/SQL-%E6%AF%8F%E6%9C%88%E4%BA%A4%E6%98%93I/" title="SQL-每月交易I"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-29</div><div class="title">SQL-每月交易I</div></div></a></div><div><a href="/2025/04/30/SQL-%E6%B8%B8%E6%88%8F%E7%8E%A9%E6%B3%95%E5%88%86%E6%9E%90IV/" title="SQL-游戏玩法分析IV"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-30</div><div class="title">SQL-游戏玩法分析IV</div></div></a></div><div><a href="/2025/05/24/MySQL%E4%BA%8B%E5%8A%A1%E8%AF%A6%E8%A7%A3%EF%BC%9A%E6%A6%82%E5%BF%B5%E3%80%81%E6%93%8D%E4%BD%9C%E3%80%81%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E4%B8%8E%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98/" title="MySQL事务详解：概念、操作、隔离级别与并发问题"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-24</div><div class="title">MySQL事务详解：概念、操作、隔离级别与并发问题</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s2.loli.net/2023/06/16/1xwKW36AN8s5rZd.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">WaltYoung</div><div class="author-info__description">为世界上所有美好而战</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">65</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">53</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/WaltYoung"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/WaltYoung" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">我的小窝</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%96%B2%E5%8A%B3%E9%A9%BE%E9%A9%B6%E5%BB%BA%E6%A8%A1%E4%BB%BB%E5%8A%A1%E5%A4%8D%E7%9B%98%E5%8F%8AAI%E6%97%B6%E4%BB%A3%E5%AF%B9%E4%BB%A3%E7%A0%81%E8%83%BD%E5%8A%9B%E7%9A%84%E5%8F%8D%E6%80%9D"><span class="toc-number">1.</span> <span class="toc-text">疲劳驾驶建模任务复盘及AI时代对代码能力的反思</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A3%E6%96%87"><span class="toc-number">1.2.</span> <span class="toc-text">正文</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9C%80%E6%B1%82"><span class="toc-number">1.2.1.</span> <span class="toc-text">需求</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">示例</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-1%EF%BC%9A%E8%A7%A6%E5%8F%91%E9%A2%84%E8%AD%A6-%E2%80%94%E2%80%94-%E8%BF%9E%E7%BB%AD%E9%A9%BE%E9%A9%B6%E6%97%A0%E4%BC%91%E6%81%AF"><span class="toc-number">1.2.1.1.1.</span> <span class="toc-text">示例 1：触发预警 —— 连续驾驶无休息</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-2%EF%BC%9A%E4%B8%8D%E8%A7%A6%E5%8F%91%E9%A2%84%E8%AD%A6-%E2%80%94%E2%80%94-%E5%A4%9A%E6%AC%A1%E9%95%BF%E4%BC%91%E6%81%AF%EF%BC%88%E9%97%B4%E9%9A%94%EF%BC%9E20-%E5%88%86%E9%92%9F%EF%BC%89"><span class="toc-number">1.2.1.1.2.</span> <span class="toc-text">示例 2：不触发预警 —— 多次长休息（间隔＞20 分钟）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-3%EF%BC%9A%E8%A7%A6%E5%8F%91%E9%A2%84%E8%AD%A6-%E2%80%94%E2%80%94-%E4%BC%91%E6%81%AF%E5%90%8E%E5%86%8D%E6%AC%A1%E8%BF%9E%E7%BB%AD%E9%A9%BE%E9%A9%B6%E8%B6%85-4-%E5%B0%8F%E6%97%B6"><span class="toc-number">1.2.1.1.3.</span> <span class="toc-text">示例 3：触发预警 —— 休息后再次连续驾驶超 4 小时</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-4%EF%BC%9A%E4%B8%8D%E8%A7%A6%E5%8F%91%E9%A2%84%E8%AD%A6-%E2%80%94%E2%80%94-%E6%9E%81%E7%9F%AD%E9%A9%BE%E9%A9%B6%E7%89%87%E6%AE%B5%EF%BC%8C%E9%A2%91%E7%B9%81%E4%BC%91%E6%81%AF"><span class="toc-number">1.2.1.1.4.</span> <span class="toc-text">示例 4：不触发预警 —— 极短驾驶片段，频繁休息</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%97%E6%B3%95%E9%80%BB%E8%BE%91"><span class="toc-number">1.2.2.</span> <span class="toc-text">算法逻辑</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%9F%E7%AE%97%E6%B3%95%E9%80%BB%E8%BE%91"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">原算法逻辑</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E5%90%8E%E7%9A%84%E7%AE%97%E6%B3%95%E9%80%BB%E8%BE%91"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">优化后的算法逻辑</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.3.</span> <span class="toc-text">代码实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8A%82%E7%82%B91%EF%BC%9A%E7%BB%8F%E8%BF%87%E6%97%B6%E9%97%B4%E6%8E%92%E5%BA%8F"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">节点1：经过时间排序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8A%82%E7%82%B92%EF%BC%9A%E8%AE%A1%E7%AE%97%E6%97%B6%E9%97%B4%E5%B7%AE"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">节点2：计算时间差</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8A%82%E7%82%B93%EF%BC%9A%E6%97%B6%E9%97%B4%E5%B7%AE%E5%88%86%E6%89%B9"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">节点3：时间差分批</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8A%82%E7%82%B94%EF%BC%9A%E7%AD%9B%E9%80%8924%E4%B8%AA%E6%B3%A2%E6%AE%B5"><span class="toc-number">1.2.3.4.</span> <span class="toc-text">节点4：筛选24个波段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8A%82%E7%82%B95%EF%BC%9A%E7%AD%9B%E9%80%89%E6%80%BB%E6%97%B6%E9%97%B4%E5%A4%A7%E4%BA%8E4%E5%B0%8F%E6%97%B6"><span class="toc-number">1.2.3.5.</span> <span class="toc-text">节点5：筛选总时间大于4小时</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%96%87%E5%90%8E"><span class="toc-number">1.3.</span> <span class="toc-text">写在文后</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AI%E6%97%B6%E4%BB%A3%E5%AF%B9%E4%BB%A3%E7%A0%81%E8%83%BD%E5%8A%9B%E7%9A%84%E5%8F%8D%E6%80%9D"><span class="toc-number">1.3.1.</span> <span class="toc-text">AI时代对代码能力的反思</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/25/%E7%96%B2%E5%8A%B3%E9%A9%BE%E9%A9%B6%E5%BB%BA%E6%A8%A1%E4%BB%BB%E5%8A%A1%E5%A4%8D%E7%9B%98%E5%8F%8AAI%E6%97%B6%E4%BB%A3%E5%AF%B9%E4%BB%A3%E7%A0%81%E8%83%BD%E5%8A%9B%E7%9A%84%E5%8F%8D%E6%80%9D/" title="疲劳驾驶建模任务复盘及AI时代对代码能力的反思">疲劳驾驶建模任务复盘及AI时代对代码能力的反思</a><time datetime="2026-10-25T15:02:53.000Z" title="发表于 2026-10-25 23:02:53">2026-10-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/22/%E5%9F%BA%E4%BA%8E-Milvus-Lite-%E4%B8%8E%E7%88%B6%E5%AD%90%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%82%BF%E7%98%A4-ICD-%E7%BC%96%E7%A0%81%E7%9F%A5%E8%AF%86%E5%BA%93%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" title="基于 Milvus Lite 与父子文档模型的肿瘤 ICD 编码知识库工程实践">基于 Milvus Lite 与父子文档模型的肿瘤 ICD 编码知识库工程实践</a><time datetime="2026-10-21T16:21:21.000Z" title="发表于 2026-10-22 00:21:21">2026-10-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/12/%E5%9F%BA%E4%BA%8EQwen3-14B%E5%9F%BA%E5%BA%A7%E6%A8%A1%E5%9E%8B%E8%BF%9B%E8%A1%8C%E6%80%9D%E7%BB%B4%E9%93%BE%E5%BE%AE%E8%B0%83%E7%9A%84%E5%8F%AF%E8%A7%A3%E9%87%8AICD-10%E7%97%85%E6%A1%88%E7%BC%96%E7%A0%81%E4%B8%93%E5%AE%B6%E6%A8%A1%E5%9E%8B/" title="基于Qwen3-14B基座模型进行思维链微调的可解释ICD-10病案编码专家模型">基于Qwen3-14B基座模型进行思维链微调的可解释ICD-10病案编码专家模型</a><time datetime="2026-10-12T10:16:30.000Z" title="发表于 2026-10-12 18:16:30">2026-10-12</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/26/MySQL%E7%A9%BA%E9%97%B4%E6%B8%85%E7%90%86%EF%BC%9A%E6%97%A5%E5%BF%97%E6%B8%85%E7%90%86%E4%B8%8E%E7%A2%8E%E7%89%87%E5%9B%9E%E6%94%B6/" title="MySQL空间清理：日志清理与碎片回收">MySQL空间清理：日志清理与碎片回收</a><time datetime="2026-09-26T08:42:57.000Z" title="发表于 2026-09-26 16:42:57">2026-09-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/25/%E8%BD%AF%E4%BB%B6%E9%A1%B9%E7%9B%AE%E5%88%9D%E6%9C%9F%E6%8A%A5%E4%BB%B7%E7%BC%96%E5%88%B6%E8%A6%81%E7%82%B9/" title="软件项目初期报价编制要点">软件项目初期报价编制要点</a><time datetime="2026-09-25T01:16:20.000Z" title="发表于 2026-09-25 09:16:20">2026-09-25</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2026 By WaltYoung</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
